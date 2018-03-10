@@ -3,13 +3,24 @@
 // const { promiseError } = require('../utils');
 // const { ERRORS } = require('../const');
 
-const places = [];
+let places = [];
 let count = 0;
 
 const findPlace = id => places.find(i => i.id === id);
 const changePlace = (place, key, value) => {
     if (place && key !== undefined && value !== undefined) {
         place[key] = value;
+    }
+};
+
+const sortFunc = sort => {
+    switch (sort) {
+        case 'date':
+            return (i, j) => i.created.getTime() - j.created.getTime();
+        case 'desc':
+            return (i, j) => i.description >= j.description ? 1 : -1;
+        default:
+            return (i, j) => i.id - j.id;
     }
 };
 
@@ -32,7 +43,7 @@ module.exports = class Place {
     }
     static find(description = '', sort, page = 0, limit) {
         const data = places.filter(i => i.description.includes(description))
-            .sort(i => i[sort]);
+            .sort(sortFunc(sort));
 
         return limit ? data.slice(page * limit, (page + 1) * limit) : data;
     }
