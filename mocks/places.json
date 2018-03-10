@@ -1,0 +1,12 @@
+[
+  {
+    "description": "London",
+    "id": "1", 
+    "visited": "false"
+  },
+  {
+    "description": "NY",
+    "id": "2", 
+    "visited": "false"
+  }
+]
