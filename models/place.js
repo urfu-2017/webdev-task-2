@@ -2,6 +2,7 @@
 
 // const { promiseError } = require('../utils');
 // const { ERRORS } = require('../const');
+const { ERRORS } = require('../data.json');
 
 let places = [];
 let count = 0;
@@ -42,23 +43,23 @@ module.exports = class Place {
         return place;
     }
     static find(description = '', sort, page = 0, limit) {
-        const data = places.filter(i => i.description.includes(description))
+        const placesCopy = places.filter(i => i.description.includes(description))
             .sort(sortFunc(sort));
 
-        return limit ? data.slice(page * limit, (page + 1) * limit) : data;
+        return limit ? placesCopy.slice(page * limit, (page + 1) * limit) : placesCopy;
     }
 
     static findById(id) {
         const place = findPlace(id);
 
-        return place ? place : { error: '2' };
+        return place ? place : { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
     }
 
     static findByIdAndRemove(id) {
         const place = findPlace(id);
         places = places.filter(i => i.id !== id);
 
-        return place ? place : { error: '4' };
+        return place ? place : { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
     }
 
     static clear() {
@@ -68,10 +69,10 @@ module.exports = class Place {
     }
 
     static replace({ id, description, visited }) {
-        if (!id) {
-            return { error: '1' };
-        }
         const place = places.find(i => i.id === id);
+        if (!place) {
+            return { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
+        }
         changePlace(place, 'description', description);
         changePlace(place, 'visited', visited);
 
@@ -82,8 +83,8 @@ module.exports = class Place {
         const place1 = findPlace(id1);
         const place2 = findPlace(id2);
 
-        if (!place1 || id1 === id2) {
-            return { error: '3' };
+        if (!place1) {
+            return { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
         }
         changePlace(place1, 'id', id2);
         changePlace(place2, 'id', id1);
