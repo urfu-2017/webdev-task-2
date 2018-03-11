@@ -28,7 +28,7 @@ test('adds and displays two spots', async () => {
     ]
 
     expect(noSpots).to.have.status(200)
-    expect(noSpots.body).to.be.empty()
+    expect(noSpots.body).to.be.empty
     expect(spots).to.have.status(200)
     expect(spots.body).to.be.deep.equal([a, b])
 })
@@ -49,9 +49,9 @@ test('can shuffle and sort', async () => {
         { description: 'aspot4', visited: false },
     ]
 
-    expect(spotsShuffled.body).not.to.be.equal([a, b, c, d])
-    expect(spotsByLex.body).to.be.equal([d, c, b, a])
-    expect(spotsByDate.body).to.be.equal([a, b, c, d])
+    expect(spotsShuffled.body).not.to.be.deep.equal([a, b, c, d])
+    expect(spotsByLex.body).to.be.deep.equal([d, c, b, a])
+    expect(spotsByDate.body).to.be.deep.equal([a, b, c, d])
 })
 
 test('deletes exisiting spot', async () => {
@@ -84,7 +84,7 @@ test('deletes all', async () => {
     const spots = await sut.getSpots()
 
     expect(res).to.have.status(200)
-    expect(spots.body).to.be.empty()
+    expect(spots.body).to.be.empty
 })
 
 test('changes spot', async () => {
@@ -102,7 +102,7 @@ test("can't change non-existing spot", async () => {
     const spots = await sut.getSpots()
 
     expect(res).to.have.status(400)
-    expect(spots.body).to.be.empty()
+    expect(spots.body).to.be.empty
 })
 
 test('can work with pages', async () => {
