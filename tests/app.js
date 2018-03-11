@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { getApp } from '../app'
 import { TestApp } from './test-app'
 
-describe('spots', () => {
+describe('/spots', () => {
     let sut
     beforeEach(() => sut = new TestApp(getApp()))
 

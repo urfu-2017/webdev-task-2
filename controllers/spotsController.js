@@ -2,11 +2,17 @@
 
 import Router from 'express-promise-router'
 
-export default function({}) {
+export default function({ spots }) {
     const router = Router()
 
     router.post('/', async (req, res) => {
-        res.json({ id: 'some' })
+        const { description } = req.body
+        const id = spots.add(description)
+        res.json({ id })
+    })
+    router.get('/', async (req, res) => {
+        const { sort, page, pageNumber } = req.query
+        res.json([])
     })
 
     return router
