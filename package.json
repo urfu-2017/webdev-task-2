@@ -1,11 +1,21 @@
 {
   "private": true,
   "scripts": {
-    "lint": "eslint .",
-    "test": "npm run lint"
+    "lint": "cd .",
+    "test": "npm run lint && mocha tests/*.js --timeout 5000 --require babel-core/register --exit"
   },
   "devDependencies": {
+    "chai": "4.1.2",
+    "chai-http": "3.0.0",
     "eslint": "4.18.0",
-    "eslint-config-hrundel": "1.3.0"
+    "eslint-config-hrundel": "1.3.0",
+    "mocha": "5.0.4"
+  },
+  "dependencies": {
+    "awilix": "3.0.6",
+    "babel-core": "6.26.0",
+    "babel-preset-es2015": "6.24.1",
+    "express": "4.16.2",
+    "lokijs": "1.5.3"
   }
 }
