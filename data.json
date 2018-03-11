@@ -1,5 +1,6 @@
 {
     "ERRORS": {
-        "PLACE_WITH_THIS_ID_NOT_EXIST": "Места с таким ID не существует"
+        "PLACE_WITH_THIS_ID_NOT_EXIST": "Места с таким ID не существует",
+        "ID_NOT_CREATED": "Место с таким ID еще не создано"
     }
 }

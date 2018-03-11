@@ -1,10 +1,18 @@
 'use strict';
 
 const Place = require('../../models/place');
+const Controller = require('../../utils/controller');
 
-module.exports = {
-    url: '/:id',
-    get: (req, res) => res.json(Place.findById(parseInt(req.params.id))),
-    put: (req, res) => res.json(Place.swap(parseInt(req.params.id), parseInt(req.body.id))),
-    delete: (req, res) => res.json(Place.findByIdAndRemove(parseInt(req.params.id)))
+module.exports = class extends Controller {
+    get() {
+        this.json(Place.findById(parseInt(this.params.id)));
+    }
+
+    put() {
+        this.json(Place.swap(parseInt(this.params.id), parseInt(this.body.id)));
+    }
+
+    delete() {
+        this.json(Place.findByIdAndRemove(parseInt(this.params.id)));
+    }
 };

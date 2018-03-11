@@ -1,6 +1,9 @@
 'use strict';
 
-module.exports = {
-    url: '/',
-    get: (req, res) => res.end('root')
+const Controller = require('../../utils/controller');
+
+module.exports = class extends Controller {
+    get() {
+        this.end('root');
+    }
 };

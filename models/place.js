@@ -1,13 +1,20 @@
 'use strict';
 
-// const { promiseError } = require('../utils');
-// const { ERRORS } = require('../const');
 const { ERRORS } = require('../data.json');
+const ServerError = require('../utils/server-error');
 
 let places = [];
 let count = 0;
 
 const findPlace = id => places.find(i => i.id === id);
+const findPlaceOrThrow = id => {
+    const place = findPlace(id);
+    if (!place) {
+        throw new ServerError(ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST);
+    }
+
+    return place;
+};
 const changePlace = (place, key, value) => {
     if (place && key !== undefined && value !== undefined) {
         place[key] = value;
@@ -42,6 +49,7 @@ module.exports = class Place {
 
         return place;
     }
+
     static find(description = '', sort, page = 0, limit) {
         const placesCopy = places.filter(i => i.description.includes(description))
             .sort(sortFunc(sort));
@@ -50,16 +58,14 @@ module.exports = class Place {
     }
 
     static findById(id) {
-        const place = findPlace(id);
-
-        return place ? place : { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
+        return findPlaceOrThrow(id);
     }
 
     static findByIdAndRemove(id) {
-        const place = findPlace(id);
+        const place = findPlaceOrThrow(id);
         places = places.filter(i => i.id !== id);
 
-        return place ? place : { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
+        return place;
     }
 
     static clear() {
@@ -69,10 +75,7 @@ module.exports = class Place {
     }
 
     static replace({ id, description, visited }) {
-        const place = places.find(i => i.id === id);
-        if (!place) {
-            return { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
-        }
+        const place = findPlaceOrThrow(id);
         changePlace(place, 'description', description);
         changePlace(place, 'visited', visited);
 
@@ -80,12 +83,11 @@ module.exports = class Place {
     }
 
     static swap(id1, id2) {
-        const place1 = findPlace(id1);
-        const place2 = findPlace(id2);
-
-        if (!place1) {
-            return { error: ERRORS.PLACE_WITH_THIS_ID_NOT_EXIST };
+        if (id2 >= count) {
+            throw new ServerError(ERRORS.ID_NOT_CREATED);
         }
+        const place1 = findPlaceOrThrow(id1);
+        const place2 = findPlace(id2);
         changePlace(place1, 'id', id2);
         changePlace(place2, 'id', id1);
 

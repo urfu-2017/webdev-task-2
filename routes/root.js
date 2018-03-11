@@ -3,8 +3,8 @@
 const { Router } = require('express');
 const router = new Router();
 
-const controller = require('../controllers/root');
+const { root } = require('../controllers/root');
 
-router.get(controller.root.url, controller.root.get);
+router.use('/', root.toController());
 
 module.exports = router;

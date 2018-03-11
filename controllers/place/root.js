@@ -1,12 +1,23 @@
 'use strict';
 
 const Place = require('../../models/place');
+const Controller = require('../../utils/controller');
 
-module.exports = {
-    url: '/',
-    get: (req, res) => res.json(Place.find(req.query.description, req.query.sort,
-        parseInt(req.query.page), parseInt(req.query.limit))),
-    post: (req, res) => res.json(new Place(req.body.description).save()),
-    put: (req, res) => res.json(Place.replace(req.body)),
-    delete: (req, res) => res.json(Place.clear())
+module.exports = class extends Controller {
+    get() {
+        const { description, sort, page, limit } = this.query;
+        this.json(Place.find(description, sort, parseInt(page), parseInt(limit)));
+    }
+
+    post() {
+        this.json(new Place(this.body.description).save());
+    }
+
+    put() {
+        this.json(Place.replace(this.body));
+    }
+
+    delete() {
+        this.json(Place.clear());
+    }
 };
