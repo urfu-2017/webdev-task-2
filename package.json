@@ -2,8 +2,9 @@
   "private": true,
   "scripts": {
     "lint": "cd .",
-    "test": "npm run lint && mocha --timeout 5000 --require babel-core/register --exit",
-    "testWatch": "mocha --reporter mochawesome --timeout 5000 --require babel-core/register --watch"
+    "mocha": "mocha --ui qunit --timeout 5000 --require babel-core/register", 
+    "test": "npm run lint && npm run mocha -- --exit",
+    "testWatch": "npm run mocha -- --reporter mochawesome --watch"
   },
   "devDependencies": {
     "chai": "4.1.2",
