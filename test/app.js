@@ -23,8 +23,8 @@ test('adds and displays two spots', async () => {
     await sut.addSpot('b2')
     const spots = await sut.getSpots()
     const [a, b] = [
-        { description: 'b1', visited: false },
-        { description: 'a2', visited: false },
+        { description: 'a1', visited: false },
+        { description: 'b2', visited: false },
     ]
 
     expect(noSpots).to.have.status(200)
