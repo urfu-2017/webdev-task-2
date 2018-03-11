@@ -22,6 +22,12 @@ export default class Spots {
             .simplesort(sort)
             .data().map(({description, visited}) => ({description, visited}))
     }
+
+    search(desc) {
+        return this.col.chain()
+            .where(x => x.description.includes(desc))
+            .data().map(({description, visited}) => ({description, visited}))
+    }
     
     shuffle() {
         const count = this.col.count() - 1

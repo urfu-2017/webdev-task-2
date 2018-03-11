@@ -16,6 +16,10 @@ export default function({ spots }) {
         sort = { lex: 'description', date: 'order' }[sort] || 'order2'
         res.json(spots.get(sort, page || 0, pageSize || 20))
     })
+    .get('/search', async (req, res) => {
+        let { desc } = req.query
+        res.json(spots.search(desc))
+    })
     .post('/shuffle', async (req, res) => {
         spots.shuffle()
         res.sendStatus(200)
