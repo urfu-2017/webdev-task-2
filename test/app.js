@@ -4,6 +4,9 @@ import { expect } from 'chai'
 import { getApp } from '../app'
 import { TestApp } from './test-app'
 
+
+const handleError = promise => promise.catch(err => err)
+
 let sut
 beforeEach(() => sut = new TestApp(getApp()))
 
@@ -67,7 +70,7 @@ test('deletes exisiting spot', async () => {
 test("can't delete non-exisiting spot", async () => {
     await sut.addSpot('delspot')
     await sut.addSpot('delspot')
-    const res = await sut.deleteSpot('BAD_ID')
+    const res = await handleError(sut.deleteSpot('BAD_ID'))
     const spots = await sut.getSpots()
 
     expect(res).to.have.status(400)
@@ -93,12 +96,12 @@ test('changes spot', async () => {
     const spots = await sut.getSpots()
 
     expect(res).to.have.status(200)
-    expect(res).to.be.deep.equal({ description: 'newDesc', visited: true })
+    expect(res.body).to.be.deep.equal({ description: 'newDesc', visited: true })
     expect(spots.body).to.be.deep.equal([{ description: 'newDesc', visited: true }])
 })
 
 test("can't change non-existing spot", async () => {
-    const res = await sut.editSpot('bad_1D', true, 'newDesc')
+    const res = await handleError(sut.editSpot('bad_1D', true, 'newDesc'))
     const spots = await sut.getSpots()
 
     expect(res).to.have.status(400)
