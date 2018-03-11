@@ -117,3 +117,26 @@ test('can work with pages', async () => {
     expect(page1.body).to.be.deep.equal([{ description: 'fst', visited: false }])
     expect(page2.body).to.be.deep.equal([{ description: 'scnd', visited: false }])
 })
+
+test('can search by substring', async () => {
+    await sut.addSpot('alala xaxax 1')
+    await sut.addSpot('ala xanax 2')
+    const [ s1, s2 ] = [
+        { description:'alala xaxax 1', visited: false },
+        { description:'ala xanax 2', visited: false }
+    ]
+    const res = await Promise.all([
+        await sut.searchSpot('ala'),
+        await sut.searchSpot(''),
+        await sut.searchSpot('xana'),
+        await sut.searchSpot('3')
+    ])
+    const [ a, b, c, d ] = res
+
+    res.forEach(x => expect(x).to.have.status(200))
+    expect(a.body).to.have.deep.members([s1, s2])
+    expect(b.body).to.have.deep.members([s1, s2])
+    expect(c.body).to.be.deep.equal([s2])
+    expect(d.body).to.be.empty
+})
+

@@ -22,8 +22,8 @@ export class TestApp {
         return this.r().get('/spots').query({ sort, page, pageSize })
     }
 
-    searchSpot(query) {
-        return this.r().get('/spots/search').query({ query })
+    searchSpot(desc) {
+        return this.r().get('/spots/search').query({ desc })
     }
 
     editSpot(id, visited, description) {
