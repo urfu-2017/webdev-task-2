@@ -3,12 +3,9 @@
 import express from 'express'
 import { createContainer } from 'awilix'
 
-export const app = ({}) => {
+export const app = ({ spotsController }) => {
     const result = express()
-
-    result.post('/spots', (req, res) => {
-        res.json({ id: 'ae' })
-    })
+    result.use('/spots', spotsController)
 
     return result
 }
@@ -16,6 +13,6 @@ export const app = ({}) => {
 export const getApp = () => {
     const container = createContainer()
     container.loadModules(['controllers/*.js', 'models/*.js'], { formatName: 'camelCase' })
-    
+
     return app(container.cradle)
 }
