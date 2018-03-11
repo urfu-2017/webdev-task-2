@@ -2,10 +2,12 @@
 
 import express from 'express'
 import { createContainer, asValue } from 'awilix'
+import bodyParser from 'body-parser'
 import Loki from 'lokijs'
 
 export const app = ({ spotsController }) => {
     const result = express()
+    result.use(bodyParser.json())
     result.use('/spots', spotsController)
 
     return result
