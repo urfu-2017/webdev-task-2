@@ -29,13 +29,14 @@ export default function({ spots }) {
         }
         res.json(edited)
     })
-    .delete('/:id', async (req, res) => {
-        res.sendStatus(spots.delete(req.params.id) ? 200 : 400)
-    })
     .delete('/all', async (req, res) => {
         spots.deleteAll()
         res.sendStatus(200)
     })
+    .delete('/:id', async (req, res) => {
+        res.sendStatus(spots.delete(req.params.id) ? 200 : 400)
+    })
+    
 
     return router
 }
