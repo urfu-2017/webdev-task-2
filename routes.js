@@ -58,10 +58,12 @@ exports.changeData = (req, res) => {
         if (DB[i].id === id) {
             DB[i].description = description ? description : DB[i].description;
             DB[i].visited = visited === 'true' || visited === 'false' ? visited : DB[i].visited;
+
+            return res.sendStatus(200);
         }
     }
 
-    res.sendStatus(200);
+    return res.sendStatus(400);
 };
 
 exports.deleteData = (req, res) => {
@@ -70,10 +72,12 @@ exports.deleteData = (req, res) => {
     for (let i = 0; i < DB.length; i++) {
         if (DB[i].id === id) {
             DB.splice(i, 1);
+
+            return res.sendStatus(200);
         }
     }
 
-    res.sendStatus(200);
+    return res.sendStatus(400);
 };
 
 exports.getSearch = (req, res) => {
