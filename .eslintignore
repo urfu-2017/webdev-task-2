@@ -1,0 +1,7 @@
+/controllers
+/models
+/node_modules
+/test
+/mochawesome-report
+app.js
+index.js
