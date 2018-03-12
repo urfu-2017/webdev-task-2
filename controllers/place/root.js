@@ -6,11 +6,12 @@ const Controller = require('../../utils/controller');
 module.exports = class extends Controller {
     get() {
         const { description, sort, page, limit } = this.query;
-        this.json(Place.find(description, sort, parseInt(page), parseInt(limit)));
+        const options = description ? { description } : {};
+        this.json(Place.find(sort, Number(page), Number(limit), options));
     }
 
     post() {
-        this.json(new Place(this.body.description).save());
+        this.json(Place.create(this.body.description));
     }
 
     put() {

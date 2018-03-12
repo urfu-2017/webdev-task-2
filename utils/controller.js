@@ -1,5 +1,7 @@
 'use strict';
 
+const ServerError = require('../utils/server-error');
+
 module.exports = class {
     constructor(req, res, next) {
         this.next = next;
@@ -33,8 +35,8 @@ module.exports = class {
                 let instance = new Controller(req, res, next);
                 instance[req.method.toLowerCase()]();
             } catch (e) {
-                if (e.name === 'ServerError') {
-                    res.json({ error: e.message });
+                if (e instanceof ServerError) {
+                    res.status(e.status).json({ error: e.message });
                 } else {
                     throw e;
                 }

@@ -5,14 +5,14 @@ const Controller = require('../../utils/controller');
 
 module.exports = class extends Controller {
     get() {
-        this.json(Place.findById(parseInt(this.params.id)));
+        this.json(Place.findById(Number(this.params.id)));
     }
 
     put() {
-        this.json(Place.swap(parseInt(this.params.id), parseInt(this.body.id)));
+        this.json(Place.swap(Number(this.params.id), Number(this.body.id)));
     }
 
     delete() {
-        this.json(Place.findByIdAndRemove(parseInt(this.params.id)));
+        this.json(Place.removeById(Number(this.params.id)));
     }
 };

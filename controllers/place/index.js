@@ -2,5 +2,6 @@
 
 module.exports = {
     root: require('./root'),
-    id: require('./id')
+    id: require('./id'),
+    visited: require('./visited')
 };
