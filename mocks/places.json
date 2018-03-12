@@ -1,0 +1,38 @@
+[
+    {
+        "name": "London",
+        "description": "111"
+    },
+    {
+        "name": "Moscow",
+        "description": "112"
+    },
+    {
+        "name": "Albuquerque",
+        "description": "113"
+    },
+    {
+        "name": "Ekaterinburg",
+        "description": "121"
+    },
+    {
+        "name": "Paris",
+        "description": "131"
+    },
+    {
+        "name": "Kiev",
+        "description": "211"
+    },
+    {
+        "name": "Sochi",
+        "description": "311"
+    },
+    {
+        "name": "Houston",
+        "description": "41"
+    },
+    {
+        "name": "Wakanda",
+        "description": "511"
+    }
+]
