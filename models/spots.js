@@ -29,6 +29,7 @@ export default class Spots {
             .data().map(({description, visited}) => ({description, visited}))
     }
     
+    // actually it's not a random shuffle but a list reverse
     shuffle() {
         const count = this.col.count() - 1
         this.col.updateWhere(x => true, x => Object.assign({}, x, { order2: count - x.order }))

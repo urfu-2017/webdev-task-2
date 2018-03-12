@@ -2,10 +2,8 @@
 
 import Router from 'express-promise-router'
 
-export default function({ spots }) {
-    const router = Router()
-
-    router
+export default ({ spots }) =>
+    Router()
     .post('/', async (req, res) => {
         const { description } = req.body
         const id = spots.add(description)
@@ -40,7 +38,3 @@ export default function({ spots }) {
     .delete('/:id', async (req, res) => {
         res.sendStatus(spots.delete(req.params.id) ? 200 : 400)
     })
-    
-
-    return router
-}

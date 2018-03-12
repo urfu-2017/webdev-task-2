@@ -15,7 +15,7 @@ export const app = ({ spotsController }) => {
 
 export const getApp = () => {
     const container = createContainer()
-    container.register('loki', asValue(new Loki()))
+    container.register('loki', asValue(new Loki))
     container.loadModules(['controllers/*.js', 'models/*.js'], { formatName: 'camelCase' })
 
     return app(container.cradle)
