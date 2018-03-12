@@ -22,7 +22,7 @@ class Query {
     update(obj = {}) {
         this._data.forEach(data => {
             for (let key in obj) {
-                if (data[key]) {
+                if (data[key] !== undefined) {
                     data[key] = obj[key];
                 }
             }

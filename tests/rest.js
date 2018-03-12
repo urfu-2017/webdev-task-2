@@ -141,6 +141,34 @@ describe('GET /', () => {
         ], done);
     });
 
+    it('Посещает место', done => {
+        series([
+            callback => {
+                request(app)
+                    .get('/place/visit')
+                    .type('form')
+                    .send({
+                        name: 'place2'
+                    })
+                    .expect(200)
+                    .end(callback);
+            },
+            callback => {
+                request(app)
+                    .get('/place/find')
+                    .type('form')
+                    .send({
+                        name: 'place2'
+                    })
+                    .expect(200)
+                    .expect(res => {
+                        assert.equal(res.body[0].visited, true);
+                    })
+                    .end(callback);
+            }
+        ], done);
+    });
+
     it('Очищает список', done => {
         series([
             callback => {
