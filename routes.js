@@ -25,7 +25,9 @@ function sortByAlphabet(a, b) {
 
 exports.getPlaces = (req, res) => {
     const { query } = parseUrl(req.url);
-    const { sort } = parseQuery(query);
+    let { sort, limit, page } = parseQuery(query);
+    limit = Number(limit);
+    page = Number(page);
 
     var cloneDB = JSON.parse(JSON.stringify(DB));
     if (sort === 'alpha') {
@@ -34,7 +36,12 @@ exports.getPlaces = (req, res) => {
         cloneDB.sort(sortByTime);
     }
 
-    res.send(JSON.stringify(cloneDB));
+    if (limit) {
+        let paragraph = page ? page - 1 : 0;
+        res.send(JSON.stringify(cloneDB.slice(paragraph * limit, paragraph * limit + limit)));
+    } else {
+        res.send(JSON.stringify(cloneDB));
+    }
 };
 
 exports.postPlaces = (req, res) => {
