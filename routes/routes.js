@@ -63,7 +63,7 @@ module.exports = function (app, db) {
     app.delete('/notes/:id', (req, res) => {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
-        db.collection('notes').remove(details, (err, item) => {
+        db.collection('notes').remove(details, (err) => {
             if (err) {
                 res.send({ 'error': 'An error has occurred' });
             } else {
@@ -77,7 +77,7 @@ module.exports = function (app, db) {
         const details = { '_id': new ObjectID(id) };
         let mark = req.body.mark;
         const note = { description: req.body.body, mark: mark, time: details._id.getTimestamp() };
-        db.collection('notes').update(details, note, (err, result) => {
+        db.collection('notes').update(details, note, (err) => {
             if (err) {
                 res.send({ 'error': 'An error has occurred' });
             } else {

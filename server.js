@@ -3,7 +3,6 @@
 const log = require('./libs/log')(module);
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const dbInf = require('./config/db');
 const path = require('path'); // модуль для парсинга пути
 let app = express();
 const bodyParser = require('body-parser');
@@ -18,18 +17,19 @@ app.use(express.static(path.join(__dirname, 'public'))); // запуск ста�
 // который смотрит на папку public/
 
 
-MongoClient.connect('mongodb://darl0ck:1147575@ds111319.mlab.com:11319/locations_yandex', (err, client) => {
+MongoClient.connect('mongodb://darl0ck:1147575@ds111319.mlab.com:11319/locations_yandex',
+    (err, client) => {
 
-    if (err) {
-        return console.info(err);
-    }
-    const db = client.db('locations_yandex');
-    require('./routes')(app, db);
-    app.listen(1337, function () {
-        console.info('Express server listening on port 1337');
+        if (err) {
+            return console.info(err);
+        }
+        const db = client.db('locations_yandex');
+        require('./routes')(app, db);
+        app.listen(1337, function () {
+            console.info('Express server listening on port 1337');
+        });
+
     });
-
-});
 
 app.get('/api', function (req, res) {
     res.send('API is running');
