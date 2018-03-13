@@ -15,7 +15,6 @@ exports.list = (req, res) => {
     places = reverse ? places.reverse() : places;
     places = places.slice(pageSize * (pageNumber - 1), pageSize * pageNumber);
 
-
     res.json(places);
 };
 

@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "start": "node index.js",
     "lint": "eslint .",
     "test": "npm run lint"
   },
