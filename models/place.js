@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const uuidv4 = require('uuid/v4');
 
@@ -18,4 +18,4 @@ module.exports = class Place {
     visit() {
         this.visited = true;
     }
-}
+};

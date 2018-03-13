@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const DEFAULT_COMPARER = 'default';
 const DEFAULT_PAGE_SIZE = 3;
@@ -18,13 +18,13 @@ exports.get = function get(comparer = DEFAULT_COMPARER) {
         default:
             return null;
     }
-}
+};
 
 function splitIntoPages(pageSize = DEFAULT_PAGE_SIZE) {
-    pages = Array.from({ length: pageSize }, _ => []);
+    const pages = Array.from({ length: pageSize }, () => []);
 
     store.forEach((place, index) => {
-        let pageIndex = Math.floor(index / pageSize)
+        let pageIndex = Math.floor(index / pageSize);
         pages[pageIndex].push(place);
     });
 
@@ -37,31 +37,31 @@ exports.getPage = function getPage(number) {
     }
 
     return splitIntoPages()[number - 1];
-}
+};
 
 exports.search = function search(query) {
     let lowerQuery = query.toLowerCase();
 
     return store.filter(x => x.name.includes(lowerQuery) || x.description.includes(lowerQuery));
-}
+};
 
 exports.drop = function drop() {
     store.length = 0;
-}
+};
 
 exports.add = function add(place) {
     store.push(place);
-}
+};
 
 exports.remove = function remove(placeUUID) {
     const index = store.findIndex(x => x.uuid === placeUUID);
 
-    if (index == -1) {
+    if (index === -1) {
         return null;
     }
 
     return store.splice(index, 1)[0];
-}
+};
 
 exports.swap = function swap(firstUUID, secondUUID) {
     const firstIndex = store.findIndex(x => x.uuid === firstUUID);
@@ -77,7 +77,7 @@ exports.swap = function swap(firstUUID, secondUUID) {
     store[secondIndex] = first;
 
     return store;
-}
+};
 
 exports.edit = function edit(placeUUID, { name, description, visited }) {
     const place = store.find(x => x.uuid === placeUUID);
@@ -86,9 +86,15 @@ exports.edit = function edit(placeUUID, { name, description, visited }) {
         return null;
     }
 
-    if (name !== undefined) { place.name = name; }
-    if (description !== undefined) { place.description = description; }
-    if (visited !== undefined) { place.visited = visited; }
+    if (name !== undefined) {
+        place.name = name;
+    }
+    if (description !== undefined) {
+        place.description = description;
+    }
+    if (visited !== undefined) {
+        place.visited = visited;
+    }
 
     return place;
-}
+};

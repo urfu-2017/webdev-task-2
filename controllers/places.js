@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const Place = require('../models/place');
 const placesStore = require('../models/placesStore');
@@ -9,33 +9,36 @@ exports.getPlaces = (req, res) => {
 
     if (places === null) {
         errors.error400(req, res);
+
         return;
     }
 
     res.send(places);
-}
+};
 
 exports.getPlacesPage = (req, res) => {
     const places = placesStore.getPage(req.params.number);
 
     if (places === null) {
         errors.error400(req, res);
+
         return;
     }
 
     res.send(places);
-}
+};
 
 exports.searchPlaces = (req, res) => {
     if (req.query.q === null) {
         errors.error400(req, res);
+
         return;
     }
 
     const places = placesStore.search(req.query.q);
 
     res.send(places);
-}
+};
 
 exports.removePlaces = (req, res) => {
     if (req.query.uuid) {
@@ -43,6 +46,7 @@ exports.removePlaces = (req, res) => {
 
         if (place === null) {
             errors.error400(req, res);
+
             return;
         }
     } else {
@@ -50,11 +54,12 @@ exports.removePlaces = (req, res) => {
     }
 
     res.sendStatus(200);
-}
+};
 
 exports.swapPlaces = (req, res) => {
     if (!(req.query.uuid1 && req.query.uuid2)) {
         errors.error400(req, res);
+
         return;
     }
 
@@ -62,23 +67,26 @@ exports.swapPlaces = (req, res) => {
 
     if (!places) {
         errors.error400(req, res);
+
         return;
     }
 
     res.sendStatus(200);
-}
+};
 
 exports.createPlace = (req, res) => {
     const place = new Place(req.body.name, req.body.description);
     placesStore.add(place);
 
     res.sendStatus(201);
-}
+};
 
 exports.editPlace = (req, res) => {
-    let requiredParams = req.query.uuid && ((req.body.name && req.body.description) || req.body.visited);
+    let requiredParams = req.query.uuid &&
+        ((req.body.name && req.body.description) || req.body.visited);
     if (!requiredParams) {
         errors.error400(req, res);
+
         return;
     }
 
@@ -91,8 +99,9 @@ exports.editPlace = (req, res) => {
 
     if (!place) {
         errors.error400(req, res);
+
         return;
     }
 
     res.sendStatus(200);
-}
+};

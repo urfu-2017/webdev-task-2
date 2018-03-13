@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 exports.error400 = (req, res) => res.sendStatus(400);
 

@@ -1,6 +1,5 @@
-'use strict'
+'use strict';
 
-const Place = require('./models/place');
 const controller = require('./controllers/places');
 const errors = require('./controllers/errors');
 
