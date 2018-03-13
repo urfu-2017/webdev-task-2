@@ -33,7 +33,7 @@ class Storage {
     }
 
     deletePlace(id) {
-        const index = this._places.findIndex(placeObj => placeObj.id === id);
+        const index = this._findById(id);
         if (id === -1) {
             throw new Error('Place not found');
         }
@@ -41,7 +41,7 @@ class Storage {
     }
 
     changeDescription(id, description) {
-        const place = this._places.find(placeObj => placeObj.id === id);
+        const place = this._findById(id);
         if (!place) {
             throw new Error('Place not found');
         }
@@ -49,7 +49,7 @@ class Storage {
     }
 
     toggleVisited(id, visited) {
-        const place = this._places.find(placeObj => placeObj.id === id);
+        const place = this._findById(id);
         if (!place) {
             throw new Error('Place not found');
         }

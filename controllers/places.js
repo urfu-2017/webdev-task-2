@@ -21,9 +21,27 @@ exports.listPlaces = (req, res) => {
     }
 };
 
-exports.deletePlaces = (req, res) => {
-    storage.clear();
-    res.json(OK_RESPONSE);
+exports.listByPages = (req, res) => {
+    const sortParam = req.params.sort;
+    const pageSize = Number(req.params.size);
+    const pageNumber = Number(req.params.number);
+    const places = storage.listByPages(sortParam, pageSize, pageNumber);
+    if (!places) {
+        res.sendStatus(204);
+    }
+    res.json({ ...OK_RESPONSE, places });
+};
+
+exports.findByDescription = (req, res) => {
+    const query = req.query.q;
+    if (!query) {
+        res.sendStatus(204);
+    }
+    const place = storage.searchByDescription(query);
+    if (!place) {
+        res.status(404).json(ERROR_RESPONSE);
+    }
+    res.json({ ...OK_RESPONSE, place });
 };
 
 exports.changeDescription = (req, res) => {
@@ -77,25 +95,7 @@ exports.swap = (req, res) => {
     }
 };
 
-exports.listByPages = (req, res) => {
-    const sortParam = req.params.sort;
-    const pageSize = Number(req.params.size);
-    const pageNumber = Number(req.params.number);
-    const places = storage.listByPages(sortParam, pageSize, pageNumber);
-    if (!places) {
-        res.sendStatus(204);
-    }
-    res.json({ ...OK_RESPONSE, places });
-};
-
-exports.findByDescription = (req, res) => {
-    const query = req.query.q;
-    if (!query) {
-        res.sendStatus(204);
-    }
-    const place = storage.searchByDescription(query);
-    if (!place) {
-        res.status(404).json(ERROR_RESPONSE);
-    }
-    res.json({ ...OK_RESPONSE, place });
+exports.deletePlaces = (req, res) => {
+    storage.clear();
+    res.json(OK_RESPONSE);
 };
