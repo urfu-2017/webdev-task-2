@@ -1,11 +1,11 @@
 'use strict';
 
 const Place = require('../models/place');
-const placesStore = require('../models/placesStore');
+const store = require('../models/places-store');
 const errors = require('./errors');
 
 exports.getPlaces = (req, res) => {
-    const places = placesStore.get(req.query.comparer);
+    const places = store.get(req.query.comparer);
 
     if (places === null) {
         errors.error400(req, res);
@@ -17,7 +17,7 @@ exports.getPlaces = (req, res) => {
 };
 
 exports.getPlacesPage = (req, res) => {
-    const places = placesStore.getPage(req.params.number);
+    const places = store.getPage(req.params.number);
 
     if (places === null) {
         errors.error400(req, res);
@@ -35,14 +35,14 @@ exports.searchPlaces = (req, res) => {
         return;
     }
 
-    const places = placesStore.search(req.query.q);
+    const places = store.search(req.query.q);
 
     res.send(places);
 };
 
 exports.removePlaces = (req, res) => {
     if (req.query.uuid) {
-        const place = placesStore.remove(req.query.uuid);
+        const place = store.remove(req.query.uuid);
 
         if (place === null) {
             errors.error400(req, res);
@@ -50,7 +50,7 @@ exports.removePlaces = (req, res) => {
             return;
         }
     } else {
-        placesStore.drop();
+        store.drop();
     }
 
     res.sendStatus(200);
@@ -63,7 +63,7 @@ exports.swapPlaces = (req, res) => {
         return;
     }
 
-    const places = placesStore.swap(req.query.uuid1, req.query.uuid2);
+    const places = store.swap(req.query.uuid1, req.query.uuid2);
 
     if (!places) {
         errors.error400(req, res);
@@ -76,7 +76,7 @@ exports.swapPlaces = (req, res) => {
 
 exports.createPlace = (req, res) => {
     const place = new Place(req.body.name, req.body.description);
-    placesStore.add(place);
+    store.add(place);
 
     res.sendStatus(201);
 };
@@ -91,7 +91,7 @@ exports.editPlace = (req, res) => {
     }
 
     const uuid = req.query.uuid;
-    const place = placesStore.edit(uuid, {
+    const place = store.edit(uuid, {
         name: req.body.name,
         description: req.body.description,
         visited: req.body.visited
