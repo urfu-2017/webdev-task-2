@@ -47,7 +47,7 @@ exports.updatePlace = async (req, res) => {
     const order = req.params.order;
     const id = placesRepository.save(place, order);
 
-    res.send({ id: id });;
+    res.send({ id: id });
 };
 
 exports.deletePlace = async (req, res) => {
