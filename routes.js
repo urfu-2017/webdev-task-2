@@ -15,6 +15,6 @@ module.exports = app => {
         .patch(places.update);
 
     app.get('*', (req, res) => {
-        errors.error404(req, res).send('Requested resourse not found');
+        errors.error404(req, res).send('Requested resource not found');
     });
 };

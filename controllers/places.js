@@ -11,6 +11,7 @@ const orderings = {
         return p1.createdAt - p2.createdAt;
     }
 };
+
 let localPlaces = [];
 
 exports.get = (req, res) => {
@@ -23,9 +24,10 @@ exports.get = (req, res) => {
 
     if (query) {
         requestedPlaces = requestedPlaces.filter(({ description }) => {
-            return description.indexOf(query) !== -1;
+            return description.toLowerCase().indexOf(query.toLowerCase()) !== -1;
         });
     }
+
     if (sortingFun) {
         requestedPlaces.sort(sortingFun);
     }
@@ -33,6 +35,7 @@ exports.get = (req, res) => {
     if (requestedPlaces.length) {
         res.json(requestedPlaces);
     } else {
+        // Лучше возвращать пустой список или 404?
         errors.error404(req, res).send('Places not found');
     }
 };
@@ -51,6 +54,13 @@ exports.getByName = (req, res) => {
 exports.add = (req, res) => {
     let placeName = req.body.name;
     let desc = req.body.description;
+    let isAlreadyAdded = Boolean(localPlaces.find(({ name }) => name === placeName));
+
+    if (isAlreadyAdded) {
+        errors.error400(req, res).send(`Place (${placeName}) has already been added`);
+
+        return;
+    }
 
     if (!placeName) {
         errors.error400(req, res).send(`Name is not specified at ${req.method} request`);
@@ -90,8 +100,26 @@ exports.deleteAll = (req, res) => {
 
 exports.update = (req, res) => {
     let placeName = req.params.name;
-    let placeToCheckIn = localPlaces.find(({ name }) => name === placeName);
-    Object.assign(placeToCheckIn, req.body.toUpdate);
+    // to - на какую позицию в списке нужно переместить место
+    let to = req.body.moveTo;
+    let placeToUpdate = localPlaces.find(({ name }) => name === placeName);
+
+    if (!placeToUpdate) {
+        errors.error404(req, res).send('Place not found');
+
+        return;
+    }
+
+    if (to !== undefined) {
+        let from = localPlaces.findIndex(({ name }) => name === placeName);
+        localPlaces.move(from, to);
+    }
+    // toUpdate содержит поля, которые нужно обновить
+    Object.assign(placeToUpdate, req.body.toUpdate);
 
     res.sendStatus(204);
+};
+
+localPlaces.move = function (from, to) {
+    this.splice(to, 0, this.splice(from, 1)[0]);
 };
