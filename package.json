@@ -5,7 +5,11 @@
     "test": "npm run lint"
   },
   "devDependencies": {
-    "eslint": "4.18.0",
+    "eslint": "4.18.2",
     "eslint-config-hrundel": "1.3.0"
+  },
+  "dependencies": {
+    "body-parser": "1.18.2",
+    "express": "4.16.2"
   }
 }
