@@ -12,8 +12,8 @@ storage.forEach(place => new Place(place).save());
 const app = express();
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
 
@@ -28,5 +28,5 @@ app.use((err, req, res) => {
 });
 
 app.listen(8080, function () {
-    console.log('Open http://localhost:8080');
+    console.info('Open http://localhost:8080');
 });
