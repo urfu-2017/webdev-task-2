@@ -32,4 +32,35 @@
 - Возможность менять порядок мест в списке
 - Возможность очистки всего списка мест
 
+#### Посмотреть специфику модели Location
+- **OPTIONS** */locations*
+   
+#### Получение списка мест
+- **GET** */locations*
+    - Параметры (в порядке применения):
+        - sortBy
+        - limit / offset
+        - select / query
+        - reverse
+    - Пример запроса:
+        - */locations?select=description&query=текст&sortBy=title&reverse=true&limit=10&offset=10*
+#### Очистить список мест:
+- **DELETE** */locations*
+#### Добавление нового места
+- **PUT** */locations* (body raw json / x-www-form-urlencoded)
+```javascript
+{
+  "type": "2",
+  "title": "Awesome place"
+}
+```
+#### Получение места:
+- **GET** */locations/{uuid}*
+#### Обновление места:
+- **PATCH** */locations/{uuid}* (body raw json / x-www-form-urlencoded)
+#### Удаление места:
+- **DELETE** */locations/{uuid}*
+#### Поменять порядок двух мест
+- **PATCH** */locations?swap=**{firstOrder}**,**{secondOrder}*
+    
 ![artemii](https://user-images.githubusercontent.com/8963033/37154087-b5f1ed76-2300-11e8-81b7-0a8700bc5f57.png)

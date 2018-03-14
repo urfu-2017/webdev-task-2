@@ -4,7 +4,8 @@
     "rules": {
         "semi": 0,
         "new-cap": 0,
-        "no-case-declarations": 0
+        "no-case-declarations": 0,
+        "newline-per-chained-call": 0
     },
     "parserOptions": {
         "ecmaVersion": 2017

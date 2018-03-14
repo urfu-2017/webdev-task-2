@@ -1,15 +1,15 @@
 import express from 'express'
-import * as controller from '../controllers/location'
+import controller from '../controllers/location'
 
 const router = express.Router()
 
-router.get('/', controller.all)
-router.put('/', controller.create)
-router.options('/', controller.options)
-router.delete('/', controller.clear)
-router.patch('/', controller.swapOrder)
-router.get('/:uuid', controller.get)
-router.patch('/:uuid', controller.update)
-router.delete('/:uuid', controller.remove)
+router.get(controller.all.path, controller.all.method)
+router.get(controller.get.path, controller.get.method)
+router.put(controller.create.path, controller.create.method)
+router.patch(controller.update.path, controller.update.method)
+router.patch(controller.swap.path, controller.swap.method)
+router.delete(controller.clear.path, controller.clear.method)
+router.delete(controller.remove.path, controller.remove.method)
+router.options(controller.options.path, controller.options.method)
 
 export default router
