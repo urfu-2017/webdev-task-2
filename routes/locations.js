@@ -1,15 +1,23 @@
 import express from 'express'
-import controller from '../controllers/location'
+
+import all from '../controllers/location/all'
+import get from '../controllers/location/get'
+import swap from '../controllers/location/swap'
+import clear from '../controllers/location/clear'
+import create from '../controllers/location/create'
+import update from '../controllers/location/update'
+import remove from '../controllers/location/remove'
+import options from '../controllers/location/options'
 
 const router = express.Router()
 
-router.get(controller.all.path, controller.all.method)
-router.get(controller.get.path, controller.get.method)
-router.put(controller.create.path, controller.create.method)
-router.patch(controller.update.path, controller.update.method)
-router.patch(controller.swap.path, controller.swap.method)
-router.delete(controller.clear.path, controller.clear.method)
-router.delete(controller.remove.path, controller.remove.method)
-router.options(controller.options.path, controller.options.method)
+router.get('/', all)
+router.put('/', create)
+router.patch('/', swap)
+router.delete('/', clear)
+router.options('/', options)
+router.get('/:uuid', get)
+router.patch('/:uuid', update)
+router.delete('/:uuid', remove)
 
 export default router
