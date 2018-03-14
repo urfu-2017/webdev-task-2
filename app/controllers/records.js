@@ -33,3 +33,7 @@ exports.update = (req, res) => {
   }
   res.json(json);
 };
+
+exports.remove = (req, res) => {
+  res.json({ message: Record.delete(req.body.id) });
+};
