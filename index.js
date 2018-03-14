@@ -10,6 +10,4 @@ app.use(express.json());
 
 routes(app);
 
-app.listen(process.env.PORT, () => {
-    console.info(`http://localhost:${process.env.PORT}`);
-});
+module.exports = app;
