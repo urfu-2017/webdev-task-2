@@ -6,7 +6,8 @@ const Controller = require('../../utils/controller');
 module.exports = class extends Controller {
     get() {
         const { sort, page, limit } = this.query;
-        this.json(Place.find(sort, Number(page), Number(limit), { visited: true }));
+        const options = { page: page ? Number(page) : 0, limit: Number(limit), sort };
+        this.json(Place.find({ visited: true }, options));
     }
 
     post() {

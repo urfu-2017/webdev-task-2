@@ -4,10 +4,5 @@
         "ID_NOT_CREATED": "Место с таким ID еще не создано",
         "NO_DESCRIPTION": "Не указано поле description",
         "DESCRIPTION_NOT_STRING": "Поле description должно быть строкой"
-    },
-    "STATUS_CODES": {
-        "BAD_REQUEST": 400,
-        "NOT_FOUND": 404,
-        "INCORRECT_ENTITY": 422
     }
 }

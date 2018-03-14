@@ -1,20 +1,22 @@
 'use strict';
 
-const { ERRORS, STATUS_CODES } = require('../data.json');
+const { ERRORS } = require('../data.json');
 const ServerError = require('../utils/server-error');
 
 let places = [];
 let count = 0;
 
+const compareByIntField = field => (i, j) => Number(i[field]) - Number(j[field]);
+const compareByStrField = field => (i, j) => i[field].localeCompare(j[field]);
+
 const sortFunc = sort => {
-    switch (sort) {
-        case 'date':
-            return (i, j) => i.created.getTime() - j.created.getTime();
-        case 'desc':
-            return (i, j) => i.description >= j.description ? 1 : -1;
-        default:
-            return (i, j) => i.id - j.id;
-    }
+    const sortFuncs = {
+        'date': compareByIntField('created'),
+        'desc': compareByStrField('description'),
+        'id': compareByIntField('id')
+    };
+
+    return sortFuncs[sort] ? sortFuncs[sort] : sortFuncs.id;
 };
 
 module.exports = class Place {
@@ -37,22 +39,22 @@ module.exports = class Place {
 
     static create(description) {
         if (!description) {
-            throw new ServerError(ERRORS.NO_DESCRIPTION, STATUS_CODES.BAD_REQUEST);
+            throw new ServerError(ERRORS.NO_DESCRIPTION);
         }
         if (typeof description !== 'string') {
-            throw new ServerError(ERRORS.DESCRIPTION_NOT_STRING, STATUS_CODES.BAD_REQUEST);
+            throw new ServerError(ERRORS.DESCRIPTION_NOT_STRING);
         }
 
         return new Place(description).save();
     }
 
-    static find(sort, page = 0, limit, options = {}) {
+    static find(query, { page = 0, limit, sort }) {
         let placesCopy = places;
-        Object.keys(options).forEach(key => {
-            if (typeof options[key] === 'string') {
-                placesCopy = placesCopy.filter(i => i[key].includes(options[key]));
+        Object.keys(query).forEach(key => {
+            if (typeof query[key] === 'string') {
+                placesCopy = placesCopy.filter(i => i[key].includes(query[key]));
             } else {
-                placesCopy = placesCopy.filter(i => i[key] === options[key]);
+                placesCopy = placesCopy.filter(i => i[key] === query[key]);
             }
         });
         placesCopy = placesCopy.sort(sortFunc(sort));
@@ -63,7 +65,7 @@ module.exports = class Place {
     static findById(id) {
         const place = places.find(i => i.id === id);
         if (!place) {
-            throw new ServerError(ERRORS.ID_NOT_EXIST, STATUS_CODES.NOT_FOUND);
+            throw new ServerError(ERRORS.ID_NOT_EXIST);
         }
 
         return place;
@@ -76,36 +78,36 @@ module.exports = class Place {
         return place;
     }
 
-    static clear() {
+    static removeAll() {
         places = [];
+        count = 0;
 
         return [];
     }
 
-    static change(place, key, value) {
-        if (place && key !== undefined && value !== undefined) {
-            place[key] = value;
-        }
-    }
-
-    static replace({ id, description, visited }) {
+    static updateById(id, fields) {
         const place = Place.findById(id);
-        Place.change(place, 'description', description);
-        Place.change(place, 'visited', visited);
+        Object.keys(fields).forEach(field => {
+            if (field !== undefined && fields[field] !== undefined) {
+                place[field] = fields[field];
+            }
+        });
 
         return place;
     }
 
     static swap(id1, id2) {
         if (id2 >= count) {
-            throw new ServerError(ERRORS.ID_NOT_CREATED, STATUS_CODES.INCORRECT_ENTITY);
+            throw new ServerError(ERRORS.ID_NOT_CREATED);
         }
-        const place1 = Place.findById(id1);
-        const place2 = places.find(i => i.id === id2);
-        Place.change(place1, 'id', id2);
-        Place.change(place2, 'id', id1);
+        const place = Place.updateById(id1, { id: id2 });
+        try {
+            Place.updateById(id2, { id: id1 });
+        } catch (e) {
+            return place;
+        }
 
-        return place1;
+        return place;
     }
 
     static visit(id) {
@@ -114,5 +116,4 @@ module.exports = class Place {
 
         return place;
     }
-
 };

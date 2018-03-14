@@ -36,7 +36,7 @@ module.exports = class {
                 instance[req.method.toLowerCase()]();
             } catch (e) {
                 if (e instanceof ServerError) {
-                    res.status(e.status).json({ error: e.message });
+                    res.status(e.getStatus()).json({ error: e.message });
                 } else {
                     throw e;
                 }
