@@ -18,10 +18,10 @@ class Storage {
             return false;
         }
         const { description, visited } = newData;
-        if (visited) {
+        if (visited !== undefined) {
             targetPlace.visited = visited;
         }
-        if (description) {
+        if (description !== undefined) {
             targetPlace.description = description;
         }
 
