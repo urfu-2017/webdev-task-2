@@ -7,7 +7,8 @@ const app = express();
 
 const help = require('./mocks/help');
 const locations = require('./controllers/locations');
-const formatData = require('./controllers/format-data');
+const createResponse = require('./config/createResponse');
+// const formatData = require('./config/format-data');
 
 const publicDir = path.join(__dirname, 'public');
 
@@ -21,8 +22,6 @@ app.use(express.static(publicDir));
 
 app.options('/', (req, res) => {
     // will be using it as a help command
-    console.info(req.method);
-    console.info(req.query);
     res.send(help);
 });
 
@@ -30,59 +29,42 @@ app.get('/', (req, res) => {
     // sortBy: timeCreated or name
     // findByDescr: string - to find entry by description
     // amount: amount of records on screen, page: number of page, both are int
-    const query = req.query;
     let result;
-    if (query.findByDescr) {
-        result = locations.getPlacesByDescr(query);
+    if (req.query.findByDescr) {
+        result = locations.getPlacesByDescr(req.query);
     } else {
-        result = locations.getPlaces(query);
+        result = locations.getPlaces(req.query);
     }
-    res.statusCode = result.code;
-    res.statusMessage = result.message;
-    let array = formatData(result.body);
-    if (query.amount) {
-        const page = (query.page - 1) || 0;
-        array = array.splice(page * query.amount, query.amount);
-    }
-    res.send('Get places  - ' + result.code + ' ' + result.message + '\n' +
-        array.join('\n'));
+    res = createResponse(res, result);
+    res.send(result);
 });
 
 app.post('/', (req, res) => {
-    const query = req.query;
-    const result = locations.createPlace(query);
-    res.statusCode = result.code;
-    res.statusMessage = result.message;
-    res.send('Create ' + query.place + ' - ' + result.message);
+    const result = locations.createPlace(req.query);
+    res = createResponse(res, result);
+    res.send(result);
 });
 
 app.put('/', (req, res) => {
     // updates existing location
     // place: place, param: param, value: new value
-    const query = req.query;
-    const result = locations.updatePlace(query);
-    res.statusCode = result.code;
-    res.statusMessage = result.message;
-    res.send(query.place + ' new value: ' + query.value +
-        ' - ' + result.code + ' ' + result.message);
+    const result = locations.updatePlace(req.query);
+    res = createResponse(res, result);
+    res.send(result);
 });
 
 app.patch('/', (req, res) => {
     // place1: name of first place we want to swap, place2: name2
-    const query = req.query;
-    const result = locations.swapPlaces(query);
-    res.statusCode = result.code;
-    res.statusMessage = result.message;
-    res.send(query.place1 + ' and ' + query.place2 + ' - ' + result.code + ' ' + result.message);
+    const result = locations.swapPlaces(req.query);
+    res = createResponse(res, result);
+    res.send(result);
 });
 
 app.delete('/', (req, res) => {
     // place: place name or place: all - to delete every record
-    const query = req.query;
-    const result = locations.deletePlace(query);
-    res.statusCode = result.code;
-    res.statusMessage = result.message;
-    res.send(query.place + ' - ' + result.code + ' ' + result.message);
+    const result = locations.deletePlace(req.query);
+    res = createResponse(res, result);
+    res.send(result);
 });
 
 hbs.registerPartials(partialsDir, () => {

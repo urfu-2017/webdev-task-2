@@ -2,15 +2,7 @@
 
 const arr = [];
 
-const alreadyExists = place => {
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i].name === place) {
-            return true;
-        }
-    }
-
-    return false;
-};
+const alreadyExists = place => arr.find(elem => elem.name === place);
 
 module.exports.createPlace = function createPlace(req) {
     if (alreadyExists(req.place)) {
@@ -55,12 +47,7 @@ module.exports.getPlaces = function getPlaces(req) {
 };
 
 module.exports.getPlacesByDescr = function getPlacesByDescr(req) {
-    const data = [];
-    arr.forEach(elem => {
-        if (elem.description.includes(req.findByDescr)) {
-            data.push(elem);
-        }
-    });
+    const data = arr.filter(elem => elem.description.includes(req.findByDescr));
     if (data.length) {
         return { code: 200, message: 'Ok', body: getInfo(data) };
     }
@@ -92,9 +79,7 @@ module.exports.swapPlaces = function swapPlaces(req) {
         }
     });
     if (firstIdx !== -1 && secondIdx !== -1) {
-        const temp = arr[firstIdx];
-        arr[firstIdx] = arr[secondIdx];
-        arr[secondIdx] = temp;
+        arr[firstIdx] = arr.splice(secondIdx, 1, arr[firstIdx])[0];
 
         return { code: 200, message: 'Ok' };
     }

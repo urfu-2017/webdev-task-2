@@ -8,4 +8,3 @@ module.exports = function formatArray(arr) {
     return arr.map(elem => 'name: ' + elem.name + ', description: ' + (elem.description || 'none') +
         ', visited: ' + elem.visited);
 };
-
