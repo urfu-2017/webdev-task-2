@@ -1,6 +1,5 @@
 'use strict';
 
-const bodyParser = require('body-parser');
 const express = require('express');
 const routes = require('./routes');
 
@@ -8,9 +7,7 @@ const port = 8080;
 
 const app = express();
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(express.json());
 
 module.exports = app;
 routes(app);
