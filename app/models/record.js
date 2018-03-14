@@ -1,4 +1,5 @@
-const uuid = require('uuid/v1');
+const uuid = require('uuid/v4');
+const move = require('array-move');
 
 const { recordsPerPage, accessibleProperties } = require('../../config');
 
@@ -83,6 +84,23 @@ class Record {
   static deleteAll() {
     storage.length = 0;
     return 'All records are deleted';
+  }
+
+  static move(id, direction) {
+    const recordIndex = storage.findIndex(record => record.id === id);
+    if (recordIndex === -1) {
+      return `Record ${id} doesn't exist`;
+    }
+    if (direction === 'up') {
+      move.mut(storage, recordIndex, recordIndex - 1);
+      return `Record ${id} moved up in list`;
+    }
+
+    if (direction === 'down') {
+      move.mut(storage, recordIndex, recordIndex + 1);
+      return `Record ${id} moved down in list`;
+    }
+    return 'Wrong move parameter';
   }
 
   save() {

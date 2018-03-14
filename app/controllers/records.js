@@ -26,10 +26,17 @@ exports.search = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  const { id, property, update } = req.body;
-  const json = { message: 'Missing parameters' };
+  const { property, update } = req.body;
+  const { id, move } = req.query;
+  const json = { message: '' };
   if (id && property && update) {
-    json.message = Record.updateProperty({ id, property, update });
+    json.message = `${json.message + Record.updateProperty({ id, property, update })}\n`;
+  }
+  if (id && move) {
+    json.message = `${json.message + Record.move(id, move)}`;
+  }
+  if (!json.message) {
+    json.message = 'Missing parameters';
   }
   res.json(json);
 };
