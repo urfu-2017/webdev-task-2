@@ -1,8 +1,6 @@
-const config = require('../config/localhost');
-
 const storage = [];
 
-const { recordsPerPage } = config;
+const { recordsPerPage, accessibleProperties } = require('../../config');
 
 class Record {
   constructor({
@@ -50,21 +48,22 @@ class Record {
   }
 
   static updateProperty({ id, property, update }) {
-    if (id <= storage.length && storage.length) {
+    if (!(id <= storage.length && storage.length)) {
       return `Record ${id} doesn't exist`;
     }
     // eslint-disable-next-line no-prototype-builtins
     if (!storage[id].hasOwnProperty(property)) {
       return `Record's ${id} property '${property}' doesn't exist`;
     }
-    if (!(property === 'description' || property === 'isVisited')) {
+    if (!(accessibleProperties.includes(property))) {
       return `Record's ${id} property '${property}' is not accessible`;
     }
-    if (typeof storage[id][property] === typeof update) {
-      return `Record's ${id} property '${property}' is wrong type`;
-    }
 
-    storage[id][property] = update;
+    if (property === 'isVisited') {
+      storage[id][property] = update === 'true';
+    } else {
+      storage[id][property] = update;
+    }
     return `property '${property}' update successful`;
   }
 

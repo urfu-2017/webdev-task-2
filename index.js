@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 
 const { apiRoutes, otherRoutes } = require('./app/routes');
 const errorHandler = require('./app/middlewares/handle-errors');
-const config = require('./app/config/localhost');
+const config = require('./config');
 
 const app = express();
 
