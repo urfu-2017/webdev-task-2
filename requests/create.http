@@ -1,0 +1,31 @@
+### Создание мест
+
+POST http://127.0.0.1:8080/places HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "description": "Столица Урала"
+}
+
+###
+
+POST http://127.0.0.1:8080/places HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "description": "Памятник Ленину"
+}
+
+###
+
+POST http://127.0.0.1:8080/places HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "description": "БЦ Палладиум"
+}
+
+###

@@ -1,0 +1,11 @@
+### Получение места
+
+GET http://127.0.0.1:8080/places/1 HTTP/1.1
+Accept: application/json
+
+### Получение несуществующего места
+
+GET http://127.0.0.1:8080/places/100 HTTP/1.1
+Accept: application/json
+
+###

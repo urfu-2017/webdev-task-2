@@ -1,0 +1,39 @@
+### Обновление описания места
+
+PATCH http://127.0.0.1:8080/places/2 HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "description": "Кинотеатр Знамя"
+}
+
+### Отметка места посещённым
+
+PATCH http://127.0.0.1:8080/places/3 HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "isVisited": true
+}
+
+### Отметка места непосещённым
+
+PATCH http://127.0.0.1:8080/places/3 HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "isVisited": false
+}
+
+### Смена порядка мест в списке
+
+PATCH http://127.0.0.1:8080/places HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+[1, 2, 1]
+
+###
