@@ -1,6 +1,7 @@
 'use strict';
 
 const storage = [];
+const orders = {};
 let currentIdx = 0;
 
 class PlacesRepository {
@@ -8,7 +9,7 @@ class PlacesRepository {
         skip = skip || 0;
         take = take || Number.MAX_SAFE_INTEGER;
 
-        return storage.slice(skip, skip + take);
+        return storage.sort((a, b) => orders[a.id] - orders[b.id]).slice(skip, skip + take);
     }
     get(id) {
         return storage.find(p => p.id === id);
@@ -16,13 +17,15 @@ class PlacesRepository {
     find(description) {
         return storage.find(p => p.description.toLowerCase().includes(description.toLowerCase()));
     }
-    save(place) {
+    save(place, order) {
+        place.id = parseInt(place.id);
         let placeIndex = storage.findIndex(p => p.id === place.id);
         if (placeIndex < 0) {
             placeIndex = storage.length;
             place.id = this.generateId();
         }
         storage[placeIndex] = place;
+        this.setOrder(place, order);
 
         return place.id;
     }
@@ -40,6 +43,19 @@ class PlacesRepository {
         currentIdx += 1;
 
         return currentIdx;
+    }
+    setOrder(place, order) {
+        const maxOrder = Math.max.apply(null, Object.values(orders));
+        if (maxOrder < 1) {
+            order = 1;
+        }
+        order = order && parseInt(order) || maxOrder + 1;
+        Object.keys(orders).forEach(id => {
+            if (orders[id] >= order) {
+                orders[id] += order < orders[place.id] ? 1 : -1;
+            }
+        });
+        orders[place.id] = order;
     }
 }
 

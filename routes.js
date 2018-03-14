@@ -12,7 +12,7 @@ module.exports = app => {
         .get(places.getAll);
 
     app
-        .route('/api/v1/places')
+        .route('/api/v1/places/:order?')
         .put(places.updatePlace);
 
     app
