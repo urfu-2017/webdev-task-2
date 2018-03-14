@@ -1,23 +1,19 @@
 'use strict';
 
-const path = require('path');
-
-const hbs = require('hbs');
 const express = require('express');
+const bodyParser = require('body-parser');
 
-const routes = require('./routes');
+const placesRoute = require('./routes/places-route');
 const { port } = require('./config/default.json');
-const { info, serverError } = require('./middlewares');
+const { error404 } = require('./controllers/errors');
+const { serverError, bodyParseError } = require('./middlewares');
 
 const app = express();
 
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(info);
-app.use('/', routes);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParseError);
+app.use('/places', placesRoute);
+app.all('*', error404);
 app.use(serverError);
 
-hbs.registerPartials(path.join(__dirname, 'views', 'partials'), () => {
-    app.listen(process.env.PORT || port);
-});
+app.listen(process.env.PORT || port);

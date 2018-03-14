@@ -3,11 +3,8 @@
 const config = require('./config/default.json');
 const { error500 } = require('./controllers/errors');
 
-module.exports.info = (req, res, next) => {
-    res.locals.meta = config.meta;
-    res.locals.lang = config.lang;
-    res.locals.title = config.title;
-
+module.exports.bodyParseError = (err, req, res, next) => {
+    console.error(err);
     next();
 };
 
