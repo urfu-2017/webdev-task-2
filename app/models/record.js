@@ -80,6 +80,11 @@ class Record {
     return `Record ${id} successfully deleted`;
   }
 
+  static deleteAll() {
+    storage.length = 0;
+    return 'All records are deleted';
+  }
+
   save() {
     storage.push(this);
   }
