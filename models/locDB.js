@@ -23,11 +23,13 @@ class LocDB {
 
     searchName(query) {
         let res = this.loc.filter(x => x.name.includes(query));
+
         return res;
     }
 
     searchDiscription(query) {
         let res = this.loc.filter(x => x.description.includes(query));
+
         return res;
     }
 

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = class name {
+module.exports = class Location {
     constructor(name, description) {
         this.name = name;
         this.description = description;
