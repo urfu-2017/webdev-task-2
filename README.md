@@ -61,6 +61,6 @@
 #### Удаление места:
 - **DELETE** */locations/{uuid}*
 #### Поменять порядок двух мест
-- **PATCH** */locations?swap=**{firstOrder}**,**{secondOrder}*
+- **PATCH** */locations?swap=***{firstOrder}**,**{secondOrder}**
     
 ![artemii](https://user-images.githubusercontent.com/8963033/37154087-b5f1ed76-2300-11e8-81b7-0a8700bc5f57.png)
