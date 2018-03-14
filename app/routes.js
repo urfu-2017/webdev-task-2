@@ -1,5 +1,7 @@
 const { error404 } = require('./controllers/errors');
-const { create, list } = require('./controllers/records');
+const {
+  create, list, search, update,
+} = require('./controllers/records');
 const express = require('express');
 
 const apiRoutes = express.Router();
@@ -16,7 +18,11 @@ apiRoutes.get('/', (req, res) => {
 
 apiRoutes.route('/record')
   .get(list)
+  .put(update)
   .post(create);
+
+apiRoutes.route('/search')
+  .get(search);
 
 const otherRoutes = (app) => {
   app.all('*', error404);

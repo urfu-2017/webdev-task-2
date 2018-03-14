@@ -11,6 +11,7 @@ class Record {
     this.place = place;
     this.description = description;
     this.isVisited = isVisited;
+    this.id = storage.length;
 
     if (date) {
       this.creationDate = date;
@@ -42,6 +43,18 @@ class Record {
       (storage.length % recordsPerPage) * recordsPerPage,
       ((storage.length % recordsPerPage) + 1) * recordsPerPage,
     );
+  }
+
+  static searchByDescription({ substring }) {
+    return storage.filter(record => record.description.indexOf(substring) !== -1);
+  }
+
+  static updateDescription({ id, newDescription }) {
+    if (id <= storage.length && storage.length) {
+      storage[id].description = newDescription;
+      return 'Update successful';
+    }
+    return `Record ${id} doesn't exist`;
   }
 
   save() {
