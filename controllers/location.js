@@ -25,11 +25,11 @@ export const all = (req, res) => {
         }
     })
 
-    results = results.map(x => x)
-
     if (limit) {
         results = results.slice(offset, offset + limit)
     }
+
+    results = results.map(x => x)
 
 
     if (reverse === 'true') {
