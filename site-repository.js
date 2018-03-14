@@ -52,7 +52,7 @@ module.exports = class SiteRepository {
     }
 
     findByDescription(description) {
-        return this._orderedSites
+        return this._sites
             .filter(site => site.description.includes(description.toLowerCase()));
     }
 
