@@ -6,5 +6,17 @@ exports.create = (req, res) => {
   console.log(record);
   record.save();
 
-  res.redirect(302, '/record');
+  res.redirect(200, '/api');
+};
+
+exports.list = (req, res) => {
+  if (req.query.sort) {
+    res.json(Record.getSortedRecords(req.query.sort));
+    return;
+  }
+  if (req.query.page) {
+    res.json(Record.getPageRecords(req.query.page));
+    return;
+  }
+  res.json(Record.getAllRecords());
 };
