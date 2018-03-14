@@ -1,6 +1,6 @@
 const { error404 } = require('./controllers/errors');
 const {
-  create, list, search, update,
+  create, list, search, update, remove,
 } = require('./controllers/records');
 const express = require('express');
 
@@ -19,6 +19,7 @@ apiRoutes.get('/', (req, res) => {
 apiRoutes.route('/record')
   .get(list)
   .put(update)
+  .delete(remove)
   .post(create);
 
 apiRoutes.route('/search')

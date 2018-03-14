@@ -1,6 +1,8 @@
-const storage = [];
+const uuid = require('uuid/v1');
 
 const { recordsPerPage, accessibleProperties } = require('../../config');
+
+const storage = [];
 
 class Record {
   constructor({
@@ -9,7 +11,7 @@ class Record {
     this.place = place;
     this.description = description;
     this.isVisited = isVisited;
-    this.id = storage.length;
+    this.id = uuid();
 
     if (date) {
       this.creationDate = date;
@@ -48,23 +50,34 @@ class Record {
   }
 
   static updateProperty({ id, property, update }) {
-    if (!(id <= storage.length && storage.length)) {
+    const record = storage.find(element => element.id === id);
+    if (!record) {
       return `Record ${id} doesn't exist`;
     }
     // eslint-disable-next-line no-prototype-builtins
-    if (!storage[id].hasOwnProperty(property)) {
+    if (!record.hasOwnProperty(property)) {
       return `Record's ${id} property '${property}' doesn't exist`;
     }
-    if (!(accessibleProperties.includes(property))) {
+    if (!accessibleProperties.includes(property)) {
       return `Record's ${id} property '${property}' is not accessible`;
     }
 
     if (property === 'isVisited') {
-      storage[id][property] = update === 'true';
+      record[property] = update === 'true';
     } else {
-      storage[id][property] = update;
+      record[property] = update;
     }
     return `property '${property}' update successful`;
+  }
+
+  static delete(id) {
+    const recordIndex = storage.findIndex(record => record.id === id);
+    if (recordIndex === -1) {
+      return `Record ${id} doesn't exist`;
+    }
+
+    storage.splice(recordIndex, 1);
+    return `Record ${id} successfully deleted`;
   }
 
   save() {
