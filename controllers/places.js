@@ -3,7 +3,7 @@
 const Storage = require('../models/placeStorage');
 
 module.exports.search = (req, res) => {
-    const data = Storage.search(req.params);
+    const data = Storage.search(req.query);
     res.json(data);
 };
 
