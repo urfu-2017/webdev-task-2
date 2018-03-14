@@ -20,3 +20,11 @@ exports.list = (req, res) => {
   }
   res.json(Record.getAllRecords());
 };
+
+exports.search = (req, res) => {
+  res.json(Record.searchByDescription(req.query));
+};
+
+exports.update = (req, res) => {
+  res.json({ message: Record.updateDescription(req.body) });
+};
