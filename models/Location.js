@@ -20,18 +20,6 @@ export class Location {
         2: 'sight'
     }
 
-    static FIELD_TYPES = {
-        BOOL: [Location.FIELDS.VISITED],
-        STRING: [
-            Location.FIELDS.UUID,
-            Location.FIELDS.TITLE,
-            Location.FIELDS.DESCRIPTION,
-            Location.FIELDS.TYPE
-        ],
-        DATE: [Location.FIELDS.DATE],
-        INT: [Location.FIELDS.ORDER]
-    }
-
     static schema = {
         name: Location.NAME,
         primaryKey: Location.FIELDS.UUID,
