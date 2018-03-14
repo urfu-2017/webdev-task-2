@@ -7,7 +7,7 @@ module.exports = class extends Controller {
     get() {
         const { description, sort, page, limit } = this.query;
         const query = description ? { description } : {};
-        const options = { page: page ? Number(page) : 0, limit: Number(limit), sort };
+        const options = { page: Number(page) || 0, limit: Number(limit), sort };
         this.json(Place.find(query, options));
     }
 

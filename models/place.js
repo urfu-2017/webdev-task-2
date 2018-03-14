@@ -11,9 +11,9 @@ const compareByStrField = field => (i, j) => i[field].localeCompare(j[field]);
 
 const sortFunc = sort => {
     const sortFuncs = {
-        'date': compareByIntField('created'),
-        'desc': compareByStrField('description'),
-        'id': compareByIntField('id')
+        date: compareByIntField('created'),
+        desc: compareByStrField('description'),
+        id: compareByIntField('id')
     };
 
     return sortFuncs[sort] ? sortFuncs[sort] : sortFuncs.id;
