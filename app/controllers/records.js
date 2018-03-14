@@ -35,5 +35,9 @@ exports.update = (req, res) => {
 };
 
 exports.remove = (req, res) => {
+  if (req.query.all) {
+    res.json({ message: Record.deleteAll() });
+    return;
+  }
   res.json({ message: Record.delete(req.body.id) });
 };
