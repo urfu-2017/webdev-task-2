@@ -1,0 +1,8 @@
+{
+    "ERRORS": {
+        "ID_NOT_EXIST": "Места с таким ID не существует",
+        "ID_NOT_CREATED": "Место с таким ID еще не создано",
+        "NO_DESCRIPTION": "Не указано поле description",
+        "DESCRIPTION_NOT_STRING": "Поле description должно быть строкой"
+    }
+}
