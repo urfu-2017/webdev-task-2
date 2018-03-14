@@ -49,12 +49,23 @@ class Record {
     return storage.filter(record => record.description.indexOf(substring) !== -1);
   }
 
-  static updateDescription({ id, newDescription }) {
+  static updateProperty({ id, property, update }) {
     if (id <= storage.length && storage.length) {
-      storage[id].description = newDescription;
-      return 'Update successful';
+      return `Record ${id} doesn't exist`;
     }
-    return `Record ${id} doesn't exist`;
+    // eslint-disable-next-line no-prototype-builtins
+    if (!storage[id].hasOwnProperty(property)) {
+      return `Record's ${id} property '${property}' doesn't exist`;
+    }
+    if (!(property === 'description' || property === 'isVisited')) {
+      return `Record's ${id} property '${property}' is not accessible`;
+    }
+    if (typeof storage[id][property] === typeof update) {
+      return `Record's ${id} property '${property}' is wrong type`;
+    }
+
+    storage[id][property] = update;
+    return `property '${property}' update successful`;
   }
 
   save() {
