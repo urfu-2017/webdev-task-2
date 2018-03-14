@@ -1,6 +1,6 @@
 'use strict';
 
-const places = [];
+let places = [];
 let currentId = 0;
 
 class Storage {
@@ -27,6 +27,15 @@ class Storage {
 
         return true;
     }
+
+    static delete(id) {
+        places = places.filter(place => place.id !== Number(id));
+    }
+
+    static deleteAll() {
+        places = [];
+    }
+
 }
 
 module.exports = Storage;
