@@ -32,7 +32,11 @@ class Storage {
         if (targetPlace === undefined) {
             return false;
         }
-        const { description, visited } = newData;
+        const { description, visited, index } = newData;
+        if (index >= 0) {
+            places = places.filter(place => place.id !== Number(id));
+            places.splice(index, 0, targetPlace);
+        }
         if (visited !== undefined) {
             targetPlace.visited = visited;
         }
@@ -51,7 +55,6 @@ class Storage {
     static deleteAll() {
         places = [];
     }
-
 }
 
 module.exports = Storage;
