@@ -3,6 +3,20 @@
 const messages = require('../assets/messages');
 const { ValueError, ObjectNotFound } = require('../utils/exceptions');
 
+const orderMap = {
+    'asc': 1,
+    'desc': -1
+};
+
+const placeComparatorMap = {
+    'createdAt': (order) => (firstPlace, secondPlace) => {
+        return order * (firstPlace.createdAt - secondPlace.createdAt);
+    },
+    'description': (order) => (firstPlace, secondPlace) => {
+        return order * (firstPlace.description.localeCompare(secondPlace.description));
+    }
+};
+
 let nextId = 1;
 let storage = [];
 
@@ -135,35 +149,18 @@ class PlaceManager {
      * @throws {ValueError} Заданы недопустимые значения параметров
      */
     static order(places, field = 'createdAt', order = 'asc') {
-        let comparator;
-        switch (field) {
-            case 'createdAt':
-                comparator = datePlaceComparator;
-                break;
-            case 'description':
-                comparator = descriptionPlaceComparator;
-                break;
-            default:
-                throw new ValueError(messages.invalidSortFieldValue);
+        const orderSign = orderMap[order];
+        if (!orderSign) {
+            throw new ValueError(messages.invalidSortFieldValue);
         }
 
-        switch (order) {
-            case 'asc':
-                return places.slice(0).sort(comparator);
-            case 'desc':
-                return places.slice(0).sort((first, second) => -comparator(first, second));
-            default:
-                throw new ValueError(messages.invalidSortFieldValue);
+        const comparator = placeComparatorMap[field];
+        if (!comparator) {
+            throw new ValueError(messages.invalidSortFieldValue);
         }
+
+        return places.slice(0).sort(comparator(orderSign));
     }
-}
-
-function datePlaceComparator(firstPlace, secondPlace) {
-    return firstPlace.createdAt - secondPlace.createdAt;
-}
-
-function descriptionPlaceComparator(firstPlace, secondPlace) {
-    return firstPlace.description.localeCompare(secondPlace.description);
 }
 
 module.exports = { Place, PlaceManager };

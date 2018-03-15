@@ -13,6 +13,10 @@ function list(req, res) {
         places = PlaceManager.filterByQuery(places, req.query.query);
     }
 
+    if (req.query.order_by) {
+        places = PlaceManager.order(places, req.query.order_by, req.query.order);
+    }
+
     res.send(places);
 }
 
