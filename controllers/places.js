@@ -29,15 +29,37 @@ module.exports.create = (req, res) => {
 
 module.exports.update = (req, res) => {
     const place = Place.findById(req.params.id);
+    const description = req.body.description;
 
     if (place) {
-        place.description = req.body.description || place.description;
-        place.visited = req.body.visited === true;
+        if (description) {
+            place.description = description;
+
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(204);
+        }
+    } else {
+        res.sendStatus(404);
+    }
+};
+
+module.exports.visit = (req, res) => {
+    const place = Place.findById(req.params.id);
+
+    if (place) {
+        place.visited = true;
 
         res.sendStatus(200);
     } else {
         res.sendStatus(404);
     }
+};
+
+module.exports.swap = (req, res) => {
+    const success = Place.swap(req.params.id1, req.params.id2);
+
+    res.sendStatus(success ? 200 : 404);
 };
 
 module.exports.removeAll = (req, res) => {

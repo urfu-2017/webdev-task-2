@@ -1,18 +1,25 @@
 'use strict';
 
+let storage = [];
 let idCounter = 0;
-const storage = [];
+
+const compareBy = {
+    date: (a, b) => a.creationTime.getTime() - b.creationTime.getTime(),
+    alphabet: (a, b) => a.description.localeCompare(b.description),
+    default: () => 0
+};
 
 class Place {
     constructor(description) {
         this.id = -1;
         this.description = description;
-        this.creationTime = Date.now();
+        this.creationTime = undefined;
         this.visited = false;
     }
 
     save() {
         this.id = idCounter++;
+        this.creationTime = Date.now();
 
         storage.push(this);
     }
@@ -21,6 +28,22 @@ class Place {
         const index = storage.findIndex(place => place.id === this.id);
 
         storage.splice(index, 1);
+    }
+
+    static swap(id1, id2) {
+        const index1 = storage.findIndex(place => id1 === place.id);
+        const index2 = storage.findIndex(place => id2 === place.id);
+
+        if (index1 === -1 || index2 === -1) {
+            return false;
+        }
+
+        const container = storage[index1];
+
+        storage[index1] = storage[index2];
+        storage[index2] = container;
+
+        return true;
     }
 
     static findById(id) {
@@ -32,32 +55,18 @@ class Place {
     }
 
     static removeAll() {
-        storage.splice(0, storage.length);
+        storage = [];
         idCounter = 0;
     }
 
-    static getAll({ offset, limit, sortBy }) {
+    static getAll({ offset, limit, sortName }) {
         offset = Number(offset) || 0;
         limit = Number(limit) || 0;
         const slice = limit > 0
             ? arr => arr.slice(offset, limit)
             : arr => arr.slice(offset);
 
-        let places = [];
-
-        switch (sortBy) {
-            case 'date':
-                places = slice(storage.sort((p1, p2) =>
-                    p1.creationTime.getTime() - p2.creationTime.getTime()));
-                break;
-            case 'alphabet':
-                places = slice(storage.sort((p1, p2) => p1.description.localeCompare(p2)));
-                break;
-            default:
-                places = slice(storage);
-        }
-
-        return places;
+        return slice(storage.sort(compareBy[sortName]));
     }
 }
 
