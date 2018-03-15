@@ -12,9 +12,7 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.list = (req, res) => {
-    const sortData = req.query.sort.split('.');
-    const property = sortData[1];
-    const order = sortData[0];
+    const [order, property] = req.query.sort.split('.');
     const storage = Place.sort(property, order);
     if (storage) {
         res.status(200).send(storage);
