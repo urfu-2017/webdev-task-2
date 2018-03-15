@@ -1,15 +1,14 @@
 'use strict';
 
-const arr = [];
-
-const alreadyExists = place => arr.find(elem => elem.name === place);
+const LocationStorage = require('../models/LocationStorage');
+const storage = new LocationStorage();
 
 module.exports.createPlace = req => {
-    if (alreadyExists(req.place)) {
+    if (storage.has(req.place)) {
         return { code: 409, message: 'Conflict, already exists. Use put if needed to update.' };
     }
     const date = new Date();
-    arr.push({
+    storage.push({
         name: req.place, description: req.description || '',
         visited: false, timeCreated: date
     });
@@ -28,14 +27,14 @@ const sortBy = (array, param) => {
     }
 };
 
-const getInfo = array => array.map(elem => ({
-    name: elem.name,
-    visited: elem.visited, description: elem.description
-}));
+// const getInfo = array => array.map(elem => ({
+//     name: elem.name,
+//     visited: elem.visited, description: elem.description
+// }));
 
 
 module.exports.getPlaces = req => {
-    let data = arr;
+    let data = storage.get();
     if (req.sortBy) {
         data = sortBy(data, req.sortBy);
     }
@@ -43,43 +42,28 @@ module.exports.getPlaces = req => {
         return { code: 400, message: 'Bad request' };
     }
 
-    return { code: 200, message: 'Ok', body: getInfo(data) };
+    return { code: 200, message: 'Ok', body: data };
 };
 
 module.exports.getPlacesByDescr = req => {
-    const data = arr.filter(elem => elem.description.includes(req.findByDescr));
+    const data = storage.get('description', req.findByDescr);
     if (data.length) {
-        return { code: 200, message: 'Ok', body: getInfo(data) };
+        return { code: 200, message: 'Ok', body: data };
     }
 
     return { code: 400, message: 'Bad request' };
 };
 
 module.exports.updatePlace = req => {
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i].name === req.place) {
-            arr[i][req.param] = req.value;
-
-            return { code: 200, message: 'Ok' };
-        }
+    if (storage.update(req.place, req.param, req.value)) {
+        return { code: 200, message: 'Ok' };
     }
 
     return { code: 400, message: 'Bad request' };
 };
 
 module.exports.swapPlaces = req => {
-    let firstIdx = -1;
-    let secondIdx = -1;
-    arr.forEach((elem, idx) => {
-        if (elem.name === req.place1) {
-            firstIdx = idx;
-        } else if (elem.name === req.place2) {
-            secondIdx = idx;
-        }
-    });
-    if (firstIdx !== -1 && secondIdx !== -1) {
-        arr[firstIdx] = arr.splice(secondIdx, 1, arr[firstIdx])[0];
-
+    if (storage.swap(req.place1, req.place2)) {
         return { code: 200, message: 'Ok' };
     }
 
@@ -88,17 +72,12 @@ module.exports.swapPlaces = req => {
 
 module.exports.deletePlace = req => {
     if (req.place === 'all') {
-        arr.splice(0, arr.length);
+        storage.delete();
 
         return { code: 200, message: 'Ok' };
     }
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i].name === req.place) {
-            arr[i][req.param] = req.value;
-            arr.splice(i, 1);
-
-            return { code: 200, message: 'Ok' };
-        }
+    if (storage.delete(req.place)) {
+        return { code: 200, message: 'Ok' };
     }
 
     return { code: 400, message: 'Bad request' };

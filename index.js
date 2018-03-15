@@ -7,7 +7,8 @@ const app = express();
 
 const help = require('./mocks/help');
 const locations = require('./controllers/locations');
-const createResponse = require('./config/createResponse');
+const createResponse = require('./controllers/createResponse');
+// const LocationStorage = require('../models/LocationStorage');
 
 const publicDir = path.join(__dirname, 'public');
 
