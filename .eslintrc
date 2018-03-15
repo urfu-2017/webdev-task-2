@@ -1,6 +1,3 @@
 {
-    "extends": "hrundel/node",
-    "rules": {
-        "new-cap": "off"
-    }
+    "extends": "hrundel/node"
 }

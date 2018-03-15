@@ -2,9 +2,9 @@
 
 const express = require('express');
 const placesController = require('../controllers/places');
-const { placeRetriever } = require('../middlewares/place-validator');
+const { placeRetriever } = require('../middlewares/place-retriever');
 
-const router = express.Router();
+const router = new express.Router();
 
 router.route('/')
     .get(placesController.list)

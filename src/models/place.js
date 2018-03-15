@@ -91,7 +91,7 @@ class PlaceManager {
      * Очистка хранилища, удаление всех мест из него
      */
     static clear() {
-        storage.length = 0;
+        storage = [];
     }
 
     /**
@@ -100,7 +100,7 @@ class PlaceManager {
      * @throws {ValueError} Передан аргумент неподдерживаемого типа
      */
     static reorder(newOrder) {
-        if (newOrder.constructor.name !== 'Array') {
+        if (!Array.isArray(newOrder)) {
             throw new ValueError(messages.invalidParameterType);
         }
         if (newOrder.length !== storage.length) {

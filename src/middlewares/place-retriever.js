@@ -6,7 +6,7 @@ const { PlaceManager } = require('../models/place');
 
 function placeRetriever(req, res, next, id) {
     const placeId = Number(id);
-    if (placeId === 0 || isNaN(placeId)) {
+    if (!placeId) {
         throw new exceptions.ObjectNotFound(messages.placeNotFound);
     }
 
