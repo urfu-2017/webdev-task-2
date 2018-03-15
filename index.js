@@ -36,9 +36,12 @@ function getPlacesController(req, res) {
 
 function patchPlaceController(req, res) {
     const id = req.params.id;
-    storage.editPlace(id, req.body);
-
-    res.sendStatus(200);
+    const result = storage.editPlace(id, req.body);
+    if (result) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(400);
+    }
 }
 
 function deletePlacesController(req, res) {
@@ -49,7 +52,11 @@ function deletePlacesController(req, res) {
 
 function deletePlaceController(req, res) {
     const id = req.params.id;
-    storage.removePlace(id);
+    const result = storage.removePlace(id);
 
-    res.sendStatus(200);
+    if (result) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(400);
+    }
 }

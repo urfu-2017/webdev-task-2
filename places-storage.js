@@ -11,7 +11,7 @@ module.exports.addPlace = function addPlace(name, description) {
     };
     places.push(place);
 
-    return place;
+    return true;
 };
 
 module.exports.getPlaces = function getPlaces(searchString, sortBy, skip, take) {
@@ -64,6 +64,9 @@ function filterByDescription(description, searchString) {
 
 module.exports.removePlace = function removePlace(id) {
     const place = places.find(p => p.id === Number(id));
+    if (place === undefined) {
+        return false;
+    }
     const placeIndex = places.indexOf(place);
     places.splice(placeIndex, 1);
 
@@ -78,6 +81,9 @@ module.exports.removeAllPlaces = function removeAllPlaces() {
 
 module.exports.editPlace = function editPlace(id, newInfo) {
     const place = places.find(p => p.id === Number(id));
+    if (place === undefined) {
+        return false;
+    }
     const { moveTo, description, visited } = newInfo;
 
     if (moveTo !== undefined) {
