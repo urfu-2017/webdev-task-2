@@ -30,7 +30,7 @@ Accept: application/json
 
 ### Постраничный вывод мест
 
-GET http://127.0.0.1:8080/places?page=0&page_size=10 HTTP/1.1
+GET http://127.0.0.1:8080/places?offset=5&limit=5 HTTP/1.1
 Accept: application/json
 
 ### Поиск места по описанию

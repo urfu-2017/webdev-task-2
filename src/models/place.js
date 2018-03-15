@@ -1,18 +1,19 @@
 'use strict';
 
 const messages = require('../assets/messages');
+const isInteger = require('../utils/is-integer');
 const { ValueError, ObjectNotFound } = require('../utils/exceptions');
 
 const orderMap = {
-    'asc': 1,
-    'desc': -1
+    asc: 1,
+    desc: -1
 };
 
 const placeComparatorMap = {
-    'createdAt': (order) => (firstPlace, secondPlace) => {
+    createdAt: (order) => (firstPlace, secondPlace) => {
         return order * (firstPlace.createdAt - secondPlace.createdAt);
     },
-    'description': (order) => (firstPlace, secondPlace) => {
+    description: (order) => (firstPlace, secondPlace) => {
         return order * (firstPlace.description.localeCompare(secondPlace.description));
     }
 };
@@ -65,6 +66,24 @@ class PlaceManager {
      */
     static all() {
         return storage;
+    }
+
+    /**
+     * Получение страницы по смещению
+     * @param {Place[]} places - Список мест
+     * @param {number} offset - Смещение от начала
+     * @param {number} limit - Максимальное количество выдаваемых элементов
+     * @returns {Place[]} Список всех мест
+     */
+    static getPage(places, offset, limit) {
+        if (!isInteger(offset) || !isInteger(limit)) {
+            throw new ValueError(messages.invalidPaginationParameterValue);
+        }
+
+        offset = Number(offset);
+        limit = Number(limit);
+
+        return places.slice(offset, offset + limit);
     }
 
     /**
@@ -151,12 +170,12 @@ class PlaceManager {
     static order(places, field = 'createdAt', order = 'asc') {
         const orderSign = orderMap[order];
         if (!orderSign) {
-            throw new ValueError(messages.invalidSortFieldValue);
+            throw new ValueError(messages.invalidSortParameterValue);
         }
 
         const comparator = placeComparatorMap[field];
         if (!comparator) {
-            throw new ValueError(messages.invalidSortFieldValue);
+            throw new ValueError(messages.invalidSortParameterValue);
         }
 
         return places.slice(0).sort(comparator(orderSign));

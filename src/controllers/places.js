@@ -9,12 +9,16 @@ function create(req, res) {
 function list(req, res) {
     let places = PlaceManager.all();
 
-    if (req.query.query) {
-        places = PlaceManager.filterByQuery(places, req.query.query);
-    }
-
     if (req.query.order_by) {
         places = PlaceManager.order(places, req.query.order_by, req.query.order);
+    }
+
+    if (req.query.offset || req.query.limit) {
+        places = PlaceManager.getPage(places, req.query.offset, req.query.limit);
+    }
+
+    if (req.query.query) {
+        places = PlaceManager.filterByQuery(places, req.query.query);
     }
 
     res.send(places);
