@@ -56,15 +56,26 @@ exports.getAllSights = (req, res) => {
 };
 
 
-exports.getSightsPage = (req, res) => {
-    const sightsPerPage = req.query.sightsPerPage || config.defaultSightsPerPage;
-    const pageNumber = Number(req.params.pageNumber) || 1;
-    if (pageNumber <= 0 || sightsPerPage <= 0) {
-        res.sendStatus(400);
+const _getSightsPageParams = (sightsPerPage, pageNumber) => {
+    sightsPerPage = sightsPerPage || config.defaultSightsPerPage;
+    pageNumber = Number(pageNumber) || 1;
 
-        return;
+    if (pageNumber <= 0 || sightsPerPage <= 0) {
+        return false;
     }
 
+    return { sightsPerPage, pageNumber };
+};
+
+
+exports.getSightsPage = (req, res) => {
+    const params = _getSightsPageParams(req.query.sightsPerPage,
+        Number(req.params.pageNumber));
+    if (!params) {
+        res.sendStatus(400);
+    }
+
+    const { sightsPerPage, pageNumber } = params;
     const orderedSights = _getOrderedSights(req.query.orderBy);
     if (!orderedSights) {
         res.sendStatus(400);
@@ -74,7 +85,7 @@ exports.getSightsPage = (req, res) => {
 
     const start = (pageNumber - 1) * sightsPerPage;
     const page = orderedSights.slice(start, start + sightsPerPage);
-    if (!page.length) {
+    if (!page.length && pageNumber !== 1) {
         res.sendStatus(404);
     } else {
         res.json(page);
