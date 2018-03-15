@@ -23,6 +23,7 @@ class LocationStorage {
     }
 
     delete(name) {
+        let success = false;
         if (!name) {
             arr.splice(0, arr.length);
 
@@ -32,21 +33,24 @@ class LocationStorage {
             if (elem.name === name) {
                 arr.splice(idx, 1);
 
-                return true;
+                success = true;
             }
         });
 
-        return false;
+        return success;
     }
 
     update(name, field, newValue) {
+        let success = false;
         arr.forEach(elem => {
             if (elem.name === name) {
                 elem[field] = newValue;
 
-                return true;
+                success = true;
             }
         });
+
+        return success;
     }
 
     swap(name1, name2) {

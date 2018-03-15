@@ -6,9 +6,7 @@ const hbs = require('hbs');
 const app = express();
 
 const help = require('./mocks/help');
-const locations = require('./controllers/locations');
-const createResponse = require('./controllers/createResponse');
-// const LocationStorage = require('../models/LocationStorage');
+const locationController = require('./controllers/locationController');
 
 const publicDir = path.join(__dirname, 'public');
 
@@ -20,52 +18,36 @@ app.set('views', viewsDir);
 
 app.use(express.static(publicDir));
 
-app.options('/', (req, res) => {
-    // will be using it as a help command
-    res.send(help);
-});
+const getControllerInstance = (Controller, methodName) => async (req, res, next) => {
+    try {
+        const controller = new Controller(req, res);
+        await controller[methodName]();
+    } catch (e) {
+        next(e);
+    }
+};
 
-app.get('/', (req, res) => {
+app
+    .options('/', (req, res) => {
+        // will be using it as a help command
+        res.send(help);
+    })
+    .get('/', getControllerInstance(locationController, 'get'))
     // sortBy: timeCreated or name
     // findByDescr: string - to find entry by description
     // amount: amount of records on screen, page: number of page, both are int
-    let result;
-    if (req.query.findByDescr) {
-        result = locations.getPlacesByDescr(req.query);
-    } else {
-        result = locations.getPlaces(req.query);
-    }
-    res = createResponse(res, result);
-    res.send(result);
-});
-
-app.post('/', (req, res) => {
-    const result = locations.createPlace(req.query);
-    res = createResponse(res, result);
-    res.send(result);
-});
-
-app.put('/', (req, res) => {
+    .post('/', getControllerInstance(locationController, 'createPlace'))
+    .put('/', getControllerInstance(locationController, 'updatePlace'))
     // updates existing location
     // place: place, param: param, value: new value
-    const result = locations.updatePlace(req.query);
-    res = createResponse(res, result);
-    res.send(result);
-});
-
-app.patch('/', (req, res) => {
+    .patch('/', getControllerInstance(locationController, 'swapPlaces'))
     // place1: name of first place we want to swap, place2: name2
-    const result = locations.swapPlaces(req.query);
-    res = createResponse(res, result);
-    res.send(result);
-});
-
-app.delete('/', (req, res) => {
+    .delete('/', getControllerInstance(locationController, 'deletePlace'))
     // place: place name or place: all - to delete every record
-    const result = locations.deletePlace(req.query);
-    res = createResponse(res, result);
-    res.send(result);
-});
+    .use('*', (req, res) => {
+        res.status(404);
+        res.end();
+    });
 
 hbs.registerPartials(partialsDir, () => {
     app.listen(8080, () => {
