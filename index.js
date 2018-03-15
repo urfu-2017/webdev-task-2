@@ -8,7 +8,6 @@ const app = express();
 const help = require('./mocks/help');
 const locations = require('./controllers/locations');
 const createResponse = require('./config/createResponse');
-// const formatData = require('./config/format-data');
 
 const publicDir = path.join(__dirname, 'public');
 
