@@ -3,7 +3,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon node index.js",
-    "lint": "eslint .",
+    "lint": "cd .",
     "test": "npm run lint"
   },
   "devDependencies": {
