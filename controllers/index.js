@@ -2,22 +2,25 @@
 
 const Place = require('../models/place');
 
-module.exports.createPlace = (req, res) => {
-    new Place(req.body).save();
-    res.sendStatus(201);
+module.exports.create = (req, res) => {
+    if (!Place.findPlace(req.body)) {
+        Place.create(req.body);
+        res.sendStatus(201);
+    } else {
+        res.sendStatus(409);
+    }
 };
 
 module.exports.list = (req, res) => {
-    let storage;
-    const order = req.query.order;
-    if (order === 'date') {
-        storage = Place.sortByDate();
-    } else if (order === 'alphabet') {
-        storage = Place.sortByAlphabet();
+    const sortData = req.query.sort.split('.');
+    const property = sortData[1];
+    const order = sortData[0];
+    const storage = Place.sort(property, order);
+    if (storage) {
+        res.status(200).send(storage);
     } else {
         res.sendStatus(404);
     }
-    res.status(200).send(storage);
 };
 
 module.exports.getPage = (req, res) => {
@@ -37,21 +40,25 @@ module.exports.searchPlaces = (req, res) => {
     if (places.length !== 0) {
         res.status(200).send(places);
     } else {
-        res.sendStatus(404);
+        res.status(200).send([]);
     }
 };
 
-module.exports.update = (req, res) => {
-    const { description, name, visited } = req.body;
+module.exports.updatePlaceDescription = (req, res) => {
+    const { description, name } = req.body;
     const placeId = Number(req.params.id);
-    if (visited === undefined) {
-        if (Place.updatePlaceDescription(placeId, description)) {
-            res.sendStatus(200);
-        } else if (name) {
-            new Place(req.body).save();
-            res.sendStatus(201);
-        }
-    } else if (Place.updatePlaceVisit(placeId, visited)) {
+    if (Place.updatePlaceDescription(placeId, description)) {
+        res.sendStatus(200);
+    } else if (name) {
+        Place.create(req.body);
+        res.sendStatus(201);
+    }
+};
+
+module.exports.updatePlaceVisit = (req, res) => {
+    const placeId = Number(req.params.id);
+    const visit = req.query.visit;
+    if (Place.updatePlaceVisit(placeId, visit)) {
         res.sendStatus(200);
     } else {
         res.sendStatus(404);

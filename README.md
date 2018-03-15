@@ -20,23 +20,22 @@
 ### Билли просил
 - Возможность добавления нового места (страны, города, достопримечательности) 
     - пример использования: 
-    GET
+    POST http://localhost:8080/places
     { 
         "name": "Это проверка",
         "description": "Это проверка"
     }
-    http://localhost:8080/places
     - Место состоит из описания и отметки о посещении
     - Место создается непосещённым
 - Возможность получения списка мест
-    - Можно сортировать по дате создания GET http://localhost:8080/places?order=date
-    - Можно сортировать по алфавиту GET http://localhost:8080/places?order=alphabet
+    - Можно сортировать по дате создания GET http://localhost:8080/places?sort=asc.createDate
+    - Можно сортировать по алфавиту GET http://localhost:8080/places?sort=desc.name
     - Можно выводить список мест постранично GET http://localhost:8080/places/pages/1?count=1
 - Возможность поиска места по его описанию GET http://localhost:8080/places/search?description=Это проверка
 - Возможность редактирования описания конкретного места
     PATCH { "description": "Это проверка1" }  http://localhost:8080/places/0 
 - Возможность отметить место посещённым или непосещённым
-    PATCH { "visited": false} http://localhost:8080/places/0
+    POST http://localhost:8080/places/0?visit=true
 - Возможность удаления места
     DELETE http://localhost:8080/places/0
 - Возможность менять порядок мест в списке

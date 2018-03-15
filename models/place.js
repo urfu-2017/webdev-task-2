@@ -1,5 +1,7 @@
 'use strict';
 
+const sortProperties = ['name', 'createDate'];
+
 let storage = [];
 let id = 0;
 
@@ -7,25 +9,40 @@ class Place {
     constructor({ name, description }) {
         this.name = name;
         this.visited = false;
-        this.id = id++;
-        this.createDate = new Date().getTime();
         this.description = description;
+    }
+
+    static findPlace({ name, description }) {
+        return storage
+            .find(place => place.name === name && place.description === description);
+    }
+
+    static create({ name, description }) {
+        let place = new Place({ name, description });
+        place.createDate = new Date().getTime();
+        place.id = id++;
+        place.save();
     }
 
     save() {
         storage.push(this);
     }
 
-    static sortByDate() {
-        return storage.sort((placeOne, placeTwo) => {
-            return placeOne.createDate - placeTwo.createDate;
-        });
-    }
+    static sort(property, order) {
+        if (sortProperties.includes(property) &&
+            (order === 'asc' || order === 'desc')) {
+            let ascending = storage.sort((placeOne, placeTwo) => {
+                if (typeof placeOne[property] === 'string') {
+                    return placeOne[property].localeCompare(placeTwo[property]);
+                }
 
-    static sortByAlphabet() {
-        return storage.sort((placeOne, placeTwo) => {
-            return placeOne.name.localeCompare(placeTwo.name);
-        });
+                return placeOne[property] - placeTwo[property];
+            });
+
+            return order === 'asc' ? ascending : ascending.reverse();
+        }
+
+        return null;
     }
 
     static getPage(pageNumber, placesCount) {
@@ -41,32 +58,29 @@ class Place {
     }
 
     static searchPlaces(description) {
-        let foundPlaces = [];
-        storage.forEach(place => {
-            if (place.description === description) {
-                foundPlaces.push(place);
-            }
-        });
-
-        return foundPlaces;
+        return storage.filter(place => place.description === description);
     }
 
     static updatePlaceDescription(placeId, description) {
-        const { isFind: isUpdate, foundIndex } = findById(placeId);
-        if (isUpdate) {
+        const { isFind, foundIndex } = findById(placeId);
+        if (isFind) {
             storage[foundIndex].description = description;
+
+            return true;
         }
 
-        return isUpdate;
+        return false;
     }
 
     static updatePlaceVisit(placeId, visited) {
-        const { isFind: isUpdate, foundIndex } = findById(placeId);
-        if (isUpdate) {
+        const { isFind, foundIndex } = findById(placeId);
+        if (isFind) {
             storage[foundIndex].visited = Boolean(visited);
+
+            return true;
         }
 
-        return isUpdate;
+        return false;
     }
 
     static clearStorage() {
@@ -85,12 +99,12 @@ class Place {
     }
 
     static swap(id1, id2) {
-        const { isFind: isFind1, foundIndex: foundIndex1 } = findById(id1);
-        if (isFind1) {
-            const { isFind: isFind2, foundIndex: foundIndex2 } = findById(id2);
-            if (isFind2) {
-                [storage[foundIndex1],
-                    storage[foundIndex2]] = [storage[foundIndex2], storage[foundIndex1]];
+        const { isFind, foundIndex } = findById(id1);
+        if (isFind) {
+            const { isFind: isFind1, foundIndex: foundIndex1 } = findById(id2);
+            if (isFind1) {
+                [storage[foundIndex],
+                    storage[foundIndex1]] = [storage[foundIndex1], storage[foundIndex]];
 
                 return true;
             }
