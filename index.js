@@ -1,5 +1,6 @@
 'use strict';
 
+const config = require('config');
 const bodyParser = require('body-parser');
 const express = require('express');
 
@@ -14,9 +15,9 @@ app.use((err, req, res, next) => {
 
     next();
 });
-
 routes(app);
 
-app.listen(8080, () => {
-    console.info('Open http://localhost:8080');
+const port = config.get('port') || 8080;
+app.listen(port, () => {
+    console.info(`Open http://localhost:${port}`);
 });
