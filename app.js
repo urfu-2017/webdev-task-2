@@ -8,6 +8,6 @@ import locationsRouter from './routes/locations'
 const app = express()
 
 setupMiddlewares(app)
-
-app.use('/locations', locationsRouter)
-app.use(errorMiddleware).listen(config.PORT)
+    .use('/locations', locationsRouter)
+    .use(errorMiddleware)
+    .listen(config.PORT)

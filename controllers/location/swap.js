@@ -1,5 +1,5 @@
 import DB, { Location } from '../../models/Location'
-import { BAD_REQUEST, OK } from 'http-status-codes/index'
+import { BAD_REQUEST, OK } from 'http-status-codes'
 
 export default ({ query }, res) => DB.write(() => {
     const { swap = '' } = query

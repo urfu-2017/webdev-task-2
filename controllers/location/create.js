@@ -1,15 +1,17 @@
 import DB, { Location } from '../../models/Location'
-import { CREATED } from 'http-status-codes/index'
+import { CREATED } from 'http-status-codes'
 
 export default ({ body }, res) => DB.write(() => {
     let location;
 
     try {
-        const results = DB.objects(Location.NAME).sorted(Location.FIELDS.ORDER, true)
+        const nextOrder = DB.objects(Location.NAME)
+            .sorted(Location.FIELDS.ORDER, true)
+            .length + 1
 
-        location = DB.create(Location.NAME,
-            Location.create({ ...body, [Location.FIELDS.ORDER]: results.length + 1 })
-        )
+        const entity = Location.create({ ...body, [Location.FIELDS.ORDER]: nextOrder })
+
+        location = DB.create(Location.NAME, entity)
 
         res.status(CREATED).json(location)
     } catch (e) {

@@ -1,18 +1,18 @@
 import DB, { Location } from '../../models/Location'
-import { NOT_FOUND } from 'http-status-codes/index'
+import { NOT_FOUND } from 'http-status-codes'
 
 const properties = Object.values(Location.FIELDS)
 
-const mapKeyToValue = (key, data) => {
+const mapKeyToValue = (key, value) => {
     switch (key) {
         case Location.FIELDS.DATE:
-            return new Date(data[key])
+            return new Date(value)
         case Location.FIELDS.TYPE:
-            return Location.PLACE_TYPE[data[key]]
+            return Location.PLACE_TYPE[value]
         case Location.FIELDS.ORDER:
             throw new Error('The order can not be changed.')
         default:
-            return data[key]
+            return value
     }
 }
 
@@ -20,10 +20,10 @@ export default ({ body, params }, res) => DB.write(() => {
     const location = DB.objectForPrimaryKey(Location.NAME, params.uuid)
 
     if (location) {
-        Object.keys(body)
-            .filter(key => properties.includes(key))
-            .forEach(key => {
-                location[key] = mapKeyToValue(key, body)
+        Object.entries(body)
+            .filter(([key]) => properties.includes(key))
+            .forEach(([key, value]) => {
+                location[key] = mapKeyToValue(key, value)
             })
 
         res.json(location)
@@ -31,3 +31,4 @@ export default ({ body, params }, res) => DB.write(() => {
         res.sendStatus(NOT_FOUND)
     }
 })
+
