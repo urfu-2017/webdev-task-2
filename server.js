@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 'use strict';
 
 const log = require('./libs/log')(module);
