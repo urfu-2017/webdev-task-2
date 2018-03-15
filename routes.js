@@ -1,7 +1,7 @@
 'use strict';
 
-const { findPlace, edit, visit } = require('./controllers/workWithPlace');
-const { create, list, deletePlace, swap, clear } = require('./controllers/workWithStorage');
+const { create, list, clear, swap } = require('./controllers/workWithStorage');
+const { findPlace, edit, visit, deletePlace } = require('./controllers/workWithPlace');
 
 module.exports = app => {
     app
@@ -9,8 +9,9 @@ module.exports = app => {
 
     app
         .route('/places')
-        .get(list)
         .post(create)
+        .get(list)
+        .put(swap)
         .delete(clear);
 
     app
@@ -19,7 +20,4 @@ module.exports = app => {
         .put(edit)
         .patch(visit)
         .delete(deletePlace);
-
-    app
-        .put('/places/:name/:position', swap);
 };

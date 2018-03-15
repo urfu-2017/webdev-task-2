@@ -22,13 +22,12 @@ class Place {
         return places.sort((a, b) => a.name > b.name);
     }
 
-    findPlace(description) {
-        // console.log(places);
+    static findPlace(description) {
         return places.find(place => place.description === description);
     }
 
     static findIndex(name) {
-        const resultIndex = places.length;
+        let resultIndex = places.length;
         places.forEach((place, index) => {
             if (place.name === name) {
                 resultIndex = index;
@@ -38,21 +37,21 @@ class Place {
         return resultIndex;
     }
 
-    setDescription(newDescription, name) {
+    static setDescription(newDescription, name) {
         const indexPlaceInArray = this.findIndex(name);
         places[indexPlaceInArray].description = newDescription;
 
         return true;
     }
 
-    visit(name) {
+    static visit(name) {
         const indexPlaceInArray = this.findIndex(name);
         places[indexPlaceInArray].isVisited = true;
 
         return true;
     }
 
-    popPlace(name) {
+    static popPlace(name) {
         const indexPlaceInArray = this.findIndex(name);
         if (places.splice(indexPlaceInArray, 1)) {
             return true;
@@ -75,7 +74,7 @@ class Place {
         places[rightEdge] = tempPlace;
     }
 
-    switchOrder(name, numberInOrder) {
+    static switchOrder(name, numberInOrder) {
         const indexPlaceInArray = this.findIndex(name);
         if (numberInOrder === 'start') {
             this.shiftPlaces(indexPlaceInArray, 'most', 0, -1);
@@ -93,7 +92,7 @@ class Place {
         return places;
     }
 
-    clearAll() {
+    static clearAll() {
         places = [];
     }
 }

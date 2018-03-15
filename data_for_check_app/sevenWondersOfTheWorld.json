@@ -1,30 +1,30 @@
 [
   {
-    "name": "Colossus of Rhodes",
-    "description": "Statue of the Greek titan-god of the sun Helios, erected in the city of Rhodes, on the Greek island of the same name, by Chares of Lindos in 280 BC."
+    "name": "ColossusOfRhodes",
+    "description": "Statue"
   },
   {
-    "name": "Great Pyramid of Giza",
-    "description": "Oldest and largest of the three pyramids in the Giza pyramid complex bordering what is now El Giza, Egypt."
-  },
-  {
-    "name": "Hanging Gardens of Babylon",
-    "description": "Remarkable feat of engineering with an ascending series of tiered gardens containing a wide variety of trees, shrubs, and vines."
-  },
-  {
-    "name": "Lighthouse of Alexandria",
+    "name": "LighthouseOfAlexandria",
     "description": "Lighthouse built by the Ptolemaic Kingdom between 280 and 247 BC which has been estimated to be 100 metres in overall height."
   },
   {
-    "name": "Mausoleum at Halicarnassus",
+    "name": "MausoleumAtHalicarnassus",
     "description": "Tomb built between 353 and 350 BC at Halicarnassus (present Bodrum, Turkey) for Mausolus, a satrap in the Persian Empire, and his sister-wife Artemisia II of Caria."
   },
   {
-    "name": "Statue of Zeus at Olympia",
+    "name": "StatueOfZeusAtOlympia",
     "description": "A sculpture of ivory plates and gold panels over a wooden framework, it represented the god Zeus sitting on an elaborate cedar wood throne ornamented with ebony, ivory, gold and precious stones."
   },
   {
-    "name": "Temple of Artemis at Ephesus",
+    "name": "GreatPyramidOfGiza",
+    "description": "Oldest and largest of the three pyramids in the Giza pyramid complex bordering what is now El Giza, Egypt."
+  },
+  {
+    "name": "HangingGardensOfBabylon",
+    "description": "Remarkable feat of engineering with an ascending series of tiered gardens containing a wide variety of trees, shrubs, and vines."
+  },
+  {
+    "name": "TempleOfArtemisAtEphesus",
     "description": "Greek temple dedicated to an ancient, local form of the goddess Artemis."
   }
 ]
