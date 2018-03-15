@@ -68,7 +68,6 @@ module.exports.updatePlace = function updatePlace(req) {
 };
 
 module.exports.swapPlaces = function swapPlaces(req) {
-    console.info(req);
     let firstIdx = -1;
     let secondIdx = -1;
     arr.forEach((elem, idx) => {
