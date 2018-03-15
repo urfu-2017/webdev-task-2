@@ -4,7 +4,7 @@ const arr = [];
 
 const alreadyExists = place => arr.find(elem => elem.name === place);
 
-module.exports.createPlace = function createPlace(req) {
+module.exports.createPlace = req => {
     if (alreadyExists(req.place)) {
         return { code: 409, message: 'Conflict, already exists. Use put if needed to update.' };
     }
@@ -34,7 +34,7 @@ const getInfo = array => array.map(elem => ({
 }));
 
 
-module.exports.getPlaces = function getPlaces(req) {
+module.exports.getPlaces = req => {
     let data = arr;
     if (req.sortBy) {
         data = sortBy(data, req.sortBy);
@@ -46,7 +46,7 @@ module.exports.getPlaces = function getPlaces(req) {
     return { code: 200, message: 'Ok', body: getInfo(data) };
 };
 
-module.exports.getPlacesByDescr = function getPlacesByDescr(req) {
+module.exports.getPlacesByDescr = req => {
     const data = arr.filter(elem => elem.description.includes(req.findByDescr));
     if (data.length) {
         return { code: 200, message: 'Ok', body: getInfo(data) };
@@ -55,7 +55,7 @@ module.exports.getPlacesByDescr = function getPlacesByDescr(req) {
     return { code: 400, message: 'Bad request' };
 };
 
-module.exports.updatePlace = function updatePlace(req) {
+module.exports.updatePlace = req => {
     for (let i = 0; i < arr.length; i++) {
         if (arr[i].name === req.place) {
             arr[i][req.param] = req.value;
@@ -67,7 +67,7 @@ module.exports.updatePlace = function updatePlace(req) {
     return { code: 400, message: 'Bad request' };
 };
 
-module.exports.swapPlaces = function swapPlaces(req) {
+module.exports.swapPlaces = req => {
     let firstIdx = -1;
     let secondIdx = -1;
     arr.forEach((elem, idx) => {
@@ -86,7 +86,7 @@ module.exports.swapPlaces = function swapPlaces(req) {
     return { code: 400, message: 'Bad request' };
 };
 
-module.exports.deletePlace = function deletePlace(req) {
+module.exports.deletePlace = req => {
     if (req.place === 'all') {
         arr.splice(0, arr.length);
 
