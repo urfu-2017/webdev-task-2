@@ -1,49 +1,51 @@
 'use strict';
 
-const { Store } = require('../models/store');
-const { Place } = require('../models/place');
+const Store = require('../models/store');
+const Place = require('../models/place');
 let store = new Store();
 
-exports.listPlaces = (req, res) => {
-    let sortMethod = req.query.sort;
-    switch (sortMethod) {
-        case 'date':
-            store.dateSort();
-            break;
-        case 'alphabet':
-            store.alphabetSort();
-            break;
-        default:
-            return res.json(store.store);
+module.exports = class StoreControl {
+    static listPlaces(req, res) {
+        let sortMethod = req.body.sort;
+        switch (sortMethod) {
+            case 'date':
+                store.dateSort();
+                break;
+            case 'alphabet':
+                store.alphabetSort();
+                break;
+            default:
+                return res.json(store.store);
+        }
+        res.json(store.store);
     }
-    res.json(store.store);
-};
 
-exports.addPlace = (req, res) => {
-    store.add(new Place(req.query.desc));
-    res.json(store.store);
-};
+    static addPlace(req, res) {
+        store.add(new Place(req.body.desc));
+        res.json(store.store);
+    }
 
-exports.clearStore = (req, res) => {
-    store.clear();
-    res.json(store.store);
-};
+    static clearStore(req, res) {
+        store.clear();
+        res.json(store.store);
+    }
 
-exports.deletePlace = (req, res) => {
-    store.delete(req.query.id);
-    res.json(store.store);
-};
+    static deletePlace(req, res) {
+        store.delete(req.body.id);
+        res.json(store.store);
+    }
 
-exports.findPlace = (req, res) => {
-    res.json(store.findDesc(req.query.desc));
-};
+    static findPlace(req, res) {
+        res.json(store.findDesc(req.body.desc));
+    }
 
-exports.editPlace = (req, res) => {
-    store.edit(req.query);
-    res.json(store.store);
-};
+    static editPlace(req, res) {
+        store.edit(req.body);
+        res.json(store.store);
+    }
 
-exports.insertPlace = (req, res) => {
-    store.insert(req.query);
-    res.json(store.store);
+    static insertPlace(req, res) {
+        store.insert(req.body);
+        res.json(store.store);
+    }
 };

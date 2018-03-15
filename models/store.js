@@ -22,7 +22,7 @@ function alphabetCompare(a, b) {
     return 0;
 }
 
-class Store {
+module.exports = class Store {
     constructor() {
         this.store = [];
     }
@@ -84,6 +84,4 @@ class Store {
             this.store.splice(indexTo, 0, copy);
         }
     }
-}
-
-exports.Store = Store;
+};

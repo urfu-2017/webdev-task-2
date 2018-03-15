@@ -1,16 +1,15 @@
 'use strict';
 
 const { error404 } = require('./controllers/errors');
-const { listPlaces, addPlace, clearStore, deletePlace } = require('./controllers/store');
-const { findPlace, editPlace, insertPlace } = require('./controllers/store');
+const StoreControl = require('./controllers/store');
 
 module.exports = app => {
-    app.get('/', listPlaces);
-    app.put('/', addPlace);
-    app.delete('/', clearStore);
-    app.get('/place', findPlace);
-    app.delete('/place', deletePlace);
-    app.post('/place', editPlace);
-    app.put('/place', insertPlace);
+    app.get('/', StoreControl.listPlaces);
+    app.post('/', StoreControl.addPlace);
+    app.delete('/', StoreControl.clearStore);
+    app.get('/places', StoreControl.findPlace);
+    app.delete('/places', StoreControl.deletePlace);
+    app.put('/places', StoreControl.editPlace);
+    app.post('/places', StoreControl.insertPlace);
     app.all('*', error404);
 };
