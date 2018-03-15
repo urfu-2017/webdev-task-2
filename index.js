@@ -5,15 +5,15 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = 10010;
 
-const placesContoller = require('./controllers/places-controller');
+const placesContoller = require('./controllers/places');
 
 app.use(bodyParser.json());
 
-app.post('/places', placesContoller.addPlaceController);
-app.get('/places', placesContoller.getPlacesController);
-app.delete('/places', placesContoller.deletePlacesController);
-app.patch('/places/:id', placesContoller.patchPlaceController);
-app.delete('/places/:id', placesContoller.deletePlaceController);
+app.post('/places', placesContoller.addPlace);
+app.get('/places', placesContoller.getPlaces);
+app.delete('/places', placesContoller.deletePlaces);
+app.patch('/places/:id', placesContoller.patchPlace);
+app.delete('/places/:id', placesContoller.deletePlace);
 
 app.listen(port, function () {
     console.info(`App is started on port ${port}.`);

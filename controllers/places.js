@@ -2,14 +2,14 @@
 
 const storage = require('../places-storage');
 
-module.exports.addPlaceController = function addPlaceController(req, res) {
+module.exports.addPlace = function addPlace(req, res) {
     const { name, description } = req.body;
     storage.addPlace(name, description);
 
     res.sendStatus(200);
 };
 
-module.exports.getPlacesController = function getPlacesController(req, res) {
+module.exports.getPlaces = function getPlaces(req, res) {
     const { search, sortBy, sortDirection, skip, take } = req.query;
     const sort = { 'type': sortBy, 'direction': sortDirection };
     const places = storage.getPlaces(search, sort, Number(skip), Number(take));
@@ -17,7 +17,7 @@ module.exports.getPlacesController = function getPlacesController(req, res) {
     res.json(places);
 };
 
-module.exports.patchPlaceController = function patchPlaceController(req, res) {
+module.exports.patchPlace = function patchPlace(req, res) {
     const id = req.params.id;
     const result = storage.editPlace(id, req.body);
     if (result) {
@@ -27,13 +27,13 @@ module.exports.patchPlaceController = function patchPlaceController(req, res) {
     }
 };
 
-module.exports.deletePlacesController = function deletePlacesController(req, res) {
+module.exports.deletePlaces = function deletePlaces(req, res) {
     storage.removeAllPlaces();
 
     res.sendStatus(200);
 };
 
-module.exports.deletePlaceController = function deletePlaceController(req, res) {
+module.exports.deletePlace = function deletePlace(req, res) {
     const id = req.params.id;
     const result = storage.removePlace(id);
 
