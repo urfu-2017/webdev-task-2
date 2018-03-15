@@ -4,10 +4,13 @@ let places = [];
 let currentId = 0;
 
 class Storage {
-    static search({ sort, start, count }) {
+    static search({ sort, start, count, description }) {
         let res = places.slice();
         if (sort === 'lex') {
             res = res.sort((a, b) => a.description.localeCompare(b.description));
+        }
+        if (description) {
+            res = res.filter(x => x.description.indexOf(description) !== -1);
         }
         if (sort === 'date') {
             res = res.sort((a, b) => b.date - a.date);
