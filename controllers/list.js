@@ -1,0 +1,109 @@
+
+'use strict';
+
+function getList(req, res) {
+    let notes = global.notes.slice(0);
+    sortNotes(req, res, notes);
+
+    if (!checkInteger(req.query.page) || !checkInteger(req.query.count)) {
+        return;
+    }
+
+    if (req.query.count === undefined) {
+        res.send(JSON.stringify(notes));
+    }
+    let startIndex = (req.query.page - 1) * req.query.count;
+    if (notes.length <= startIndex) {
+        res.sendStatus(404);
+
+        return;
+    }
+    res.send(
+        JSON.stringify(notes.slice(startIndex, notes.length - startIndex))
+    );
+
+}
+
+function checkInteger(value, res) {
+    if (value !== undefined && !Number.isInteger(value) || value <= 0) {
+        res.sendStatus(400);
+
+        return false;
+    }
+
+    return true;
+}
+function sortByAlphabet(a, b) {
+    if (a.name < b.name) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    }
+
+    return 0;
+}
+
+function sortByDate(a, b) {
+    if (a.date < b.date) {
+        return -1;
+    }
+    if (a.date > b.date) {
+        return 1;
+    }
+
+    return 0;
+}
+
+function sortNotes(req, res, notes) {
+    let sortMultiplier = 1;
+    if (req.query.orderBy === 'DESC') {
+        sortMultiplier = -1;
+    }
+    let sortBy = req.query.sortBy;
+    if (sortBy === undefined) {
+        return;
+    }
+    if (sortBy === 'alphabet') {
+        notes.sort(sortMultiplier * sortByAlphabet);
+
+        return;
+    }
+    if (sortBy === 'date') {
+        notes.sort(sortMultiplier * sortByDate);
+
+        return;
+    }
+    res.sendStatus(400);
+}
+
+function clearList() {
+    global.notes = [];
+}
+
+function editList(req, res) {
+    let permutations = req.body;
+    if (!Array.isArray(permutations)) {
+        res.sendStatus(400);
+    }
+    if (permutations.some(permutation =>
+        isBadPermutationPart(permutation.was) || isBadPermutationPart(permutation.become))) {
+        res.sendStatus(400);
+    }
+    permutations.forEach(permutation => {
+        let temp = global.notes[permutation.was];
+        global.notes[permutation.was] = global.notes[permutation.become];
+        global.notes[permutation.become] = temp;
+    });
+}
+
+function isBadPermutationPart(permutationValue) {
+    return permutationValue === undefined ||
+        !Number.isInteger(permutationValue) ||
+        permutationValue < 0 ||
+        permutationValue >= global.notes.length;
+}
+
+exports.clearList = clearList;
+exports.getList = getList;
+exports.editList = editList;
