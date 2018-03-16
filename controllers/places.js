@@ -1,20 +1,21 @@
 'use strict';
 
+const fs = require('fs');
 const Place = require('../models/place');
 
 exports.swap = (req, res) => {
-    const firstId = req.params.firstId;
-    const secondId = req.params.secondId;
-    res.sendStatus(Place.swap(firstId, secondId));
+    const { firstId } = req.params;
+    const { secondId } = req.params;
+    res.sendStatus(Place.swap({ firstId, secondId }));
 };
 
 exports.change = (req, res) => {
-    const id = req.params.id;
-    res.sendStatus(Place.change(id, req.body));
+    const { id } = req.params;
+    res.sendStatus(Place.change({ id, body: req.body }));
 };
 
 exports.remove = (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     if (id) {
         res.sendStatus(Place.remove(id));
     } else {
@@ -23,14 +24,14 @@ exports.remove = (req, res) => {
 };
 
 exports.list = (req, res) => {
-    const query = req.query;
-    const places = Place.findAll(query.sort, query.page);
+    const { query } = req;
+    const places = Place.findAll({ sort: query.sort, page: query.page });
 
     res.json(places);
 };
 
 exports.item = (req, res) => {
-    const description = req.params.description;
+    const { description } = req.params;
     const place = Place.find(description);
 
     if (place) {
@@ -43,6 +44,12 @@ exports.item = (req, res) => {
 exports.create = (req, res) => {
     const place = new Place(req.body);
     place.save();
+    fs.writeFile('./storage/places.json', JSON.stringify(Place.findAll()),
+        (error) => {
+            if (error) {
+                console.error(error.stack);
+            }
+        });
 
     res.sendStatus(201);
 };

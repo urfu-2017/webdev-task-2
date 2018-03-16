@@ -17,7 +17,7 @@ class Place {
         storage.push(this);
     }
 
-    static swap(firstId, secondId) {
+    static swap({ firstId, secondId }) {
         const firstIndex = storage.findIndex((place) => (place.id === firstId));
         const secondIndex = storage.findIndex((place) => (place.id === secondId));
         if (firstIndex === -1 || secondIndex === -1) {
@@ -28,7 +28,7 @@ class Place {
         return 200;
     }
 
-    static change(id, body) {
+    static change({ id, body }) {
         const changedPlace = storage.find((place) => (place.id === id));
         if (changedPlace === -1) {
             return 404;
@@ -62,7 +62,7 @@ class Place {
         }
     }
 
-    static findAll(sort, page) {
+    static findAll({ sort, page }) {
         let localStorage = storage.slice();
         switch (sort) {
             case 'alph':
@@ -76,15 +76,24 @@ class Place {
                 break;
         }
 
-        return (page) ? localStorage.slice(0, page) : localStorage;
+        if (page) {
+            const subarrayLen = Math.ceil(localStorage.length / page);
+
+            return localStorage.reduce((accumulator, currentValue, index) => {
+                if (index % subarrayLen === 0) {
+                    accumulator.push([]);
+                }
+                accumulator[accumulator.length - 1].push(currentValue);
+
+                return accumulator;
+            }, []);
+        }
+
+        return localStorage;
     }
 
     static find(description) {
         return storage.find((place) => (place.description === description));
-    }
-
-    static findAll() {
-        return storage;
     }
 }
 
