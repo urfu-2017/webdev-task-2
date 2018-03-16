@@ -44,7 +44,7 @@ const _getOrderedSights = orderBy => {
 };
 
 
-exports.getAllSights = (req, res) => {
+export const getAllSights = (req, res) => {
     const orderedSights = _getOrderedSights(req.query.orderBy);
     if (!orderedSights) {
         res.sendStatus(400);
@@ -67,7 +67,7 @@ const _getSightsPageParams = (sightsPerPage, pageNumber) => {
 };
 
 
-exports.getSightsPage = (req, res) => {
+export const getSightsPage = (req, res) => {
     const params = _getSightsPageParams(req.query.sightsPerPage,
         Number(req.params.pageNumber));
     if (!params) {
@@ -92,7 +92,7 @@ exports.getSightsPage = (req, res) => {
 };
 
 
-exports.createSight = (req, res) => {
+export const createSight = (req, res) => {
     const description = _getDescriptionOrSend400(req, res);
     if (!description) {
         return;
@@ -102,13 +102,13 @@ exports.createSight = (req, res) => {
 };
 
 
-exports.deleteAllSights = (req, res) => {
+export const deleteAllSights = (req, res) => {
     sights.clear();
     res.sendStatus(200);
 };
 
 
-exports.getSightById = (req, res) => {
+export const getSightById = (req, res) => {
     const sight = _getSightFromIdRequest(req);
     if (!_send404IfNotFound(sight)) {
         res.json(sight);
@@ -116,7 +116,7 @@ exports.getSightById = (req, res) => {
 };
 
 
-exports.setSightVisitedValue = value => (req, res) => {
+export const setSightVisitedValue = value => (req, res) => {
     const sight = _getSightFromIdRequest(req);
     if (_send404IfNotFound(sight, res)) {
         return;
@@ -127,7 +127,7 @@ exports.setSightVisitedValue = value => (req, res) => {
 };
 
 
-exports.deleteSightById = (req, res) => {
+export const deleteSightById = (req, res) => {
     const sight = _getSightFromIdRequest(req);
     if (!_send404IfNotFound(sight)) {
         sights.remove(sight);
@@ -136,7 +136,7 @@ exports.deleteSightById = (req, res) => {
 };
 
 
-exports.updateSightById = (req, res) => {
+export const updateSightById = (req, res) => {
     const description = _getDescriptionOrSend400(req, res);
     if (!description) {
         return;
@@ -149,7 +149,7 @@ exports.updateSightById = (req, res) => {
 };
 
 
-exports.changeIndex = (req, res) => {
+export const changeIndex = (req, res) => {
     const [oldIndex, newIndex] = [req.params.oldIndex, req.params.newIndex]
         .map(Number);
     if (oldIndex >= sights.count || newIndex >= sights.count) {
@@ -163,7 +163,7 @@ exports.changeIndex = (req, res) => {
 };
 
 
-exports.findSightByDescription = (req, res) => {
+export const findSightByDescription = (req, res) => {
     const description = req.params.description;
     const sightsArray = sights.findByDescription(description);
     if (_send404IfNotFound(sightsArray.length)) {

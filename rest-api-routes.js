@@ -1,6 +1,6 @@
 import express from 'express';
 
-import controller from './controllers/rest-api';
+import * as controller from './controllers/rest-api';
 
 
 const _BASE_PATH = '/sights';

@@ -1,4 +1,3 @@
-
 const { BinTree } = require('bintrees');
 
 
@@ -13,7 +12,7 @@ class _Sight {
 }
 
 
-module.exports = {
+export default {
     _sights: new Map(),
     _defaultOrder: [],
     _orderedByDescr: new BinTree(
