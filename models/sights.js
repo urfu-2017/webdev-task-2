@@ -58,8 +58,10 @@ export default {
         return this._sights.get(id);
     },
     findByDescription(description) {
+        description = description.toLocaleLowerCase();
+
         return this._defaultOrder
-            .filter(p => p.description === description);
+            .filter(p => p.description.toLocaleLowerCase().includes(description));
     },
     changeIndex(oldIndex, newIndex) {
         const sight = this._defaultOrder[oldIndex];
