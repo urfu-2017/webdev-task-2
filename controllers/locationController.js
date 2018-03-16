@@ -1,44 +1,12 @@
 'use strict';
 
 const LocationStorage = require('../models/LocationStorage');
-const Response = require('./responseController');
+const Base = require('./baseController');
 const storage = new LocationStorage();
 
-const sortBy = (array, param) => {
-    switch (param) {
-        case 'timeCreated':
-            return array.sort((a, b) => a.timeCreated - b.timeCreated);
-        case 'name':
-            return array.sort((a, b) => a.name.localeCompare(b.name));
-        default:
-            return [];
-    }
-};
-
-const getPlaces = query => {
-    let data = storage.get();
-    if (query.sortBy) {
-        data = sortBy(data, query.sortBy);
-    }
-    if (!data) {
-        return { code: 400, message: 'Bad request' };
-    }
-
-    return { code: 200, message: 'Ok', body: data };
-};
-
-const getPlacesByDescr = query => {
-    const data = storage.get('description', query.findByDescr);
-    if (data.length) {
-        return { code: 200, message: 'Ok', body: data };
-    }
-
-    return { code: 400, message: 'Bad request' };
-};
-
-class Location extends Response {
+class Location extends Base {
     createPlace() {
-        if (storage.has(this.req.place)) {
+        if (storage.has(this._req.place)) {
             this.createResponse({
                 code: 409,
                 message: 'Conflict, already exists. Use put if needed to update.'
@@ -46,7 +14,7 @@ class Location extends Response {
         }
         const date = new Date();
         storage.push({
-            name: this.req.place, description: this.req.description || '',
+            name: this._req.place, description: this._req.description || '',
             visited: false, timeCreated: date
         });
 
@@ -55,16 +23,16 @@ class Location extends Response {
 
     get() {
         let result;
-        if (this.req.findByDescr) {
-            result = getPlacesByDescr(this.req);
+        if (this._req.findByDescr) {
+            result = this._getPlacesByDescr();
         } else {
-            result = getPlaces(this.req);
+            result = this._getPlaces();
         }
         this.createResponse(result);
     }
 
     updatePlace() {
-        if (storage.update(this.req.place, this.req.param, this.req.value)) {
+        if (storage.update(this._req.place, this._req.param, this._req.value)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 
@@ -72,7 +40,7 @@ class Location extends Response {
     }
 
     swapPlaces() {
-        if (storage.swap(this.req.place1, this.req.place2)) {
+        if (storage.swap(this._req.place1, this._req.place2)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 
@@ -80,18 +48,49 @@ class Location extends Response {
     }
 
     deletePlace() {
-        if (this.req.place === 'all') {
+        if (this._req.place === 'all') {
             storage.delete();
 
             this.createResponse({ code: 200, message: 'Ok' });
         }
-        if (storage.delete(this.req.place)) {
+        if (storage.delete(this._req.place)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 
         this.createResponse({ code: 400, message: 'Bad request' });
     }
 
+    _sortBy(array, param) {
+        switch (param) {
+            case 'timeCreated':
+                return array.sort((a, b) => a.timeCreated - b.timeCreated);
+            case 'name':
+                return array.sort((a, b) => a.name.localeCompare(b.name));
+            default:
+                return [];
+        }
+    }
+
+    _getPlaces() {
+        let data = storage.get();
+        if (this._req.sortBy) {
+            data = this._sortBy(data, this._req.sortBy);
+        }
+        if (!data) {
+            return { code: 400, message: 'Bad request' };
+        }
+
+        return { code: 200, message: 'Ok', body: data };
+    }
+
+    _getPlacesByDescr() {
+        const data = storage.get('description', this._req.findByDescr);
+        if (data.length) {
+            return { code: 200, message: 'Ok', body: data };
+        }
+
+        return { code: 400, message: 'Bad request' };
+    }
 }
 
 module.exports = Location;

@@ -1,8 +1,8 @@
 'use strict';
 
-class Response {
+class Base {
     constructor(req, res) {
-        this.req = req.query;
+        this._req = req.query;
         this.res = res;
     }
 
@@ -14,4 +14,4 @@ class Response {
 
 }
 
-module.exports = Response;
+module.exports = Base;
