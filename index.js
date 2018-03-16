@@ -18,10 +18,10 @@ app.set('views', viewsDir);
 
 app.use(express.static(publicDir));
 
-const getControllerInstance = (Controller, methodName) => async (req, res, next) => {
+const getControllerInstance = (Controller, methodName) => (req, res, next) => {
     try {
         const controller = new Controller(req, res);
-        await controller[methodName]();
+        controller[methodName]();
     } catch (e) {
         next(e);
     }

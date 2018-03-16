@@ -2,9 +2,6 @@
 
 const arr = [];
 
-const getIdx = name => arr.slice().map(elem => elem.name)
-    .indexOf(name);
-
 class LocationStorage {
     push(element) {
         arr.push(element);
@@ -54,8 +51,8 @@ class LocationStorage {
     }
 
     swap(name1, name2) {
-        const firstIdx = getIdx(name1);
-        const secondIdx = getIdx(name2);
+        const firstIdx = arr.findIndex(({ name }) => name === name1);
+        const secondIdx = arr.findIndex(({ name }) => name === name2);
         if (firstIdx !== -1 && secondIdx !== -1) {
             arr[firstIdx] = arr.splice(secondIdx, 1, arr[firstIdx])[0];
 
