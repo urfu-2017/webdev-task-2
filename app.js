@@ -1,11 +1,11 @@
-'use strict';
-const express = require('express');
-const logger = require('morgan');
-const bodyParser = require('body-parser');
+import express from 'express';
+import logger from 'morgan';
+import bodyParser from 'body-parser';
 
-const config = require('./config/config');
-const restApiConfig = require('./config/rest-api-config');
-const routes = require('./rest-api-routes');
+import config from './config/config';
+import restApiConfig from './config/rest-api-config';
+import routes from './rest-api-routes';
+
 
 const app = express();
 
@@ -34,4 +34,4 @@ app.listen(config.port, () => {
 });
 
 
-module.exports = app;
+export default app;

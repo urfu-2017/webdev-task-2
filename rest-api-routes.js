@@ -1,7 +1,6 @@
-'use strict';
-const express = require('express');
+import express from 'express';
 
-const controller = require('./controllers/rest-api');
+import controller from './controllers/rest-api';
 
 
 const _BASE_PATH = '/sights';
@@ -48,4 +47,4 @@ router
     .all('*', (req, res) => res.sendStatus(404));
 
 
-module.exports = router;
+export default router;

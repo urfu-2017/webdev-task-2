@@ -1,6 +1,5 @@
-'use strict';
-const sights = require('../models/sights');
-const config = require('../config/rest-api-config');
+import sights from '../models/sights';
+import config from '../config/rest-api-config';
 
 
 const _getSightFromIdRequest = req => {
@@ -40,7 +39,7 @@ const _getOrderedSights = orderBy => {
         case 'description':
             return [...sights.getOrderedByDescription()];
         default:
-            return false;
+            return null;
     }
 };
 
@@ -61,7 +60,7 @@ const _getSightsPageParams = (sightsPerPage, pageNumber) => {
     pageNumber = Number(pageNumber) || 1;
 
     if (pageNumber <= 0 || sightsPerPage <= 0) {
-        return false;
+        return null;
     }
 
     return { sightsPerPage, pageNumber };
