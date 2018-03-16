@@ -2,18 +2,22 @@
 
 const LocationStorage = require('../models/LocationStorage');
 const Base = require('./baseController');
-const storage = new LocationStorage();
+// const storage = new LocationStorage();
 
 class Location extends Base {
+    constructor(req, res) {
+        super(req, res);
+        this.storage = new LocationStorage();
+    }
     createPlace() {
-        if (storage.has(this._req.place)) {
+        if (this.storage.has(this._req.place)) {
             this.createResponse({
                 code: 409,
                 message: 'Conflict, already exists. Use put if needed to update.'
             });
         }
         const date = new Date();
-        storage.push({
+        this.storage.push({
             name: this._req.place, description: this._req.description || '',
             visited: false, timeCreated: date
         });
@@ -32,7 +36,7 @@ class Location extends Base {
     }
 
     updatePlace() {
-        if (storage.update(this._req.place, this._req.param, this._req.value)) {
+        if (this.storage.update(this._req.place, this._req.param, this._req.value)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 
@@ -40,7 +44,7 @@ class Location extends Base {
     }
 
     swapPlaces() {
-        if (storage.swap(this._req.place1, this._req.place2)) {
+        if (this.storage.swap(this._req.place1, this._req.place2)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 
@@ -49,11 +53,11 @@ class Location extends Base {
 
     deletePlace() {
         if (this._req.place === 'all') {
-            storage.delete();
+            this.storage.delete();
 
             this.createResponse({ code: 200, message: 'Ok' });
         }
-        if (storage.delete(this._req.place)) {
+        if (this.storage.delete(this._req.place)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 
@@ -72,7 +76,7 @@ class Location extends Base {
     }
 
     _getPlaces() {
-        let data = storage.get();
+        let data = this.storage.get();
         if (this._req.sortBy) {
             data = this._sortBy(data, this._req.sortBy);
         }
@@ -84,7 +88,7 @@ class Location extends Base {
     }
 
     _getPlacesByDescr() {
-        const data = storage.get('description', this._req.findByDescr);
+        const data = this.storage.get('description', this._req.findByDescr);
         if (data.length) {
             return { code: 200, message: 'Ok', body: data };
         }
