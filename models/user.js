@@ -12,7 +12,7 @@ module.exports = class User {
         if (!name) {
             throw new Error('No name');
         }
-        this.places.push(new Place(name, description));
+        this.places.push(new Place(name, description, this.places.length));
         const index = this.places.length - 1;
         if (!this.indexes[name]) {
             this.indexes[name] = [index];
@@ -50,8 +50,42 @@ module.exports = class User {
         this.indexes = {};
     }
 
-    listPlaces() {
-        return this.places;
+    listPlaces(option) {
+        let relevantPlaces = this.places.filter(place => place);
+        switch (option) {
+            case 'alphabet':
+                relevantPlaces = relevantPlaces.sort((first, second) => {
+                    if (first.name < second.name) {
+                        return -1;
+                    }
+                    if (first.name > second.name) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+                break;
+            case 'date':
+                relevantPlaces = relevantPlaces.sort((first, second) => {
+                    if (first.date < second.date) {
+                        return -1;
+                    }
+                    if (first.date > second.date) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+                break;
+            default:
+
+        }
+
+        return relevantPlaces;
+    }
+
+    listPage(page, option) {
+        return this.listPlaces(option).slice((page - 1) * 20, page * 20);
     }
 
     getIndexesByName(name) {
@@ -79,5 +113,7 @@ module.exports = class User {
         const temp = this.places[index1];
         this.places[index1] = this.places[index2];
         this.places[index2] = temp;
+        this.places[index1].changeIndex(index1);
+        this.places[index2].changeIndex(index2);
     }
 };
