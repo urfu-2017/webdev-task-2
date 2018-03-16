@@ -1,6 +1,6 @@
 'use strict';
 
-const arr = [];
+let arr = [];
 
 class LocationStorage {
     push(element) {
@@ -22,7 +22,7 @@ class LocationStorage {
     delete(name) {
         let success = false;
         if (!name) {
-            arr.splice(0, arr.length);
+            arr = [];
 
             return true;
         }

@@ -2,7 +2,6 @@
 
 const LocationStorage = require('../models/LocationStorage');
 const Base = require('./baseController');
-// const storage = new LocationStorage();
 
 class Location extends Base {
     constructor(req, res) {
