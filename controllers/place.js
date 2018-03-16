@@ -22,17 +22,7 @@ module.exports.add = (req, res) => {
 module.exports.get = (req, res) => {
     let places = Place.find();
 
-    if (req.query.sortBy) {
-        places.sort(req.query.sortBy);
-    }
-
-    if (req.query.page) {
-        let page = parseInt(req.query.page);
-
-        places = places
-            .skip(placesOnPage * page)
-            .limit(placesOnPage);
-    }
+    getSortedAndPage(places, req);
 
     res.status(200);
     res.send(places.getData());
@@ -44,6 +34,8 @@ module.exports.find = (req, res) => {
     if (validBody) {
         let places = Place.find(req.body);
 
+        getSortedAndPage(places, req);
+
         res.status(200).send(places.getData());
     } else {
         res.status(400).end();
@@ -51,12 +43,16 @@ module.exports.find = (req, res) => {
 };
 
 module.exports.edit = (req, res) => {
-    let validBody = Object.keys(req.body.find).every(field => FIND_FIELDS.indexOf(field) !== -1);
+    let validBody =
+        req.body.find &&
+        req.body.data &&
+        Object.keys(req.body.find).every(field => FIND_FIELDS.indexOf(field) !== -1);
+
 
     if (validBody) {
         let places = Place.find(req.body.find).update(req.body.data);
 
-        res.status(200).send(places);
+        res.status(200).send(places.getData());
     } else {
         res.status(400).end();
     }
@@ -117,3 +113,17 @@ module.exports.clear = (req, res) => {
 
     res.status(200).end();
 };
+
+function getSortedAndPage(query, req) {
+    if (req.query.sortBy) {
+        query.sort(req.query.sortBy);
+    }
+
+    if (req.query.page) {
+        let page = parseInt(req.query.page);
+
+        query
+            .skip(placesOnPage * page)
+            .limit(placesOnPage);
+    }
+}

@@ -16,7 +16,7 @@ class Query {
                 }
             });
 
-        return new Query(this._storage, this._data);
+        return this;
     }
 
     update(obj = {}) {
@@ -48,11 +48,15 @@ class Query {
     }
 
     skip(num) {
-        return new Query(this._storage, this._data.slice(num));
+        this._data = this._data.slice(num);
+
+        return this;
     }
 
     limit(num) {
-        return new Query(this._storage, this._data.slice(0, 0 + num));
+        this._data = this._data.slice(0, 0 + num);
+
+        return this;
     }
 
     getData() {
