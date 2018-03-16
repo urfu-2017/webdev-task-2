@@ -6,11 +6,15 @@ function getList(req, res) {
     sortNotes(req, res, notes);
 
     if (!checkInteger(req.query.page) || !checkInteger(req.query.count)) {
+        req.sendStatus(400);
+
         return;
     }
 
     if (req.query.count === undefined) {
-        res.send(JSON.stringify(notes));
+        res.json(notes);
+
+        return;
     }
     let startIndex = (req.query.page - 1) * req.query.count;
     if (notes.length <= startIndex) {
@@ -18,10 +22,7 @@ function getList(req, res) {
 
         return;
     }
-    res.send(
-        JSON.stringify(notes.slice(startIndex, notes.length - startIndex))
-    );
-
+    res.json(notes.slice(startIndex, notes.length - startIndex));
 }
 
 function checkInteger(value, res) {
@@ -57,7 +58,7 @@ function sortByDate(a, b) {
 
 function sortNotes(req, res, notes) {
     let sortMultiplier = 1;
-    if (req.query.orderBy === 'DESC') {
+    if (/^DESC$/i.test(req.query.orderBy)) {
         sortMultiplier = -1;
     }
     let sortBy = req.query.sortBy;
@@ -77,8 +78,9 @@ function sortNotes(req, res, notes) {
     res.sendStatus(400);
 }
 
-function clearList() {
+function clearList(req, res) {
     global.notes = [];
+    res.sendStatus(200);
 }
 
 function editList(req, res) {
@@ -95,6 +97,7 @@ function editList(req, res) {
         global.notes[permutation.was] = global.notes[permutation.become];
         global.notes[permutation.become] = temp;
     });
+    res.sendStatus(200);
 }
 
 function isBadPermutationPart(permutationValue) {

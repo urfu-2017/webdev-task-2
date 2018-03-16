@@ -5,7 +5,8 @@ function checkData(req, res) {
     const note = req.body;
     const name = req.params.name;
 
-    if (name === undefined || name.length === 0 || note.description === undefined) {
+    if (name === undefined || name.length === 0 || note.description === undefined ||
+        global.notes.some(savedNote => savedNote.name === name)) {
         res.sendStatus('400');
 
         return false;
@@ -27,6 +28,7 @@ function saveNote(req, res) {
         date: new Date(),
         visited: false
     });
+    res.sendStatus(200);
 }
 
 function editNote(req, res) {
@@ -39,6 +41,7 @@ function editNote(req, res) {
     }
 
     global.notes[foundIndex].description = note.description;
+    res.sendStatus(200);
 }
 
 function getNote(req, res) {
@@ -52,7 +55,7 @@ function getNote(req, res) {
     if (foundIndex === -1) {
         res.sendStatus(404);
     }
-    res.send(JSON.stringify(global.notes[foundIndex]));
+    res.json(global.notes[foundIndex]);
 }
 
 function deleteNote(req, res) {
@@ -68,6 +71,7 @@ function deleteNote(req, res) {
     }
 
     delete global.notes[foundIndex];
+    res.sendStatus(200);
 }
 
 function changeNoteState(req, res) {
@@ -77,12 +81,11 @@ function changeNoteState(req, res) {
         res.sendStatus(404);
     }
 
-    const state = req.params.state;
     const visited = -1;
-    if (state === 'visit') {
+    if (req.params.state === 'visit') {
         visited = true;
     }
-    if (state === 'unvisit') {
+    if (req.params.state === 'unvisit') {
         visited = false;
     }
     if (visited === -1) {
@@ -95,6 +98,7 @@ function changeNoteState(req, res) {
     }
 
     global.notes[foundIndex].visited = visited;
+    res.sendStatus(200);
 }
 
 function findNotes(req, res) {
@@ -121,7 +125,7 @@ function findNotes(req, res) {
             let result = countWords
                 .sort(sortByCount)
                 .map(countContainer => global.notes[countContainer.index]);
-            res.send(JSON.stringify(result));
+            res.json(result);
         });
 }
 
