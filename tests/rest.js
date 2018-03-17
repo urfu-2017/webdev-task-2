@@ -83,7 +83,8 @@ describe('GET /', () => {
             .get('/place')
             .query({
                 sortBy: 'name',
-                page: 1
+                page: 1,
+                pageCount: 2
             })
             .expect(200)
             .expect(res => {

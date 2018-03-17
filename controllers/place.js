@@ -1,16 +1,13 @@
 'use strict';
 
-const config = require('config');
-
 const Place = require('../models/Place');
-
-const placesOnPage = config.get('placesOnPage');
 
 const FIND_FIELDS = ['description', 'name', 'visited'];
 
 module.exports.add = (req, res) => {
-    if (req.body.name && req.body.description) {
-        let place = Place.add(req.body.name, req.body.description);
+    const { name, description } = req.body;
+    if (name && description) {
+        const place = Place.add(name, description);
 
         res.status(201);
         res.send(place);
@@ -20,7 +17,7 @@ module.exports.add = (req, res) => {
 };
 
 module.exports.get = (req, res) => {
-    let places = Place.find();
+    const places = Place.find();
 
     getSortedAndPage(places, req);
 
@@ -29,10 +26,10 @@ module.exports.get = (req, res) => {
 };
 
 module.exports.find = (req, res) => {
-    let validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
+    const validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
 
     if (validBody) {
-        let places = Place.find(req.body);
+        const places = Place.find(req.body);
 
         getSortedAndPage(places, req);
 
@@ -43,14 +40,15 @@ module.exports.find = (req, res) => {
 };
 
 module.exports.edit = (req, res) => {
-    let validBody =
-        req.body.find &&
-        req.body.data &&
-        Object.keys(req.body.find).every(field => FIND_FIELDS.indexOf(field) !== -1);
+    const { find, data } = req.body;
+    const validBody =
+        find &&
+        data &&
+        Object.keys(find).every(field => FIND_FIELDS.indexOf(field) !== -1);
 
 
     if (validBody) {
-        let places = Place.find(req.body.find).update(req.body.data);
+        const places = Place.find(find).update(data);
 
         res.status(200).send(places.getData());
     } else {
@@ -59,10 +57,10 @@ module.exports.edit = (req, res) => {
 };
 
 module.exports.visit = (req, res) => {
-    let validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
+    const validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
 
     if (validBody) {
-        let places = Place.find(req.body).update({
+        const places = Place.find(req.body).update({
             visited: true
         });
 
@@ -73,10 +71,10 @@ module.exports.visit = (req, res) => {
 };
 
 module.exports.unVisit = (req, res) => {
-    let validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
+    const validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
 
     if (validBody) {
-        let places = Place.find(req.body).update({
+        const places = Place.find(req.body).update({
             visited: false
         });
 
@@ -87,10 +85,10 @@ module.exports.unVisit = (req, res) => {
 };
 
 module.exports.remove = (req, res) => {
-    let validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
+    const validBody = Object.keys(req.body).every(field => FIND_FIELDS.indexOf(field) !== -1);
 
     if (validBody) {
-        let places = Place.find(req.body).remove();
+        const places = Place.find(req.body).remove();
 
         res.status(200).send(places.getData());
     } else {
@@ -99,8 +97,10 @@ module.exports.remove = (req, res) => {
 };
 
 module.exports.swap = (req, res) => {
-    if (req.body.name1 && req.body.name2) {
-        Place.swap(req.body.name1, req.body.name2);
+    const { name1, name2 } = req.body;
+
+    if (name1 && name2) {
+        Place.swap(name1, name2);
 
         res.status(200).end();
     } else {
@@ -115,15 +115,17 @@ module.exports.clear = (req, res) => {
 };
 
 function getSortedAndPage(query, req) {
-    if (req.query.sortBy) {
-        query.sort(req.query.sortBy);
+    const { sortBy, page, pageCount } = req.query;
+
+    if (sortBy) {
+        query.sort(sortBy);
     }
 
-    if (req.query.page) {
-        let page = parseInt(req.query.page);
+    if (page && pageCount) {
+        const pageNumber = parseInt(page);
 
         query
-            .skip(placesOnPage * page)
-            .limit(placesOnPage);
+            .skip(pageCount * pageNumber)
+            .limit(pageCount);
     }
 }
