@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
+    "deploy": "now --docker --public",
     "lint": "eslint .",
     "test": "npm run lint"
   },
