@@ -4,8 +4,7 @@ const Place = require('../models/place');
 
 exports.list = (req, res) => {
     let places = [];
-    const description = req.query.description;
-    const sortMethod = req.query.sortMethod || '';
+    const { description, sortMethod = '', max, offset = 0 } = req.query;
 
     if (!description) {
         places = Place.findAll();
@@ -14,10 +13,9 @@ exports.list = (req, res) => {
     }
     places = sort(places, sortMethod);
 
-    const max = Number(req.query.max) || places.length;
-    const offset = Number(req.query.offset) || 0;
-    const begin = max * offset;
-    const end = begin + max;
+    const maximum = Number(max) || places.length;
+    const begin = maximum * Number(offset);
+    const end = begin + maximum;
 
     places = places.slice(begin, end);
 
@@ -51,8 +49,13 @@ function sort(places, sortMethod) {
 }
 
 exports.create = (req, res) => {
+    const description = req.body.description;
 
-    const place = new Place(req.body.description);
+    if (!description) {
+        return res.sendStatus(400);
+    }
+
+    const place = new Place(description);
 
     place.create();
 
@@ -63,7 +66,7 @@ exports.remove = (req, res) => {
     const index = Place.get(req.params.id);
 
     if (index === -1) {
-        res.sendStatus(404);
+        return res.sendStatus(404);
     }
 
     Place.delete(index);
@@ -82,19 +85,42 @@ exports.update = (req, res) => {
     const index = Place.get(req.params.id);
 
     if (index === -1) {
-        res.sendStatus(404);
+        return res.sendStatus(404);
     }
 
     const data = req.body;
+
+    if (!data.description) {
+        return res.sendStatus(400);
+    }
 
     Place.update(index, data);
 
     res.sendStatus(200);
 };
 
+exports.visit = (req, res) => {
+
+    const index = Place.get(req.params.id);
+
+    if (index === -1) {
+        return res.sendStatus(404);
+    }
+
+    Place.update(index, { isVisited: true });
+
+    res.sendStatus(200);
+};
+
 exports.swap = (req, res) => {
-    const index1 = Place.get(req.params.index1);
-    const index2 = Place.get(req.params.index2);
+    const { id1, id2 } = req.params;
+
+    const index1 = Place.get(id1);
+    const index2 = Place.get(id2);
+
+    if (index1 === -1 || index2 === -1) {
+        return res.sendStatus(404);
+    }
 
     Place.swap(index1, index2);
 

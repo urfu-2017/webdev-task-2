@@ -1,6 +1,6 @@
 'use strict';
 
-const { create, list, remove, clean, update, swap } = require('./controllers/places');
+const { create, list, remove, clean, update, swap, visit } = require('./controllers/places');
 
 module.exports = app => {
 
@@ -10,11 +10,12 @@ module.exports = app => {
 
     app.route('/places/:id')
         .delete(remove)
-        .patch(update);
+        .patch(update)
+        .post(visit);
 
     app.delete('/places', clean);
 
-    app.put('/places/swap/:index1/:index2', swap);
+    app.put('/places/swap/:id1/:id2', swap);
 
     app.all('*', (req, res) => res.sendStatus(404));
 };
