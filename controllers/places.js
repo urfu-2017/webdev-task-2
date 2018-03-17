@@ -3,33 +3,30 @@
 const Place = require('../models/place');
 
 exports.create = (req, res) => {
-    const { name, descr } = req.body;
-    const place = Place.create(name, descr);
+    const { description } = req.body;
+    const place = Place.create(description);
     res.status(201).json(place);
 };
 
-exports.listByDefault = (req, res) => {
-    const places = Place.listByDefault();
-    res.status(200).json(places);
+exports.list = (req, res) => {
+    const order = req.query.order;
+    const pageNumber = req.query.pageNumber;
+    const pageSize = req.query.pageSize;
+    let result = Place.list();
+    if (order === 'date') {
+        result = Place.listByDate();
+    }
+    if (order === 'description') {
+        result = Place.listByDescription();
+    }
+    if (pageNumber && pageSize) {
+        result = Place.listPaginal(result, Number(pageNumber), Number(pageSize));
+    }
+    res.status(200).json(result);
 };
 
-exports.listByCreatedAt = (req, res) => {
-    const places = Place.listByCreatedAt();
-    res.status(200).json(places);
-};
-
-exports.listByAlphabet = (req, res) => {
-    const places = Place.listByAlphabet();
-    res.status(200).json(places);
-};
-
-exports.listPaginal = (req, res) => {
-    const page = Place.listPaginal(Number(req.params.pageNumber), Number(req.params.pageSize));
-    res.status(200).json(page);
-};
-
-exports.findByDescr = (req, res) => {
-    const place = Place.findByDescr(req.query.descr);
+exports.findByDescription = (req, res) => {
+    const place = Place.find('description', req.query.description.toLowerCase());
     if (place === undefined) {
         res.sendStatus(404);
     } else {
@@ -37,9 +34,10 @@ exports.findByDescr = (req, res) => {
     }
 };
 
-exports.editDescr = (req, res) => {
-    const place = Place.editDescr(Number(req.params.id), req.query.newDescr);
-    if (place === -1) {
+exports.editDescription = (req, res) => {
+    const place = Place.editDescription(Number(req.params.id), req.query.description);
+    const placeNotExists = place === -1;
+    if (placeNotExists) {
         res.sendStatus(204);
     } else {
         res.status(200).json(place);
@@ -47,8 +45,13 @@ exports.editDescr = (req, res) => {
 };
 
 exports.editVisited = (req, res) => {
-    const place = Place.editVisited(Number(req.params.id), req.query.visited);
-    if (place === -1) {
+    let visited = false;
+    if (req.method === 'PUT') {
+        visited = true;
+    }
+    const place = Place.editVisited(Number(req.params.id), visited);
+    const placeNotExists = place === -1;
+    if (placeNotExists) {
         res.sendStatus(204);
     } else {
         res.status(200).json(place);
@@ -56,7 +59,7 @@ exports.editVisited = (req, res) => {
 };
 
 exports.deleteById = (req, res) => {
-    const deleted = Place.deleteById(Number(req.params.id));
+    const deleted = Place.delete('id', Number(req.params.id));
     if (deleted) {
         res.status(200).json(deleted);
     } else {
@@ -65,7 +68,7 @@ exports.deleteById = (req, res) => {
 };
 
 exports.changeOrder = (req, res) => {
-    const success = Place.changeOrder(Number(req.params.id), req.params.position);
+    const success = Place.changeOrder(Number(req.params.id), Number(req.params.position));
     if (success) {
         res.sendStatus(200);
     } else {

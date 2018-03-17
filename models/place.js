@@ -1,38 +1,37 @@
 'use strict';
 
-const storage = [];
+let storage = [];
 let counter = 0;
 
 class Place {
-    constructor(name, descr) {
+    constructor(description) {
         this.id = counter++;
-        this.name = name;
-        this.descr = descr;
+        this.description = description;
         this.visited = false;
-        this.createdAt = Math.floor(Date.now() / 1000);
+        this.createdAt = Date.now();
     }
 
-    static create(name, descr) {
-        const place = new Place(name, descr);
+    static create(description) {
+        const place = new Place(description);
         storage.push(place);
 
         return place;
     }
 
-    static listByDefault() {
+    static list() {
         return storage;
     }
 
-    static listByCreatedAt() {
+    static listByDate() {
         return storage.slice().sort((a, b) => Number(a.createdAt) - Number(b.createdAt));
     }
 
-    static listByAlphabet() {
+    static listByDescription() {
         return storage.slice().sort(function (a, b) {
-            if (a.descr < b.descr) {
+            if (a.description < b.description) {
                 return -1;
             }
-            if (a.descr > b.descr) {
+            if (a.description > b.description) {
                 return 1;
             }
 
@@ -40,61 +39,54 @@ class Place {
         });
     }
 
-    static listPaginal(pageNumber, pageSize) {
+    static listPaginal(arrayToShow, pageNumber, pageSize) {
         pageNumber--;
+        let result = [];
+        let hasNext = true;
         let start = pageNumber * pageSize;
-        start = start < storage.length ? start : 0;
+        if (start >= arrayToShow.length) {
+            hasNext = false;
+
+            return [result, hasNext];
+        }
         let end = start + pageSize;
-        end = end < storage.length ? end : storage.length;
+        if (end > arrayToShow.length) {
+            end = arrayToShow.length;
+            hasNext = false;
+        }
+        result = arrayToShow.slice(start, end);
 
-        return storage.slice(start, end);
+        return [result, hasNext];
     }
 
-    static findById(id) {
-        return storage.find(place => place.id === id);
+    static find(field, value) {
+        if (field === 'description') {
+            return storage.filter(place => place[field].includes(value));
+        }
+
+        return storage.find(place => place[field] === value);
     }
 
-    static findByName(name) {
-        return storage.find(place => place.name === name);
-    }
-
-    static findByDescr(descr) {
-        return storage.find(place => place.descr === descr);
-    }
-
-    static editDescr(id, newDescr) {
-        const place = this.findById(id);
+    static editDescription(id, description) {
+        const place = this.find('id', id);
         if (place) {
-            place.descr = newDescr;
+            place.description = description;
         }
 
         return place;
     }
 
     static editVisited(id, visited) {
-        const place = this.findById(id);
+        const place = this.find('id', id);
         if (place) {
-            visited = (visited === 'true');
             place.visited = visited;
         }
 
         return place;
     }
 
-    static deleteById(id) {
-        const index = storage.findIndex(place => place.id === id);
-
-        return (index === -1) ? null : storage.splice(index, 1);
-    }
-
-    static deleteByName(name) {
-        const index = storage.findIndex(place => place.name === name);
-
-        return (index === -1) ? null : storage.splice(index, 1);
-    }
-
-    static deleteByDescr(descr) {
-        const index = storage.findIndex(place => place.descr === descr);
+    static delete(field, value) {
+        const index = storage.findIndex(place => place[field] === value);
 
         return (index === -1) ? null : storage.splice(index, 1);
     }
@@ -104,13 +96,14 @@ class Place {
         if (from === -1 || position > storage.length - 1) {
             return false;
         }
-        storage.splice(position, 0, storage.splice(from, 1)[0]);
+        const elementToMove = storage.splice(from, 1)[0];
+        storage.splice(position, 0, elementToMove);
 
         return true;
     }
 
     static clear() {
-        storage.splice(0, storage.length);
+        storage = [];
     }
 }
 

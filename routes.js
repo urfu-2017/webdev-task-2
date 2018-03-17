@@ -3,12 +3,9 @@
 const { error404 } = require('./controllers/errors');
 const {
     create,
-    listByDefault,
-    listByCreatedAt,
-    listByAlphabet,
-    listPaginal,
-    findByDescr,
-    editDescr,
+    list,
+    findByDescription,
+    editDescription,
     editVisited,
     deleteById,
     changeOrder,
@@ -16,16 +13,14 @@ const {
 } = require('./controllers/places');
 
 module.exports = app => {
-    app.post('/create', create);
-    app.get('/listByDefault', listByDefault);
-    app.get('/listByCreatedAt', listByCreatedAt);
-    app.get('/listByAlphabet', listByAlphabet);
-    app.get('/listPaginal/:pageNumber/:pageSize', listPaginal);
-    app.get('/description', findByDescr);
-    app.patch('/description/:id', editDescr);
-    app.patch('/visited/:id', editVisited);
-    app.delete('/delete/:id', deleteById);
+    app.post('/places', create);
+    app.get('/places', list);
+    app.get('/search', findByDescription);
+    app.patch('/places/:id', editDescription);
+    app.put('/places/:id/visited', editVisited);
+    app.delete('/places/:id/visited', editVisited);
+    app.delete('/places/:id', deleteById);
     app.put('/order/:id/:position', changeOrder);
-    app.delete('/clear', clear);
+    app.delete('/places', clear);
     app.all('*', error404);
 };

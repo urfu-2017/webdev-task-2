@@ -21,17 +21,6 @@ app.use((err, req, res, next) => {
     next();
 });
 
-app.use((req, res, next) => {
-    res.locals.meta = {
-        charset: 'utf-8',
-        description: 'rest'
-    };
-
-    res.locals.title = 'rest';
-
-    next();
-});
-
 routes(app);
 
 app.use((err, req, res) => {
