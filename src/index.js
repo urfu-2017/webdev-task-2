@@ -1,5 +1,6 @@
 'use strict';
 
+const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -11,6 +12,7 @@ const { gracefulShutdown } = require('./utils/app-helpers');
 const { genericErrorHandler } = require('./middlewares/error-handlers');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use('/places', placesRouter);
 app.all('*', () => {
