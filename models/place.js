@@ -50,7 +50,7 @@ class Place {
             return [result, hasNext];
         }
         let end = start + pageSize;
-        if (end > arrayToShow.length) {
+        if (end >= arrayToShow.length) {
             end = arrayToShow.length;
             hasNext = false;
         }
