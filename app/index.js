@@ -15,5 +15,5 @@ const app = express();
 app.use(bodyParser.json());
 routes(app);
 
-app.listen(8080);
-console.info('http://localhost:8080/places');
+let port = process.env.PORT || 8080;
+app.listen(port);

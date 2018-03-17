@@ -32,4 +32,7 @@
 - Возможность менять порядок мест в списке (PATCH /places/shuffle/?firstId={number}&secondId={number})
 - Возможность очистки всего списка мест (DELETE /places)
 
+### Деплой
+https://webdev-task-2-idopbpwslm.now.sh/places
+
 ![artemii](https://user-images.githubusercontent.com/8963033/37154087-b5f1ed76-2300-11e8-81b7-0a8700bc5f57.png)
