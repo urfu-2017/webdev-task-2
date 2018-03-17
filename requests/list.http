@@ -1,0 +1,41 @@
+### Получение списка всех мест
+
+GET http://127.0.0.1:8080/places HTTP/1.1
+Accept: application/json
+
+### Сортировка по дате создания (порядок по умолчанию)
+
+GET http://127.0.0.1:8080/places?order_by=createdAt HTTP/1.1
+Accept: application/json
+
+### Сортировка по дате создания (порядок по возрастанию)
+
+GET http://127.0.0.1:8080/places?order_by=createdAt&order=asc HTTP/1.1
+Accept: application/json
+
+### Сортировка по дате создания (порядок по убыванию)
+
+GET http://127.0.0.1:8080/places?order_by=createdAt&order=desc HTTP/1.1
+Accept: application/json
+
+### Сортировка по описанию по описанию (алфавитный порядок по возрастанию)
+
+GET http://127.0.0.1:8080/places?order_by=description&order=asc HTTP/1.1
+Accept: application/json
+
+### Сортировка по описанию по описанию (алфавитный порядок по убыванию)
+
+GET http://127.0.0.1:8080/places?order_by=description&order=desc HTTP/1.1
+Accept: application/json
+
+### Постраничный вывод мест
+
+GET http://127.0.0.1:8080/places?offset=5&limit=5 HTTP/1.1
+Accept: application/json
+
+### Поиск места по описанию
+
+GET http://127.0.0.1:8080/places?query=%D1%83%D1%80%D0%B0%D0%BB HTTP/1.1
+Accept: application/json
+
+###
