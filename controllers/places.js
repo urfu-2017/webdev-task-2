@@ -24,7 +24,8 @@ exports.getPlace = (req, res) => {
 };
 
 exports.create = (req, res) => {
-    if (typeof req.body.description !== 'string') {
+    const { description } = req.body
+    if (typeof description !== 'string') {
         res.status(400).send('body must contain a description as a string');
 
         return;
@@ -44,19 +45,21 @@ exports.change = (req, res) => {
         return;
     }
 
-    if (req.body.description && typeof req.body.description !== 'string') {
+    const { description, isVisited } = req.body
+
+    if (description && typeof description !== 'string') {
         res.status(400).send('description must be a string');
 
         return;
     }
 
-    if (req.body.isVisited && typeof req.body.isVisited !== 'boolean') {
+    if (isVisited && typeof isVisited !== 'boolean') {
         res.status(400).send('isVisited must be boolean');
 
         return;
     }
 
-    place.update(req.body);
+    place.update({ description, isVisited });
 
     res.status(200).send(place);
 };

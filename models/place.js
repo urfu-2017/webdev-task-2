@@ -22,7 +22,7 @@ class Place {
     }
 
     static findByDescription(sortBy, description) {
-        let sortings = {
+        const sortings = {
             date: (place1, place2) => place1.creationDate < place2.creationDate ? -1 : 1,
             description: (place1, place2) => place1.description < place2.description ? -1 : 1
         };
