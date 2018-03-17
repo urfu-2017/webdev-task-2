@@ -14,6 +14,8 @@ class Location extends Base {
                 code: 409,
                 message: 'Conflict, already exists. Use put if needed to update.'
             });
+
+            return;
         }
         const date = new Date();
         this.storage.push({
