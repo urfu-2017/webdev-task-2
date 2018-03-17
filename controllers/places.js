@@ -24,12 +24,14 @@ exports.getPlace = (req, res) => {
 };
 
 exports.create = (req, res) => {
-    const { description } = req.body
+    const { description } = req.body;
+
     if (typeof description !== 'string') {
         res.status(400).send('body must contain a description as a string');
 
         return;
     }
+
     const place = new Place(req.body);
     place.save();
 
@@ -45,7 +47,7 @@ exports.change = (req, res) => {
         return;
     }
 
-    const { description, isVisited } = req.body
+    const { description, isVisited } = req.body;
 
     if (description && typeof description !== 'string') {
         res.status(400).send('description must be a string');
