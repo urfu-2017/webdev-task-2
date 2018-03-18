@@ -12,7 +12,8 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.list = (req, res) => {
-    const [order, property] = req.query.sort.split('.');
+    const sortData = req.query.sort ? req.query.sort : 'asc.name';
+    const [order, property] = sortData.split('.');
     const storage = Place.sort(property, order);
     if (storage) {
         res.status(200).send(storage);
