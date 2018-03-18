@@ -27,9 +27,11 @@ module.exports = app => {
                 } else {
                     notes = Note.findAll();
                 }
+            } else {
+                notes = Note.findAll();
             }
 
-            res.send(notes);
+            res.send(JSON.stringify(notes));
         })
         .delete((req, res) => {
             let notes = Note;
@@ -39,12 +41,12 @@ module.exports = app => {
                 notes = Note.deleteAll();
             }
 
-            res.send(notes);
+            res.send(JSON.stringify(notes));
         })
         .patch((req, res) => {
             const note = Note.changeInfo(req.query.index, req.body.status, req.body.desc);
 
-            res.send(note);
+            res.send(JSON.stringify(note));
         });
 
     app
@@ -52,7 +54,7 @@ module.exports = app => {
         .get((req, res) => {
             const notes = Note.findByPages(req.query.page, req.query.limit);
 
-            res.send(notes);
+            res.send(JSON.stringify(notes));
         });
 
 
