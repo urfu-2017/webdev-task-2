@@ -3,7 +3,8 @@
 const Place = require('../models/place');
 
 module.exports.create = (req, res) => {
-    if (!Place.findPlace(req.body)) {
+    let { name = null, description = null } = req.body;
+    if (name && description && !Place.findPlace({ name, description })) {
         Place.create(req.body);
         res.sendStatus(201);
     } else {
