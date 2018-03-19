@@ -84,13 +84,18 @@ function clearList(req, res) {
 }
 
 function editList(req, res) {
-    let permutations = req.body;
-    if (!Array.isArray(permutations)) {
+    let permutations = req.body.permutations;
+    if (permutations === undefined ||
+        !Array.isArray(permutations)) {
         res.sendStatus(400);
+
+        return;
     }
     if (permutations.some(permutation =>
         isBadPermutationPart(permutation.was) || isBadPermutationPart(permutation.become))) {
         res.sendStatus(400);
+
+        return;
     }
     permutations.forEach(permutation => {
         let temp = global.notes[permutation.was];

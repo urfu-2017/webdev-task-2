@@ -55,3 +55,37 @@ describe('GET /list', () => {
             .catch(err => done(err));
     });
 });
+
+const pathList =
+    {
+        permutations: [
+            { was: 0, become: 1 }
+        ]
+    };
+
+describe('PATCH /list', () => {
+    it('permutations', done => {
+        request(app)
+            .delete('/list')
+            .expect(200)
+            .then(() => getPromiseTwoRequests())
+            .then(() => {
+                return request(app)
+                    .patch('/list')
+                    .type('application/json')
+                    .send(pathList)
+                    .expect(200);
+            })
+            .then(() => request(app)
+                .get('/list')
+                .set('Accept', 'application/json'))
+            .then((res) => {
+                assert(res.body[0].name, 'second');
+                assert(res.body[1].name, 'first');
+                done();
+            })
+            .catch(err => {
+                done(err);
+            });
+    });
+});
