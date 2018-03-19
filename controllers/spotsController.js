@@ -22,6 +22,11 @@ export default ({ spots }) =>
         spots.shuffle()
         res.sendStatus(200)
     })
+    .post('/:id/swap-with', async (req, res) => {
+        const idA = req.query.id
+        const idB = req.params.id
+        res.sendStatus(spots.swap(idA, idB) ? 200 : 400)
+    })
     .patch('/:id', async (req, res) => {
         const { visited, description } = req.body
         const edited = spots.edit(req.params.id, description, visited)

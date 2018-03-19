@@ -54,4 +54,17 @@ export default class Spots {
         this.col.update(spot)
         return { description, visited }
     }
+
+    swap(idA, idB) {
+        const spotA = this.col.findOne({ id: idA })
+        const spotB = this.col.findOne({ id: idB })
+        if (!spotA || !spotB)
+            return false
+        const tmp = spotA.order2
+        spotA.order2 = spotB.order2
+        spotB.order2 = tmp
+        this.col.update(spotA)
+        this.col.update(spotB)
+        return true
+    }
 }
