@@ -2,20 +2,14 @@ import DB, { Location } from '../../models/Location'
 import { CREATED } from 'http-status-codes'
 
 export default ({ body }, res) => DB.write(() => {
-    let location;
+    let location
 
     try {
-        const nextOrder = DB.objects(Location.NAME)
-            .sorted(Location.FIELDS.ORDER, true)
-            .length + 1
-
-        const entity = Location.create({ ...body, [Location.FIELDS.ORDER]: nextOrder })
-
+        const maxOrder = DB.objects(Location.NAME).max('order') || 0
+        const entity = Location.create({ ...body, [Location.FIELDS.ORDER]: maxOrder + 1 })
         location = DB.create(Location.NAME, entity)
-
         res.status(CREATED).json(location)
     } catch (e) {
-        DB.delete(location)
-        throw new Error(e.message)
+        throw new Error('The sent object does not match the schema.')
     }
 })

@@ -2,8 +2,7 @@
     "extends": "hrundel/node",
     "parser": "babel-eslint",
     "rules": {
-        "semi": 0,
-        "new-cap": 0
+        "semi": 0
     },
     "parserOptions": {
         "ecmaVersion": 2017

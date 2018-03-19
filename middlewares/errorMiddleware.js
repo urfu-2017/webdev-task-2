@@ -2,12 +2,10 @@ import { UNAUTHORIZED, BAD_REQUEST } from 'http-status-codes'
 
 // eslint-disable-next-line no-unused-vars
 export default (err, req, res, next) => {
-    console.error(err)
-
     switch (err.message) {
         case 'Unauthorized':
             res.sendStatus(UNAUTHORIZED)
-            break;
+            break
         default:
             res.status(BAD_REQUEST).json({
                 error: err.message,

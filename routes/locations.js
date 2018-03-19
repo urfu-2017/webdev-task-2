@@ -10,7 +10,7 @@ import update from '../controllers/location/update'
 import remove from '../controllers/location/remove'
 import options from '../controllers/location/options'
 
-const router = express.Router()
+const router = express.Router() //eslint-disable-line
 
 router.get('/', all)
 router.put('/', create)
