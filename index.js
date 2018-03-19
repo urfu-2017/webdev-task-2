@@ -1,11 +1,13 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const config = require('./config');
 const apiVersionOne = require('./controllers/v1');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/api/v1', apiVersionOne);
