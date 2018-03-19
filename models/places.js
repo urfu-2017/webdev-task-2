@@ -49,7 +49,7 @@ class PlacesStorage {
             return false;
         }
 
-        let place = this._places.splice(currentIndex, 1);
+        let place = this._places.splice(currentIndex, 1)[0];
         this._places.splice(index, 0, place);
 
         return true;
