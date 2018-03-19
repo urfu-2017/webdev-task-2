@@ -39,13 +39,7 @@ class Location extends Base {
     updatePlace() {
         if (this.storage.update(this._req.place, this._req.param, this._req.value)) {
             this.createResponse({ code: 200, message: 'Ok' });
-        }
-
-        this.createResponse({ code: 400, message: 'Bad request' });
-    }
-
-    swapPlaces() {
-        if (this.storage.swap(this._req.place1, this._req.place2)) {
+        } else if (this.storage.swap(this._req.place1, this._req.place2)) {
             this.createResponse({ code: 200, message: 'Ok' });
         }
 

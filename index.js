@@ -40,7 +40,7 @@ app
     .put('/', getControllerInstance(locationController, 'updatePlace'))
     // updates existing location
     // place: place, param: param, value: new value
-    .patch('/', getControllerInstance(locationController, 'swapPlaces'))
+    // .put('/', getControllerInstance(locationController, 'swapPlaces'))
     // place1: name of first place we want to swap, place2: name2
     .delete('/', getControllerInstance(locationController, 'deletePlace'))
     // place: place name or place: all - to delete every record
