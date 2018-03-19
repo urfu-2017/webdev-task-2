@@ -1,10 +1,11 @@
 'use strict';
 
-const { storage } = require('../models/places');
+const { Storage } = require('../models/places');
 const OK_RESPONSE = { ok: true };
 const ERROR_RESPONSE = { ok: false };
 
 exports.createPlace = (req, res) => {
+    const storage = new Storage();
     const query = req.body;
     const id = storage.add(query.description);
 
@@ -12,6 +13,7 @@ exports.createPlace = (req, res) => {
 };
 
 exports.listPlaces = (req, res) => {
+    const storage = new Storage();
     const sortParameter = req.query.sort;
     const places = storage.list(sortParameter);
     if (!places) {
@@ -22,6 +24,7 @@ exports.listPlaces = (req, res) => {
 };
 
 exports.listByPages = (req, res) => {
+    const storage = new Storage();
     const sortParam = req.params.sort;
     const pageSize = Number(req.params.size);
     const pageNumber = Number(req.params.number);
@@ -33,6 +36,7 @@ exports.listByPages = (req, res) => {
 };
 
 exports.findByDescription = (req, res) => {
+    const storage = new Storage();
     const query = req.query.q;
     if (!query) {
         res.sendStatus(204);
@@ -45,6 +49,7 @@ exports.findByDescription = (req, res) => {
 };
 
 exports.changeDescription = (req, res) => {
+    const storage = new Storage();
     const id = Number(req.params.id);
     if (!req.body.description) {
         res.status(400).json(ERROR_RESPONSE);
@@ -59,6 +64,7 @@ exports.changeDescription = (req, res) => {
 };
 
 exports.toggleVisited = (req, res) => {
+    const storage = new Storage();
     const id = Number(req.params.id);
     if (!req.body.visited) {
         res.status(400).json(ERROR_RESPONSE);
@@ -73,6 +79,7 @@ exports.toggleVisited = (req, res) => {
 };
 
 exports.deletePlace = (req, res) => {
+    const storage = new Storage();
     const id = Number(req.params.id);
     try {
         storage.deletePlace(id);
@@ -84,6 +91,7 @@ exports.deletePlace = (req, res) => {
 };
 
 exports.swap = (req, res) => {
+    const storage = new Storage();
     const firstId = Number(req.params.id1);
     const secondId = Number(req.params.id2);
     try {
@@ -96,6 +104,7 @@ exports.swap = (req, res) => {
 };
 
 exports.deletePlaces = (req, res) => {
+    const storage = new Storage();
     storage.clear();
     res.json(OK_RESPONSE);
 };

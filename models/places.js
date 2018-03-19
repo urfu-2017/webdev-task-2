@@ -9,27 +9,30 @@ class Place {
     }
 }
 
-class Storage {
+let _places = [];
+let _lastId = -1;
+
+exports.Storage = class Storage {
     constructor() {
-        this._places = [];
-        this._lastId = -1;
+        _places = [];
+        _lastId = -1;
     }
 
     add(description) {
-        const place = new Place(++this._lastId, description);
-        this._places.push(place);
+        const place = new Place(++_lastId, description);
+        _places.push(place);
 
-        return this._lastId;
+        return _lastId;
     }
 
     clear() {
-        this._places = [];
+        _places = [];
     }
 
     list(sortParam) {
         const sortFunc = Storage._getSortingFunc(sortParam);
 
-        return this._places.slice().sort(sortFunc);
+        return _places.slice().sort(sortFunc);
     }
 
     deletePlace(id) {
@@ -37,7 +40,7 @@ class Storage {
         if (id === -1) {
             throw new Error('Place not found');
         }
-        this._places.splice(index, 1);
+        _places.splice(index, 1);
     }
 
     changeDescription(id, description) {
@@ -57,7 +60,7 @@ class Storage {
     }
 
     searchByDescription(description) {
-        const result = this._places.find(place => place.description.indexOf(description) !== -1);
+        const result = _places.find(place => place.description.indexOf(description) !== -1);
         if (!result) {
             return null;
         }
@@ -97,8 +100,6 @@ class Storage {
     }
 
     _findById(id) {
-        return this._places.find(place => place.id === id);
+        return _places.find(place => place.id === id);
     }
-}
-
-exports.storage = new Storage();
+};
