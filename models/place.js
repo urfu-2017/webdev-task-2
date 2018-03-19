@@ -1,20 +1,7 @@
 'use strict';
 
-let ID = 3;
-let places = [
-    {
-        id: 1,
-        description: 'Moscow',
-        isVisited: true,
-        creationDate: '2018-03-07T17:41:24.240Z'
-    },
-    {
-        id: 2,
-        description: 'Ekaterinburg',
-        isVisited: false,
-        creationDate: '2018-03-08T11:08:24.240Z'
-    }
-];
+let ID = 0;
+let places = [];
 
 class Place {
 
