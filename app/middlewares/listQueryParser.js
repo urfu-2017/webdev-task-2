@@ -21,6 +21,7 @@ function isValidSortQuery(sort) {
 }
 
 function isValidQuery(query) {
-    return (query.offset === undefined || !isNaN(query.offset)) &&
-           (query.limit === undefined || !isNaN(query.limit)) && isValidSortQuery(query.sort);
+    return (query.offset === undefined || typeof query.offset === 'string') &&
+           (query.limit === undefined || typeof query.limit === 'string') &&
+            isValidSortQuery(query.sort);
 }
