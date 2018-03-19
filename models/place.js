@@ -2,7 +2,8 @@ import { _ } from 'lodash';
 let places = [];
 
 class Place {
-    constructor({ description }) {
+    constructor({ name, description }) {
+        this.name = name;
         this.description = description;
         this.visitedPlace = false;
         this.createTime = new Date();
@@ -21,33 +22,31 @@ class Place {
     }
 
     static sortByAbc() {
-        return places.sort((a, b) => a.description > b.description);
+        return places.sort((a, b) => a.name > b.name);
     }
 
     static find(description) {
-        return places.find(place => place.description === description);
+        return places.filter(place => place.description === description);
     }
 
-    static changeDescription(description, newDescription) {
-        const findToChange = this.find(description);
-        if (findToChange) {
-            findToChange.description = newDescription;
-
-            return true;
-        }
-
-        return false;
+    static findByName(name) {
+        return places.find(place => place.name === name);
     }
 
-    static isVisited(description) {
-        const placeToTick = this.find(description);
+    static changeDescription(name, newDescription) {
+        const place = this.findByName(name);
+        place.description = newDescription;
+
+        return place;
+    }
+
+    static isVisited(name) {
+        const placeToTick = this.findByName(name);
         if (placeToTick) {
             placeToTick.visitedPlace = true;
-
-            return true;
         }
 
-        return false;
+        return placeToTick.visitedPlace;
 
     }
 
@@ -55,21 +54,25 @@ class Place {
         places = [];
     }
 
-    static deletePlace(description) {
-        const index = this.find(description);
-        if (index) {
-            places.splice(index, 1);
+    static isPlaceDeleted(name) {
+        const len = places.length;
+        places = places.filter(place => place.name !== name);
 
-            return true;
-        }
-
-        return false;
+        return places.length === len;
     }
 
-    static changeIndex(index1, index2) {
-        let temp = places[index1];
-        places[index1] = places[index2];
-        places[index2] = temp;
+    static switchOrder(name1, name2) {
+        const firstPlaceToSwap = _.findIndex(places, obj => obj.name === name1);
+        const secondPlaceToSwap = _.findIndex(places, obj => obj.name === name2);
+        if (firstPlaceToSwap >= 0 && secondPlaceToSwap >= 0) {
+            let temp = places[firstPlaceToSwap];
+            places[firstPlaceToSwap] = places[secondPlaceToSwap];
+            places[secondPlaceToSwap] = temp;
+
+            return places;
+        }
+
+        return [];
     }
 
     static onNewPage() {

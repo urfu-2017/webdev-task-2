@@ -1,35 +1,25 @@
 import { error404 } from './controllers/errors';
-import { list,
-    create,
-    changeDescription,
-    isVisited,
-    deletePlace,
-    deleteAll,
-    find,
-    sortByDate,
-    sortByAbc,
-    changeOrder,
-    onNewPage } from './controllers/places';
+import * as placesController from './controllers/places';
 
 exports.routes = app => {
-    app.get('/', list);
+    app.get('/', placesController.list);
 
     app
         .route('/places')
-        .post(create)
-        .get(list)
-        .delete(deleteAll);
+        .post(placesController.create)
+        .get(placesController.list)
+        .delete(placesController.deleteAll);
 
-    app.route('/places/:description')
-        .delete(deletePlace)
-        .get(find)
-        .put(changeDescription)
-        .patch(isVisited);
+    app.route('/places/name/:name')
+        .delete(placesController.deletePlace)
+        .put(placesController.changeDescription)
+        .patch(placesController.isVisited);
+    app.get('/places/search/:description', placesController.find);
 
-    app.put('/places/sort/date', sortByDate);
-    app.put('/places/sort/abc', sortByAbc);
-    app.put('/change', changeOrder);
-    app.put('/places/pages/:page', onNewPage);
+    app.put('/places/sort/date', placesController.sortByDate);
+    app.put('/places/sort/abc', placesController.sortByAbc);
+    app.put('/places/order', placesController.switchOrder);
+    app.put('/places/pages/:[1-9]+', placesController.onNewPage);
 
     app.all('*', error404);
 };
