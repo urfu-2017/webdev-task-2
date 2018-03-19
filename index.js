@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const routes = require('./routes');
-const Note = require('./note');
+const Note = require('./noteModel');
 const notes = require('./notes');
 
 // при старте заполняю заметки из json

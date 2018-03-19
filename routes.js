@@ -1,6 +1,6 @@
 'use strict';
 
-const Note = require('./note.js');
+const Note = require('./noteModel.js');
 
 module.exports = app => {
 
@@ -31,7 +31,7 @@ module.exports = app => {
                 notes = Note.findAll();
             }
 
-            res.send(JSON.stringify(notes));
+            res.json(notes);
         })
         .delete((req, res) => {
             let notes = Note;
@@ -41,12 +41,18 @@ module.exports = app => {
                 notes = Note.deleteAll();
             }
 
-            res.send(JSON.stringify(notes));
+            res.json(notes);
         })
         .patch((req, res) => {
-            const note = Note.changeInfo(req.query.index, req.body.status, req.body.desc);
+            const note = Note.getByIndex(req.query.index);
+            if (req.body.desc) {
+                note.desc = req.body.desc;
+            }
+            if (req.body.status) {
+                note.status = req.body.status;
+            }
 
-            res.send(JSON.stringify(note));
+            res.json(note);
         });
 
     app
@@ -54,7 +60,7 @@ module.exports = app => {
         .get((req, res) => {
             const notes = Note.findByPages(req.query.page, req.query.limit);
 
-            res.send(JSON.stringify(notes));
+            res.json(notes);
         });
 
 

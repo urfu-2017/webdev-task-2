@@ -89,17 +89,23 @@ class Note {
         return storage;
     }
 
-    static changeInfo(index, status, desc) {
-        let noteToChange = storage.find(note => note.index === Number(index));
-        if (desc) {
-            noteToChange.desc = desc;
-        }
-        if (status) {
-            noteToChange.status = status;
-        }
+    static getByIndex(index) {
+        const foundNote = storage.find(note => note.index === Number(index));
 
-        return noteToChange;
+        return foundNote;
     }
+
+    // static changeInfo(index, status, desc) {
+    //     let noteToChange = storage.find(note => note.index === Number(index));
+    //     if (desc) {
+    //         noteToChange.desc = desc;
+    //     }
+    //     if (status) {
+    //         noteToChange.status = status;
+    //     }
+
+    //     return noteToChange;
+    // }
 }
 
 module.exports = Note;
