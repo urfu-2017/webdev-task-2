@@ -1,6 +1,6 @@
 'use strict';
 
-import { PlacesRepository } from '../models/places';
+import { PlacesRepository } from '../models/placesRepositiry';
 
 const repository = new PlacesRepository()
 
@@ -13,19 +13,19 @@ export class PlacesController {
         res.send(repository.list(req.body));
     }
     static async search(req, res) {
-        const place = repository.search(req.body);
+        const place = repository.searchByName(req.body);
         res.send(place);
     }
     static async edit(req, res) {
-        const place = repository.edit({id: req.params.id, name: req.body.name});
+        const place = repository.editNameToId({id: req.params.id, name: req.body.name});
         res.send(place);
     }
     static async setVisited(req, res) {
-        const place = repository.setVisited({ id: req.params.id, isVisited: true });
+        const place = repository.changeVisitedById({ id: req.params.id, isVisited: true });
         res.send(place);
     }
     static async setUnvisited(req, res) {
-        const place = repository.setVisited({ id: req.params.id, isVisited: false });
+        const place = repository.changeVisitedById({ id: req.params.id, isVisited: false });
         res.send(place);
     }
     static async delete(req, res) {
@@ -35,7 +35,7 @@ export class PlacesController {
         });
     }
     static async changePriority(req, res) {
-        repository.changePriority(req.params);
+        repository.changePriority({id: req.params.id, priority: req.body.priority});
         res.send({});
     }
     static async clear(req, res) {
