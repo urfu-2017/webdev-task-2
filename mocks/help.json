@@ -1,0 +1,22 @@
+{
+    "available http commands": {
+        "options": "get help.json",
+        "get": "get requested resource",
+        "post": "create brand new resource",
+        "put": "update existing resource",
+        "patch": "i'm using it to swap records",
+        "delete": "delete resource"
+    },
+    "params": {
+        "place": "name of the location",
+        "description": "description of the location",
+        "visited": "boolean that defines if the location was visited",
+        "sortBy": "to specify how data should be sorted, timeCreated - to sort by date, name - to sort by name",
+        "findByDescr": "to find location by description, searches substring and returns all matching locations",
+        "amount": "amount of records on screen",
+        "page": "number of a page we are showing",
+        "param": "param name when updating record, two values: visited and description, doesn't update time",
+        "place1": "first of two places to swap",
+        "place2": "second of two places to swap"
+    }
+}
