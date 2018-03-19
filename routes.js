@@ -1,20 +1,31 @@
 'use strict';
 
-const places = require('./controllers/places');
+const { PlacesController } = require('./controllers/places');
+
+const getController = (Controller, methodName) => async (req, res, next) => {
+    try {
+        const controller = new Controller(req, res);
+        await controller[methodName]();
+    } catch (e) {
+        console.error(e);
+        next(e);
+    }
+};
+
 
 module.exports = app => {
     app.route('/places')
-        .get(places.listPlaces)
-        .post(places.createPlace)
-        .delete(places.deletePlaces);
+        .get(getController(PlacesController, 'listPlaces'))
+        .post(getController(PlacesController, 'createPlace'))
+        .delete(getController(PlacesController, 'deletePlaces'));
     app.route('/places/:id([0-9]+)')
-        .put(places.changeDescription)
-        .patch(places.toggleVisited)
-        .delete(places.deletePlace);
+        .put(getController(PlacesController, 'changeDescription'))
+        .patch(getController(PlacesController, 'toggleVisited'))
+        .delete(getController(PlacesController, 'deletePlace'));
     app.route('/places/pages/:size([0-9]+)/:number([0-9]+)')
-        .get(places.listByPages);
+        .get(getController(PlacesController, 'listByPages'));
     app.route('/places/:id1([0-9]+)/:id2([0-9]+)')
-        .put(places.swap);
+        .put(getController(PlacesController, 'swap'));
     app.route('/places/description')
-        .get(places.findByDescription);
+        .get(getController(PlacesController, 'findByDescription'));
 };

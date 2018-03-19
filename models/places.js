@@ -13,11 +13,6 @@ let _places = [];
 let _lastId = -1;
 
 exports.Storage = class Storage {
-    constructor() {
-        _places = [];
-        _lastId = -1;
-    }
-
     add(description) {
         const place = new Place(++_lastId, description);
         _places.push(place);
@@ -36,7 +31,7 @@ exports.Storage = class Storage {
     }
 
     deletePlace(id) {
-        const index = this._findById(id);
+        const index = this._getIndexById(id);
         if (id === -1) {
             throw new Error('Place not found');
         }
@@ -44,7 +39,7 @@ exports.Storage = class Storage {
     }
 
     changeDescription(id, description) {
-        const place = this._findById(id);
+        const place = this._getItemById(id);
         if (!place) {
             throw new Error('Place not found');
         }
@@ -52,7 +47,7 @@ exports.Storage = class Storage {
     }
 
     toggleVisited(id, visited) {
-        const place = this._findById(id);
+        const place = this._getItemById(id);
         if (!place) {
             throw new Error('Place not found');
         }
@@ -69,8 +64,8 @@ exports.Storage = class Storage {
     }
 
     swapPlaces(firstId, secondId) {
-        const first = this._findById(firstId);
-        const second = this._findById(secondId);
+        const first = this._getItemById(firstId);
+        const second = this._getItemById(secondId);
         if (!first || !second) {
             throw new Error('Place not found');
         }
@@ -99,7 +94,11 @@ exports.Storage = class Storage {
         }
     }
 
-    _findById(id) {
+    _getItemById(id) {
         return _places.find(place => place.id === id);
+    }
+
+    _getIndexById(id) {
+        return _places.findIndex(place => place.id === id);
     }
 };
