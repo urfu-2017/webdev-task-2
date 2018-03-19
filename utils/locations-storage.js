@@ -8,6 +8,9 @@ class LocationsStorage {
         this.order = [];
     }
 
+    /**
+     * @param {Location} location
+     */
     save(location) {
         if (location.id === null) {
             location.id = this.idCounter++;
@@ -17,6 +20,10 @@ class LocationsStorage {
         this.locations[location.id] = location;
     }
 
+    /**
+     * @param {Location} location
+     * @returns {Location}
+     */
     delete(location) {
         if (location.id === null) {
             throw new Error('Location not saved');
@@ -30,10 +37,18 @@ class LocationsStorage {
         return deletedLocation;
     }
 
+    /**
+     * @param {Number} locationId
+     * @returns {Location|null}
+     */
     get(locationId) {
         return this.locations[locationId] || null;
     }
 
+    /**
+     * @param {Location} location
+     * @param {Number} position
+     */
     changeOrder(location, position) {
         if (isNaN(position) || position > this.order.length) {
             throw new Error('Position must be less then number of locations');
@@ -44,18 +59,34 @@ class LocationsStorage {
         this.order.splice(position, 0, location);
     }
 
-    find(description = '', sortBy = 'order') {
-        const orderedLocations = this.order.map(id => this.locations[id]);
+    /**
+     * @param {String} query
+     * @param {String} sortBy
+     * @param {Number} pageSize
+     * @param {Number} pageNumber
+     * @returns {Location[]}
+     */
+    find({ query = '', sortBy = 'order', pageSize = 10, pageNumber = 1 }) {
+        let locations = this.order.map(id => this.locations[id]);
+
+        if (pageSize < 1 || pageNumber < 1) {
+            throw new Error('Page size and number can not less then 1');
+        }
 
         if (sortBy !== 'order') {
-            sortLocations(orderedLocations, sortBy);
+            sortLocations(locations, sortBy);
         }
 
-        if (description) {
-            return orderedLocations.filter(location => location.description.includes(description));
+        if (query) {
+            locations = locations
+                .filter(location => location.description.includes(query));
         }
 
-        return orderedLocations;
+        const start = pageSize * (pageNumber - 1);
+        const end = start + pageSize;
+        locations = locations.slice(start, end);
+
+        return locations;
     }
 
     clear() {
@@ -64,4 +95,4 @@ class LocationsStorage {
     }
 }
 
-module.exports = LocationsStorage;
+module.exports = new LocationsStorage();

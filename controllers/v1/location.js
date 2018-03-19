@@ -1,90 +1,68 @@
 'use strict';
 
 const Location = require('../../models/location');
-const LocationStorage = require('../../utils/locations-storage');
-
-const locationsStorage = new LocationStorage();
+const LocationsStorage = require('../../utils/locations-storage');
 
 exports.findAll = (req, res) => {
-    const { search = '', sortBy = 'order', pageSize = 10, pageNumber = 1 } = req.query;
-    let locations = locationsStorage.find(search, sortBy);
+    const { search, sortBy } = req.query;
+    let { pageSize, pageNumber } = req.query;
 
-    if (pageSize < 1 || pageNumber < 1) {
-        throw new Error('Page size and number can not less then 1');
+    if ((pageSize && isNaN(pageSize)) || (pageNumber && isNaN(pageNumber))) {
+        throw new Error('Page size and number must be numbers');
     }
 
-    const start = pageSize * (pageNumber - 1);
-    const end = start + pageSize;
-    locations = locations.slice(start, end);
-
+    const locations = LocationsStorage.find({ query: search, sortBy, pageNumber, pageSize });
     res.json(locations);
 };
 
 exports.add = (req, res) => {
     const { description } = req.body;
-
-    if (!description) {
-        throw new Error('Description can not be empty');
-    }
-
-    const location = new Location(description);
-    locationsStorage.save(location);
+    const location = new Location(String(description));
+    LocationsStorage.save(location);
 
     res.status(201).json(location);
 };
 
 exports.update = (req, res) => {
     const { id } = req.params;
-    const location = locationsStorage.get(id);
+    const location = LocationsStorage.get(Number(id));
+    const { description, isVisited } = req.body;
 
     if (!location) {
         return res.sendStatus(404);
     }
 
-    const { description = '', isVisited = location.isVisited } = req.body;
-
-    if (description && description.length === 0) {
-        throw new Error('Description can not be empty');
-    }
-
-    if (typeof(isVisited) !== 'boolean') {
-        throw new Error('Flag isVisited must have boolean type');
-    }
-
-    location.description = description || location.description;
-    location.isVisited = isVisited;
-
-    locationsStorage.save(location);
+    location.update({ description: String(description), isVisited });
+    LocationsStorage.save(location);
 
     res.sendStatus(200);
 };
 
 exports.changeOrder = (req, res) => {
     const { id, position } = req.body;
-    const location = locationsStorage.get(id);
+    const location = LocationsStorage.get(Number(id));
 
     if (!location) {
         return res.sendStatus(404);
     }
 
-    locationsStorage.changeOrder(Number(id), Number(position));
-
+    LocationsStorage.changeOrder(location, Number(position));
     res.sendStatus(200);
 };
 
 exports.delete = (req, res) => {
     const id = req.params.id;
-    const location = locationsStorage.get(id);
+    const location = LocationsStorage.get(Number(id));
 
     if (!location) {
         return res.sendStatus(404);
     }
 
-    locationsStorage.delete(location);
+    LocationsStorage.delete(location);
     res.sendStatus(200);
 };
 
 exports.reset = (req, res) => {
-    locationsStorage.clear();
+    LocationsStorage.clear();
     res.sendStatus(200);
 };
