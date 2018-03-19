@@ -10,12 +10,20 @@ class PlacesStorage {
         this.places = this._storage.addCollection('places');
     }
 
+    add(place) {
+        this.places.insert(place);
+    }
+
+    deleteAll() {
+        this.places.clear();
+    }
+
     getList({ limit, offset, sortKey }) {
-        sortKey = sortKey || '$loki';
-        sortKey = sortKey === 'date' ? 'meta.created' : sortKey;
+        let sortingKey = sortKey || '$loki';
+        sortingKey = sortingKey === 'date' ? 'meta.created' : sortingKey;
 
         return this.places.chain()
-            .simplesort(sortKey)
+            .simplesort(sortingKey)
             .offset(offset)
             .limit(limit)
             .data()
@@ -31,8 +39,10 @@ class PlacesStorage {
         });
     }
 
-    getPlace(placeId) {
-        return this._storage[placeId];
+    getById(placeId) {
+        const placeRecord = this.places.get(placeId);
+
+        return placeRecord !== null ? new Place(placeRecord) : null;
     }
 
     tryDeletePlace(placeId) {
@@ -53,7 +63,7 @@ class PlacesStorage {
 
     tryUpdateMark(id, mark) {
         return this._tryUpdateValue(id, place => {
-            place.isVisited = mark || place.isVisited;
+            place.isVisited = mark;
         });
     }
 
@@ -76,4 +86,4 @@ class PlacesStorage {
     }
 }
 
-module.exports = PlacesStorage;
+module.exports = new PlacesStorage();

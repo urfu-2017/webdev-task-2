@@ -1,12 +1,10 @@
 'use strict';
 
-const PlacesStorage = require('../models/placesStorage');
 const Place = require('../models/place');
-
-const placesStorage = new PlacesStorage();
+const placesStorage = require('../models/placesStorage');
 
 exports.deleteAll = (req, res) => {
-    placesStorage.places.clear();
+    placesStorage.deleteAll();
     res.sendStatus(200);
 };
 
@@ -17,55 +15,51 @@ exports.list = (req, res) => {
 
 exports.create = (req, res) => {
     const place = new Place(req.body);
-    placesStorage.places.insert(place);
+    placesStorage.add(place);
     res.sendStatus(200);
 };
 
 exports.deleteById = (req, res) => {
-    const statusCode = !placesStorage.tryDeletePlace(req.params.id) ? 400 : 200;
-    res.sendStatus(statusCode);
+    if (!placesStorage.tryDeletePlace(req.params.id)) {
+        sendIdNotExistsError(req.params.id);
+    } else {
+        res.sendStatus(200);
+    }
 };
 
 exports.getById = (req, res) => {
-    const place = placesStorage.places.get(req.params.id);
+    const place = placesStorage.getById(req.params.id);
     if (place === null) {
-        res.sendStatus(400);
+        sendIdNotExistsError(req.params.id);
     } else {
-        res.json(new Place(place));
+        res.json(place);
     }
 };
 
 exports.findByDescription = (req, res) => {
     const places = placesStorage.findByDescription(req.params.description);
-    if (places.length === 0) {
-        res.sendStatus(400);
-    }
-
     res.json(places);
 };
 
 exports.updateDescription = (req, res) => {
-    const statusCode = placesStorage.tryUpdateDescription(req.params.id, req.params.newValue)
-        ? 200
-        : 400;
-    res.sendStatus(statusCode);
+    if (placesStorage.tryUpdateDescription(req.params.id, req.params.newValue)) {
+        sendIdNotExistsError(req.params.id);
+    } else {
+        res.sendStatus(200);
+    }
 };
 
 exports.updateMark = (req, res) => {
-    let newValue;
-    if (req.params.newValue.toLowerCase() === 'true') {
-        newValue = true;
+    let newValue = JSON.parse(req.params.newValue);
+    if (typeof newValue !== 'boolean') {
+        res.status(400).send(`parameter type = ${typeof newValue}, expected boolean `);
     }
 
-    if (req.params.newValue.toLowerCase() === 'false') {
-        newValue = false;
+    if (newValue === undefined || !placesStorage.tryUpdateMark(req.params.id, newValue)) {
+        sendIdNotExistsError(req.params.id);
+    } else {
+        res.sendStatus(200);
     }
-
-    const statusCode = newValue !== undefined &&
-        placesStorage.tryUpdateMark(req.params.id, newValue)
-        ? 200
-        : 400;
-    res.sendStatus(statusCode);
 };
 
 exports.shuffle = (req, res) => {
@@ -73,3 +67,6 @@ exports.shuffle = (req, res) => {
     res.sendStatus(200);
 };
 
+function sendIdNotExistsError(res, id) {
+    return res.status(400).send(`place with id = ${id} doesn't exist`);
+}
