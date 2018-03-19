@@ -3,18 +3,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const config = require('./config');
-const locationController = require('./controllers/location');
+const apiVersionOne = require('./controllers/v1');
 
-const baseUrl = `/api/v${config.apiVersion}/`;
 const app = express();
 app.use(bodyParser.json());
 
-app.get(baseUrl + 'locations', locationController.index);
-app.post(baseUrl + 'locations', locationController.add);
-app.patch(baseUrl + 'locations/:id', locationController.update);
-app.put(baseUrl + 'locations/:id/order/:position', locationController.changeOrder);
-app.delete(baseUrl + 'locations/:id', locationController.remove);
-app.delete(baseUrl + 'locations', locationController.reset);
+app.use('/api/v1', apiVersionOne);
 app.all('*', (req, res) => res.sendStatus(404));
 
 app.use((err, req, res, next) => {
@@ -23,4 +17,6 @@ app.use((err, req, res, next) => {
     res.status(400).json({ error: err.message });
 });
 
-app.listen(config.port);
+app.listen(config.port, () => {
+    console.info(`Server started. Open http://localhost:${config.port}`);
+});

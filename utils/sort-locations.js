@@ -10,9 +10,6 @@ module.exports = (locations, sortBy = 'order') => {
             locations.sort((l1, l2) => l1.createdAt - l2.createdAt);
             break;
         }
-        case 'order': {
-            break;
-        }
         default: {
             throw new Error('Unknown value for sort mode');
         }
