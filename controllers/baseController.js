@@ -3,13 +3,13 @@
 class Base {
     constructor(req, res) {
         this._req = req.query;
-        this.res = res;
+        this._res = res;
     }
 
     createResponse(result) {
-        this.res.statusCode = result.code;
-        this.res.statusMessage = result.message;
-        this.res.send(result);
+        this._res.statusCode = result.code;
+        this._res.statusMessage = result.message;
+        this._res.send(result);
     }
 
 }
