@@ -140,3 +140,23 @@ test('can search by substring', async () => {
     expect(d.body).to.be.empty
 })
 
+test('can swap two spots', async () => {
+    const idA = (await sut.addSpot('dspot1')).body.id
+    await sut.addSpot('cspot2')
+    const idB = (await sut.addSpot('bspot3')).body.id
+    await sut.addSpot('aspot4')
+    await sut.swap(idA, idB)
+    const spots = await sut.getSpots()
+    const spotsByDate = await sut.getSpots('date')
+    const spotsByLex = await sut.getSpots('lex')
+    const [a, b, c, d] = [
+        { description: 'dspot1', visited: false },
+        { description: 'cspot2', visited: false },
+        { description: 'bspot3', visited: false },
+        { description: 'aspot4', visited: false },
+    ]
+
+    expect(spots.body).to.be.deep.equal([c, b, a, d])
+    expect(spotsByLex.body).to.be.deep.equal([d, c, b, a])
+    expect(spotsByDate.body).to.be.deep.equal([a, b, c, d])
+})

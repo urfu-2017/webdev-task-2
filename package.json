@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "mocha": "mocha --ui qunit --timeout 5000 --require babel-core/register", 
+    "mocha": "mocha --ui qunit --timeout 5000 --require babel-core/register",
     "test": "npm run lint && npm run mocha -- --exit",
     "testWatch": "npm run mocha -- --reporter mochawesome --watch"
   },

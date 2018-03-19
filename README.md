@@ -30,6 +30,7 @@
 - Возможность отметить место посещённым или непосещённым [ PATCH /spots/:id { visited: false, description: '' } ]
 - Возможность удаления места [ DELETE /spots/:id ]
 - Возможность менять порядок мест в списке [ POST /spots/shuffle ]
+- Возможность менять порядок мест в списке #2 [ POST /spots/:id/swap-with?id= ]
 - Возможность очистки всего списка мест [ DELETE /spots/all ]
 
 ![artemii](https://user-images.githubusercontent.com/8963033/37154087-b5f1ed76-2300-11e8-81b7-0a8700bc5f57.png)

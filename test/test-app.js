@@ -41,4 +41,8 @@ export class TestApp {
     deleteAllSpots() {
         return this.r().del('/spots/all')
     }
+
+    swap(idA, idB) {
+        return this.r().post(`/spots/${idA}/swap-with`).query({ id: idB })
+    }
 }
