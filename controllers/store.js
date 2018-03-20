@@ -1,10 +1,9 @@
 'use strict';
 
-const Store = require('../models/store');
+const store = require('../models/store');
 const Place = require('../models/place');
-let store = new Store();
 
-module.exports = class StoreControl {
+module.exports = class PlaceController {
     static listPlaces(req, res) {
         let sortMethod = req.body.sort;
         switch (sortMethod) {
@@ -15,37 +14,40 @@ module.exports = class StoreControl {
                 store.alphabetSort();
                 break;
             default:
-                return res.json(store.store);
+                return res.json(store.getStore(req.body.page, req.body.itemsCount));
         }
-        res.json(store.store);
+        res.json(store.getStore(req.body.page, req.body.itemsCount));
     }
 
     static addPlace(req, res) {
         store.add(new Place(req.body.desc));
-        res.json(store.store);
+        res.json(store.getStore());
     }
 
     static clearStore(req, res) {
         store.clear();
-        res.json(store.store);
+        res.json(store.getStore());
     }
 
     static deletePlace(req, res) {
         store.delete(req.body.id);
-        res.json(store.store);
+        res.json(store.getStore());
     }
 
     static findPlace(req, res) {
+        if (req.body.desc && typeof(req.body.desc) === 'string') {
+            res.status(400).send('Description is empty');
+        }
         res.json(store.findDesc(req.body.desc));
     }
 
     static editPlace(req, res) {
         store.edit(req.body);
-        res.json(store.store);
+        res.json(store.getStore());
     }
 
     static insertPlace(req, res) {
         store.insert(req.body);
-        res.json(store.store);
+        res.json(store.getStore());
     }
 };

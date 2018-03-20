@@ -22,7 +22,7 @@ function alphabetCompare(a, b) {
     return 0;
 }
 
-module.exports = class Store {
+class Store {
     constructor() {
         this.store = [];
     }
@@ -32,11 +32,15 @@ module.exports = class Store {
     }
 
     dateSort() {
-        this.store.sort(dateCompare);
+        const copyStore = this.store.slice();
+
+        return copyStore.sort(dateCompare);
     }
 
     alphabetSort() {
-        this.store.sort(alphabetCompare);
+        const copyStore = this.store.slice();
+
+        return copyStore.sort(alphabetCompare);
     }
 
     findDesc(desc) {
@@ -59,20 +63,23 @@ module.exports = class Store {
         }
     }
 
-    edit(options) {
-        const id = options.id;
-        const desc = options.desc;
-        const isVisited = options.isVisited;
+    edit({ id, desc, isVisited }) {
         const index = this.findElemById(id);
         if (index) {
-            this.store[index].desc = desc || this.store[index].desc;
-            this.store[index].isVisited = isVisited || this.store[index].isVisited;
+            this.setDesc(index, desc);
+            this.setIsVisited(index, isVisited);
         }
     }
 
-    insert(options) {
-        const id = options.id;
-        const indexTo = options.index;
+    setDesc(index, desc) {
+        this.store[index].desc = desc || this.store[index].desc;
+    }
+
+    setIsVisited(index, isVisited) {
+        this.store[index].isVisited = isVisited || this.store[index].isVisited;
+    }
+
+    insert({ id, indexTo }) {
         const indexFrom = this.findElemById(id);
         if (indexFrom && indexTo <= this.store.length) {
             const copy = {
@@ -84,4 +91,17 @@ module.exports = class Store {
             this.store.splice(indexTo, 0, copy);
         }
     }
-};
+
+    getStore(page, itemsCount) {
+        if (page && itemsCount) {
+            const leftBorder = Number(page) * Number(itemsCount);
+
+            return this.store.slice(leftBorder, leftBorder + Number(itemsCount));
+        }
+
+        return this.store;
+    }
+}
+
+
+module.exports = new Store();
