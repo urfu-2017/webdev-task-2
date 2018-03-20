@@ -1,20 +1,15 @@
 FROM node:8
 
-ENV NODE_ENV production
-
 RUN mkdir /app
 WORKDIR /app
 
-COPY package-lock.json /app
-COPY package.json /app
+COPY . /app
 
 RUN yarn install --production
 
 ENV PORT 4000
 
 ENV NODE_ENV=production
-
-COPY . /app
 
 EXPOSE 4000
 

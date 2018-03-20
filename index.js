@@ -9,6 +9,7 @@ const places = require('./mocks/places');
 const routes = require('./routes');
 const Place = require('./models/place');
 const { handleError } = require('./middlewares/error-handler');
+const { setCors } = require('./middlewares/cors-setter');
 
 places.forEach(place => new Place(place).save());
 
@@ -19,6 +20,8 @@ if (config.get('debug')) {
 }
 
 app.use(bodyParser.json());
+
+app.use(setCors);
 
 routes(app);
 

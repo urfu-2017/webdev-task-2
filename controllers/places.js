@@ -4,15 +4,17 @@ const Place = require('../models/place');
 
 exports.list = (req, res) => {
     const {
-        sortBy = 'date',
+        sortBy,
         pageSize = 10,
         pageNumber = 1,
-        description = '',
-        reverse = false
+        description = ''
     } = req.query;
 
-    let places = Place.findByDescription(sortBy, description);
-    places = reverse ? places.reverse() : places;
+    if (sortBy) {
+        Place.sortPlaces(sortBy);
+    }
+
+    let places = Place.findByDescription(description);
     places = places.slice(pageSize * (pageNumber - 1), pageSize * pageNumber);
 
     res.json(places);
@@ -47,21 +49,16 @@ exports.change = (req, res) => {
         return;
     }
 
-    const { description, isVisited } = req.body;
+    const { description, isVisited, indexNumber } = req.body;
 
-    if (description && typeof description !== 'string') {
-        res.status(400).send('description must be a string');
-
-        return;
-    }
-
-    if (isVisited && typeof isVisited !== 'boolean') {
-        res.status(400).send('isVisited must be boolean');
+    const errorMessage = getErrorMessage({ description, isVisited, indexNumber });
+    if (errorMessage) {
+        res.status(400).send(errorMessage);
 
         return;
     }
 
-    place.update({ description, isVisited });
+    place.update({ description, isVisited, indexNumber });
 
     res.status(200).send(place);
 };
@@ -76,3 +73,23 @@ exports.deleteAll = (req, res) => {
     Place.deleteAll();
     res.sendStatus(200);
 };
+
+function getErrorMessage({ description, isVisited, indexNumber }) {
+    if (isPropertyCorrect(description, 'string')) {
+        return 'description must be a string';
+    }
+
+    if (isPropertyCorrect(isVisited, 'boolean')) {
+        return 'isVisited must be boolean';
+    }
+
+    if (isPropertyCorrect(indexNumber, 'number')) {
+        return 'indexNumber must be a number';
+    }
+
+    return;
+}
+
+function isPropertyCorrect(property, typeOfProperty) {
+    return property && typeof property !== typeOfProperty;
+}

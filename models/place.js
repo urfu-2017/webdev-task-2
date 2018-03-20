@@ -10,27 +10,35 @@ class Place {
         this.creationDate = new Date();
         this.description = description;
         this.isVisited = false;
+        this.indexNumber = null;
     }
 
     save() {
         STORAGE.push(this);
+        this.indexNumber = STORAGE.length - 1;
     }
 
-    update({ description, isVisited }) {
+    update({ description, isVisited, indexNumber = this.indexNumber }) {
         this.description = description ? description : this.description;
         this.isVisited = isVisited ? isVisited : this.isVisited;
+        this.movePlace(indexNumber);
     }
 
-    static findByDescription(sortBy, description) {
-        const sortings = {
-            date: (place1, place2) => place1.creationDate < place2.creationDate ? -1 : 1,
-            description: (place1, place2) => place1.description < place2.description ? -1 : 1
-        };
+    movePlace(toIndex) {
+        toIndex = Math.floor(toIndex);
+        if (toIndex < 0 || toIndex >= STORAGE.length || toIndex === this.indexNumber) {
+            return;
+        }
 
-        let suitablePlaces = STORAGE.filter(place =>
-            place.description.toLowerCase().includes(description.toLowerCase()));
+        STORAGE[toIndex].indexNumber = this.indexNumber;
+        STORAGE[this.indexNumber] = STORAGE[toIndex];
+        STORAGE[toIndex] = this;
+        this.indexNumber = toIndex;
+    }
 
-        suitablePlaces.sort(sortings[sortBy.toLowerCase()]);
+    static findByDescription(description) {
+        let suitablePlaces = STORAGE
+            .filter(place => place.description.toLowerCase().includes(description.toLowerCase()));
 
         return suitablePlaces;
     }
@@ -46,6 +54,17 @@ class Place {
 
     static deleteAll() {
         STORAGE.splice(0, STORAGE.length);
+    }
+
+    static sortPlaces(sortBy) {
+        const sortings = {
+            date: (place1, place2) => place1.creationDate < place2.creationDate ? -1 : 1,
+            description: (place1, place2) => place1.description < place2.description ? -1 : 1
+        };
+        STORAGE.sort(sortings[sortBy.toLowerCase()]);
+        STORAGE.forEach((place, index) => {
+            place.indexNumber = index;
+        });
     }
 }
 
