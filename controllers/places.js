@@ -17,7 +17,7 @@ exports.getPlaces = (req, res) => {
 };
 
 exports.getPlacesPage = (req, res) => {
-    const places = store.getPage(req.params.number);
+    const places = store.getPage(Number(req.params.number));
 
     if (places === null) {
         errors.error400(req, res);
@@ -41,8 +41,8 @@ exports.searchPlaces = (req, res) => {
 };
 
 exports.removePlaces = (req, res) => {
-    if (req.query.uuid) {
-        const place = store.remove(req.query.uuid);
+    if (req.query.id) {
+        const place = store.remove(req.query.id);
 
         if (place === null) {
             errors.error400(req, res);
@@ -57,15 +57,15 @@ exports.removePlaces = (req, res) => {
 };
 
 exports.swapPlaces = (req, res) => {
-    if (!(req.query.uuid1 && req.query.uuid2)) {
-        errors.error400(req, res);
+    if (!(req.query.id1 && req.query.id2)) {
+        errors.error404(req, res);
 
         return;
     }
 
-    const places = store.swap(req.query.uuid1, req.query.uuid2);
+    const places = store.swap(req.query.id1, req.query.id2);
 
-    if (!places) {
+    if (places === null) {
         errors.error400(req, res);
 
         return;
@@ -82,22 +82,21 @@ exports.createPlace = (req, res) => {
 };
 
 exports.editPlace = (req, res) => {
-    let requiredParams = req.query.uuid &&
+    const hasRequiredParams = req.params.id &&
         ((req.body.name && req.body.description) || req.body.visited);
-    if (!requiredParams) {
-        errors.error400(req, res);
+    if (!hasRequiredParams) {
+        errors.error404(req, res);
 
         return;
     }
 
-    const uuid = req.query.uuid;
-    const place = store.edit(uuid, {
+    const place = store.edit(req.params.id, {
         name: req.body.name,
         description: req.body.description,
         visited: req.body.visited
     });
 
-    if (!place) {
+    if (place === null) {
         errors.error400(req, res);
 
         return;

@@ -35,19 +35,27 @@ class PlacesStore {
         return pages;
     }
 
-    getPage(number) {
-        const pagesCount = Math.ceil(this.store.length / DEFAULT_PAGE_SIZE);
-        if (number > pagesCount) {
+    getPage(pageNumber, pageSize = DEFAULT_PAGE_SIZE) {
+        const pagesCount = Math.ceil(this.store.length / pageSize);
+        if (pageNumber > pagesCount) {
             return null;
         }
 
-        return this._splitIntoPages()[number - 1];
+        return this.store.reduce((acc, place, index) => {
+            const pageIndex = Math.floor(index / pageSize);
+
+            return (pageIndex + 1 === pageNumber)
+                ? [...acc, place]
+                : acc;
+        }, []);
     }
 
     search(query) {
-        const lower = query.toLowerCase();
+        const lowerQuery = query.toLowerCase();
 
-        return this.store.filter(x => x.name.includes(lower) || x.description.includes(lower));
+        return this.store.filter(place =>
+            place.name.toLowerCase().includes(lowerQuery) ||
+            place.description.toLowerCase().includes(lowerQuery));
     }
 
     drop() {
@@ -58,8 +66,8 @@ class PlacesStore {
         this.store.push(place);
     }
 
-    remove(placeUUID) {
-        const index = this.store.findIndex(x => x.uuid === placeUUID);
+    remove(placeID) {
+        const index = this.store.findIndex(x => x.id === placeID);
 
         if (index === -1) {
             return null;
@@ -68,9 +76,9 @@ class PlacesStore {
         return this.store.splice(index, 1)[0];
     }
 
-    swap(firstUUID, secondUUID) {
-        const firstIndex = this.store.findIndex(x => x.uuid === firstUUID);
-        const secondIndex = this.store.findIndex(x => x.uuid === secondUUID);
+    swap(firstID, secondID) {
+        const firstIndex = this.store.findIndex(x => x.id === firstID);
+        const secondIndex = this.store.findIndex(x => x.id === secondID);
 
         if (firstIndex === -1 || secondIndex === -1) {
             return null;
@@ -84,8 +92,8 @@ class PlacesStore {
         return this.store;
     }
 
-    edit(placeUUID, { name, description, visited }) {
-        const place = this.store.find(x => x.uuid === placeUUID);
+    edit(placeID, { name, description, visited }) {
+        const place = this.store.find(x => x.id === placeID);
 
         if (!place) {
             return null;

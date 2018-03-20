@@ -11,6 +11,6 @@ module.exports = app => {
         .delete('/', controller.removePlaces)
         .patch('/swapped', controller.swapPlaces)
         .post('/', controller.createPlace)
-        .patch('/', controller.editPlace)
+        .patch('/:id', controller.editPlace)
         .all('*', errors.error404);
 };
