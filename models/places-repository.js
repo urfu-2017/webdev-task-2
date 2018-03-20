@@ -2,6 +2,19 @@
 
 let places = [];
 
+function buildComparatorBy(orderingKey) {
+    return function (a, b) {
+        if (a[orderingKey] < b[orderingKey]) {
+            return -1;
+        }
+        if (a[orderingKey] > b[orderingKey]) {
+            return 1;
+        }
+
+        return 0;
+    };
+}
+
 class PlacesRepository {
     static insert(place) {
         places.push(place);
@@ -11,10 +24,10 @@ class PlacesRepository {
         places = [];
     }
 
-    static getAll(orderBy, offset, limit) {
+    static getAll(orderingKey, offset, limit) {
         const result = places.slice(0);
-        if (orderBy !== null) {
-            result.sort(x => x[orderBy]);
+        if (orderingKey !== null) {
+            result.sort(buildComparatorBy(orderingKey));
         }
 
         return places.slice(offset, offset + limit);
@@ -29,14 +42,14 @@ class PlacesRepository {
     }
 
     static tryMove(place, offset) {
-        const curPos = places.indexOf(place);
-        const newPos = curPos + offset;
-        const isOutOfRange = (newPos < 0 || newPos >= places.length);
+        const currentPosition = places.indexOf(place);
+        const newPosition = currentPosition + offset;
+        const isOutOfRange = (newPosition < 0 || newPosition >= places.length);
         if (isOutOfRange) {
             return false;
         }
-        places.splice(curPos, 1);
-        places.splice(newPos, 0, place);
+        places.splice(currentPosition, 1);
+        places.splice(newPosition, 0, place);
 
         return true;
 

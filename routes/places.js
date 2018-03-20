@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const place = require('../controllers/place');
 const placesList = require('../controllers/places-list');
+const { findPlaceMiddleware } = require('../middlewares/utils');
 const { jsonOnly } = require('../controllers/errors');
 
 
@@ -14,13 +15,13 @@ router.route('/')
 
 
 router.route('/:id')
-    .all(place.validateId)
+    .all(findPlaceMiddleware)
 
     .get(place.get)
     .patch(jsonOnly, place.update)
     .delete(place.remove);
 
 router.route('/:id/move')
-    .post(place.validateId, jsonOnly, place.validators.move, place.move);
+    .post(findPlaceMiddleware, jsonOnly, place.validators.move, place.move);
 
 module.exports = router;

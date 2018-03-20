@@ -19,7 +19,7 @@ module.exports.validators = {
             .isIn(['createdAt', 'description']),
         query('offset')
             .optional()
-            .isInt({ min: 0, max: Number.MAX_SAFE_INTEGER }),
+            .isInt({ min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER }),
         query('limit')
             .optional()
             .isInt({ min: 0, max: 200 }),
