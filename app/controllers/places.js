@@ -23,8 +23,8 @@ exports.get = (req, res) => {
     let requestedPlaces = localPlaces.slice(offset, limit + offset);
 
     if (query) {
-        requestedPlaces = requestedPlaces.filter(({ description }) => {
-            return description.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+        requestedPlaces = requestedPlaces.filter(({ name }) => {
+            return name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
         });
     }
 
@@ -52,8 +52,7 @@ exports.getByName = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    let placeName = req.body.name;
-    let desc = req.body.description;
+    let placeName = req.params.name;
     let isAlreadyAdded = Boolean(localPlaces.find(({ name }) => name === placeName));
 
     if (isAlreadyAdded) {
@@ -68,13 +67,7 @@ exports.add = (req, res) => {
         return;
     }
 
-    if (!desc) {
-        errors.error400(req, res).send(`Description is not specified at ${req.method} request`);
-
-        return;
-    }
-
-    localPlaces.push(new Place(placeName, desc, Date.now()));
+    localPlaces.push(new Place(placeName, Date.now()));
 
     res.status(201).send(`Added note: ${placeName}`);
 };

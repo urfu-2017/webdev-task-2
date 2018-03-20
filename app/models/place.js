@@ -1,9 +1,8 @@
 'use strict';
 
 class Place {
-    constructor(name, description, createdAt) {
+    constructor(name, createdAt) {
         this.name = name;
-        this.description = description;
         this.createdAt = createdAt;
         this.isVisited = false;
     }
