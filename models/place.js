@@ -43,6 +43,7 @@ class Place {
         let index2;
         let place1;
         let place2;
+
         for (let i = 0; i < storage.length; i++) {
             if (storage[i].id === id1) {
                 index1 = i;
