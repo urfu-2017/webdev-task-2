@@ -1,11 +1,28 @@
 {
   "private": true,
   "scripts": {
+    "build": "babel app -d ./build",
+    "dev": "nodemon app/app.js --exec babel-node",
+    "start": "node ./build/app.js",
     "lint": "eslint .",
     "test": "npm run lint"
   },
+  "dependencies": {
+    "body-parser": "1.18.2",
+    "cors": "2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2",
+    "http-status-codes": "1.3.0",
+    "realm": "2.2.15"
+  },
   "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-plugin-transform-class-properties": "6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "1.6.1",
     "eslint": "4.18.0",
-    "eslint-config-hrundel": "1.3.0"
+    "eslint-config-hrundel": "1.3.0",
+    "nodemon": "^1.17.1"
   }
 }
