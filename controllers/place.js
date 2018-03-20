@@ -1,64 +1,71 @@
 'use strict';
 
 const Place = require('../models/place');
+const ServerError = require('../errors/serverError');
+const errorMessages = require('../errors/errorMessages');
 
 exports.create = (req, res) => {
-    let place = new Place(req.params.name);
+    const place = new Place(req.body);
     place.save();
-    res.statusCode = 201;
-    res.send(place);
+    res.status(201).send(place);
 };
 
-exports.list = (req, res) => {
-    let places = Place.getAll(req.params.fieldSort, req.params.order);
-    res.status(200);
-    res.send(places);
-};
 
-exports.find = (req, res) => {
-    let place = Place.tryfind(req.params.name);
-    if (place) {
-        res.statusCode = 200;
-        res.send(place);
-    } else {
-        res.sendStatus(400);
+exports.getAll = (req, res, next) => {
+    const { name, visited, sortBy, order, from, to } = req.query;
+    const places = Place.getAll({ name, visited, from: Number(from), to: Number(to) },
+        { sortBy, order }
+    );
+    if (!places) {
+        next(new ServerError(errorMessages.INVALID_INPUT_PARAMETERS, 400));
     }
+    res.status(200).send(places);
 };
 
-exports.edit = (req, res) => {
-    let result = Place.tryEdit(req.params.name, req.params.newName);
-    if (result) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(400);
+exports.get = (req, res, next) => {
+    const { id } = req.params;
+    const place = Place.get(Number(id));
+    if (!place) {
+        return next(new ServerError(errorMessages.PLACE_NOT_FOUND, 400));
     }
+    res.status(200).send(place);
 };
 
-exports.visit = (req, res) => {
-    let result = Place.tryVisit(req.params.name, req.params.isVisited !== 'false');
-    if (result) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(400);
+exports.edit = (req, res, next) => {
+    const { name } = req.body;
+    const { id } = req.params;
+    const place = Place.edit(Number(id), { name });
+    if (!place) {
+        return next(new ServerError(errorMessages.PLACE_NOT_FOUND, 400));
     }
+    res.status(200).send(place);
 };
 
-exports.delete = (req, res) => {
-    let result = Place.tryDelete(req.params.name);
-    if (result) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(400);
+exports.visit = (req, res, next) => {
+    let { id, isVisited } = req.params;
+    isVisited = isVisited !== 'false';
+    const place = Place.edit(Number(id), { visited: isVisited });
+    if (!place) {
+        return next(new ServerError(errorMessages.PLACE_NOT_FOUND, 400));
     }
+    res.status(200).send(place);
 };
 
-exports.swap = (req, res) => {
-    let result = Place.trySwap(Number(req.params.index1), Number(req.params.index2));
-    if (result) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(400);
+exports.delete = (req, res, next) => {
+    const { id } = req.params;
+    const result = Place.remove(Number(id));
+    if (!result) {
+        return next(new ServerError(errorMessages.PLACE_NOT_FOUND, 400));
     }
+    res.sendStatus(200);
+};
+
+exports.swap = (req, res, next) => {
+    const result = Place.swap(Number(req.params.index1), Number(req.params.index2));
+    if (!result) {
+        return next(new ServerError(errorMessages.PLACE_NOT_FOUND, 400));
+    }
+    res.sendStatus(200);
 };
 
 exports.clear = (req, res) => {
