@@ -16,15 +16,16 @@ exports.getPlaces = (req, res) => {
 
 exports.getPage = (req, res) => {
     let pageNumber = Number(req.params.pageNumber);
-    let pages = chunkArrayInGroups(Place.getAll(), PLACES_COUNT_PER_PAGE);
+    let placesCount = Number(req.query.placesCount) || PLACES_COUNT_PER_PAGE;
+    let pages = chunkArrayInGroups(Place.getAll(), placesCount);
 
     res.send(pages[--pageNumber]);
 };
 
 exports.createPlace = (req, res) => {
-    const note = new Place(req.body);
+    const place = new Place(req.body);
 
-    note.save();
+    place.save();
     res.sendStatus(201);
 };
 
@@ -42,7 +43,7 @@ exports.updatePlace = (req, res) => {
 };
 
 exports.deletePlaces = (req, res) => {
-    let id = Number(req.query.id);
+    const id = Number(req.query.id);
     if (isNaN(id)) {
         Place.deleteAll();
     } else {

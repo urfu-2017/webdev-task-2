@@ -8,7 +8,6 @@ let idToPlaceInList = {};
 class Place {
     constructor({ name, description }) {
         this.id = currentId++;
-        this.placeInList = currentPlaceInList++;
         this.name = name;
         this.description = description;
         this.isVisited = false;
@@ -16,9 +15,8 @@ class Place {
     }
 
     save() {
-        idToPlaceInList[this.id] = this.placeInList;
-
-        list[this.placeInList] = this;
+        idToPlaceInList[this.id] = currentPlaceInList++;
+        list[idToPlaceInList[this.id]] = this;
     }
 
     static getAll() {
@@ -60,11 +58,8 @@ class Place {
         let firstPlace = list[firstPlaceInList];
         let secondPlace = list[secondPlaceInList];
 
-        secondPlace.placeInList = firstPlaceInList;
-        firstPlace.placeInList = secondPlaceInList;
-
-        idToPlaceInList[secondId] = secondPlace.placeInList;
-        idToPlaceInList[firstId] = firstPlace.placeInList;
+        idToPlaceInList[secondId] = firstPlaceInList;
+        idToPlaceInList[firstId] = secondPlaceInList;
 
         list[firstPlaceInList] = secondPlace;
         list[secondPlaceInList] = firstPlace;

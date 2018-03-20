@@ -1,8 +1,9 @@
 'use strict';
 
+const { descendingSort } = require('./arrayHelper');
+
 const ASC_VALUE = 'asc';
 const DESC_VALUE = 'desc';
-const { descendingSort } = require('./arrayHelper');
 
 exports.getPlacesByDescription = (allPlaces, description) => {
     if (description !== undefined) {

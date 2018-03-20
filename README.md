@@ -24,7 +24,7 @@
 - Возможность получения списка мест (GET /places)
     - Можно сортировать по дате создания (GET /places/?dateSort={asc|desc})
     - Можно сортировать по алфавиту (GET /places/?dateSort={asc|desc})
-    - Можно выводить список мест постранично (GET /places/page/{number})
+    - Можно выводить список мест постранично (GET /places/page/{number}?placesCount={number})
 - Возможность поиска места по его описанию (GET /places/?description=text)
 - Возможность редактирования описания конкретного места (PATCH /places)
 - Возможность отметить место посещённым или непосещённым (PATCH /places)
