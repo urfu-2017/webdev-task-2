@@ -21,11 +21,11 @@ class Record {
     }
   }
 
-  static getAllRecords() {
+  static getAll() {
     return storage;
   }
 
-  static getSortedRecords(sortType) {
+  static getSorted(sortType) {
     if (sortType === 'date') {
       return storage.concat().sort((a, b) => a.creationDate.localeCompare(b.creationDate));
     }
@@ -33,10 +33,10 @@ class Record {
     if (sortType === 'alph' || sortType === 'alphabet') {
       return storage.concat().sort((a, b) => a.place.localeCompare(b.place));
     }
-    return Record.getAllRecords();
+    return Record.getAll();
   }
 
-  static getPageRecords(page) {
+  static getPage(page) {
     if ((page - 1) * recordsPerPage <= storage.length) {
       return storage.slice((page - 1) * recordsPerPage, page * recordsPerPage);
     }
@@ -68,7 +68,7 @@ class Record {
     } else {
       record[property] = update;
     }
-    return `property '${property}' update successful`;
+    return `Property '${property}' update successful`;
   }
 
   static delete(id) {

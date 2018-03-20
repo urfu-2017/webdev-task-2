@@ -1,9 +1,7 @@
 const Record = require('../models/record');
 
 exports.create = (req, res) => {
-  console.log(req.body);
   const record = new Record({ ...req.body, isVisited: false });
-  console.log(record);
   record.save();
 
   res.redirect(200, '/api');
@@ -11,14 +9,14 @@ exports.create = (req, res) => {
 
 exports.list = (req, res) => {
   if (req.query.sort) {
-    res.json(Record.getSortedRecords(req.query.sort));
+    res.json(Record.getSorted(req.query.sort));
     return;
   }
   if (req.query.page) {
-    res.json(Record.getPageRecords(req.query.page));
+    res.json(Record.getPage(req.query.page));
     return;
   }
-  res.json(Record.getAllRecords());
+  res.json(Record.getAll());
 };
 
 exports.search = (req, res) => {
@@ -30,7 +28,7 @@ exports.update = (req, res) => {
   const { id, move } = req.query;
   const json = { message: '' };
   if (id && property && update) {
-    json.message = `${json.message + Record.updateProperty({ id, property, update })}\n`;
+    json.message = `${json.message + Record.updateProperty({ id, property, update })}; `;
   }
   if (id && move) {
     json.message = `${json.message + Record.move(id, move)}`;

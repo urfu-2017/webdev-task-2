@@ -5,4 +5,5 @@ module.exports = {
     'isVisited',
     'description',
   ],
+  debug: true,
 };
