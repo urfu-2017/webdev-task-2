@@ -1,4 +1,4 @@
-/* eslint-disable new-cap */
+/* eslint-disable linebreak-style */
 'use strict';
 
 const winston = require('winston');
@@ -8,6 +8,7 @@ function getLogger(module) {
         .join('/'); // отобразим метку с именем файла, который выводит
     // сообщение
 
+    // eslint-disable-next-line new-cap
     return new winston.createLogger({
         transports: [
             new winston.transports.Console({
