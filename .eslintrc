@@ -1,3 +1,7 @@
 {
-    "extends": "hrundel/node"
+    "extends": "hrundel/node",
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 2017
+    }
 }

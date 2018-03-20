@@ -1,0 +1,5 @@
+{
+    "apiPath": "/api",
+    "defaultSightsPerPage": 5,
+    "defaultOrdering": "default"
+}
