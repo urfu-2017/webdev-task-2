@@ -8,10 +8,10 @@ class Storage {
         this.currentId = 0;
     }
 
-    search({ sort, start, count, description }) {
+    search(sort, start, count, description) {
         let res = this.places.slice();
         if (sort === 'lex') {
-            res = res.sort((a, b) => a.description.localeCompare(b.description));
+            res.sort((a, b) => a.description.localeCompare(b.description));
         }
         if (description) {
             res = res.filter(x => x.description.includes(description));
@@ -26,19 +26,19 @@ class Storage {
         return res;
     }
 
-    append({ description }) {
+    append(description) {
         this.places.push({ description,
             visited: false, id: this.currentId++, date: Date.now() });
     }
 
-    edit(id, newData) {
-        const targetPlace = this.places.find(place => place.id === Number(id));
-        if (targetPlace === undefined) {
-            return false;
-        }
-        const { description, visited, index } = newData;
+    find(id) {
+        return this.places.find(place => place.id === Number(id));
+    }
+
+    edit(targetPlace, params) {
+        const { description, visited, index } = params;
         if (index >= 0 && index !== null) {
-            this.places = this.places.filter(place => place.id !== Number(id));
+            this.places = this.places.filter(place => place.id !== Number(targetPlace.id));
             this.places.splice(index, 0, targetPlace);
         }
         if (visited !== undefined) {
@@ -47,8 +47,6 @@ class Storage {
         if (description !== undefined) {
             targetPlace.description = description;
         }
-
-        return true;
     }
 
     delete(id) {
