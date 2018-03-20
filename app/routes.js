@@ -3,6 +3,7 @@
 const places = require('./controllers/places');
 const parseQuery = require('./middlewares/listQueryParser');
 const parseId = require('./middlewares/idParser');
+const parseSwapQuery = require('./middlewares/swapQueryParser');
 
 module.exports = app => {
     app.route('/places')
@@ -15,7 +16,7 @@ module.exports = app => {
         .delete(parseId, places.deleteById)
         .get(parseId, places.getById);
 
-    app.put('/places/shuffle', places.shuffle);
+    app.put('/places/swap', parseSwapQuery, places.swap);
     app.patch('/places/:id/description/:newValue', parseId, places.updateDescription);
     app.patch('/places/:id/mark/:newValue', parseId, places.updateMark);
 };
