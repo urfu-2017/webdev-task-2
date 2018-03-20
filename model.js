@@ -3,7 +3,7 @@
 const { isUndefined } = require('util');
 const ObjectID = require('mongodb').ObjectID;
 
-module.exports.addPlace = function (req, res, database) {
+module.exports.addPlace = function (req, res, database, site) {
     if (isUndefined(req.body.description) || isUndefined(req.body.name)) {
         res.send({ 'error': 'empty description or name of place' });
     } else {
@@ -11,7 +11,8 @@ module.exports.addPlace = function (req, res, database) {
             name: req.body.name,
             description: req.body.description,
             visit: false,
-            createDate: new Date() };
+            createDate: new Date(),
+            site: site };
         database.insert(place, (err, result) => {
             if (err) {
                 res.send({ 'error': 'An error has occurred' });
@@ -76,6 +77,10 @@ module.exports.getPlaces = function (req, res, database) {
                 } else {
                     if (!isUndefined(req.query.sort)) {
                         sortPlaces(items, req.query.sort);
+                    } else {
+                        items.sort((first, second) => {
+                            return first.site - second.site;
+                        });
                     }
                     res.send(items);
                 }
@@ -97,6 +102,10 @@ module.exports.getPlacesPage = function (req, res, database) {
                 } else {
                     if (!isUndefined(req.query.sort)) {
                         sortPlaces(items, req.query.sort);
+                    } else {
+                        items.sort((first, second) => {
+                            return first.site - second.site;
+                        });
                     }
                     let size = isUndefined(req.query.count) ? 10 : parseInt(req.query.count);
                     let subarray = [];
@@ -165,6 +174,28 @@ module.exports.updatePlace = function (req, res, database) {
                     res.send({ 'error': 'An error has occurred' });
                 } else {
                     res.send(place);
+                }
+            });
+        }
+    });
+};
+
+module.exports.changeSite = function (req, res, database) {
+    const firstID = { '_id': new ObjectID(req.query.first) };
+    const secondID = { '_id': new ObjectID(req.query.second) };
+    database.findOne(firstID, { site: 1 }, function (err, firstDoc) {
+        if (err) {
+            res.send({ 'error': 'An error has occurred' });
+        } else {
+            var firstSite = firstDoc.site;
+            database.findOne(secondID, { site: 1 }, function (subErr, secondDoc) {
+                if (subErr) {
+                    res.send({ 'error': 'An error has occurred' });
+                } else {
+                    var secondSite = secondDoc.site;
+                    database.update(firstID, { $set: { site: secondSite } });
+                    database.update(secondID, { $set: { site: firstSite } });
+                    res.send('Swap done.');
                 }
             });
         }

@@ -2,10 +2,11 @@
 
 const model = require('./model');
 
-module.exports = function (app, database) {
+module.exports = function (app, database, countOfPlaces) {
 
     app.post('/places/add', (req, res) => {
-        model.addPlace(req, res, database);
+        model.addPlace(req, res, database, countOfPlaces);
+        countOfPlaces += 1;
     });
 
     app.delete('/places/delete/:id', (req, res) => {
@@ -14,6 +15,7 @@ module.exports = function (app, database) {
 
     app.delete('/places/deleteall', (req, res) => {
         model.deleteAll(req, res, database);
+        countOfPlaces = 0;
     });
 
     app.get('/places', (req, res) => {
@@ -30,5 +32,9 @@ module.exports = function (app, database) {
 
     app.get('/places/description', (req, res) => {
         model.findByDescription(req, res, database);
+    });
+
+    app.put('/places/site/update', (req, res) => {
+        model.changeSite(req, res, database);
     });
 };

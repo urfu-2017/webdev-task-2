@@ -10,7 +10,17 @@ MongoClient.connect(db.url, (err, client) => {
     if (err) {
         console.error(err);
     }
-    require('./routes.js')(app, client.db('places').collection('places'));
+    client.db('places').collection('places')
+        .find()
+        .sort({ site: -1 })
+        .limit(1)
+        .toArray((subErr, items) => {
+            if (subErr) {
+                console.error(subErr);
+            }
+            let count = items.length === 0 ? 0 : items[0].site + 1;
+            require('./routes.js')(app, client.db('places').collection('places'), count);
+        });
 });
 
 module.exports = app;
