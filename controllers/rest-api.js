@@ -1,4 +1,4 @@
-import sights from '../models/sights';
+import * as sights from '../models/sights';
 import config from '../config/rest-api-config';
 
 
@@ -69,7 +69,7 @@ const _getSightsPageParams = (sightsPerPage, pageNumber) => {
 
 export const getSightsPage = (req, res) => {
     const params = _getSightsPageParams(req.query.sightsPerPage,
-        Number(req.params.pageNumber));
+        req.params.pageNumber);
     if (!params) {
         res.sendStatus(400);
     }
@@ -84,9 +84,7 @@ export const getSightsPage = (req, res) => {
 
     const start = (pageNumber - 1) * sightsPerPage;
     const page = orderedSights.slice(start, start + sightsPerPage);
-    if (!page.length && pageNumber !== 1) {
-        res.sendStatus(404);
-    } else {
+    if (!_send404IfNotFound(page.length || pageNumber === 1)) {
         res.json(page);
     }
 };
