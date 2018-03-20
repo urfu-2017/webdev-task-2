@@ -2,10 +2,11 @@
 const express = require('express');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
+const notesStorage = require('./middlewares/notes-storage');
 
 const app = express();
-global.notes = [];
 
+app.use(notesStorage.memory);
 app.use(bodyParser.json());
 routes(app);
 

@@ -23,7 +23,7 @@ module.exports = app => {
         .get(getNote)
         .delete(deleteNote);
 
-    app.patch('/:name/:state', changeNoteState);
+    app.patch('/:name/:state(visit|unvisit)', changeNoteState);
 
     app.delete('/', clearList);
     app.all('*', (req, res) => {

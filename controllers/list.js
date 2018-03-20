@@ -1,9 +1,14 @@
 
 'use strict';
-
+const { Notes } = require('../models/notes');
 function getList(req, res) {
-    let notes = global.notes.slice(0);
-    sortNotes(req, res, notes);
+    let notes = (new Notes(req.storage)).getAll()
+        .slice();
+    if (!sortNotes(req, notes)) {
+        res.sendStatus(400);
+
+        return;
+    }
 
     if (!checkInteger(req.query.page) || !checkInteger(req.query.count)) {
         req.sendStatus(400);
@@ -56,35 +61,41 @@ function sortByDate(a, b) {
     return 0;
 }
 
-function sortNotes(req, res, notes) {
+function sortNotes(req, notes) {
     let sortMultiplier = 1;
-    if (/^DESC$/i.test(req.query.orderBy)) {
+    let order = req.query.orderBy;
+    if (order !== undefined && order.toLowerCase() === 'desc') {
         sortMultiplier = -1;
     }
     let sortBy = req.query.sortBy;
     if (sortBy === undefined) {
-        return;
+        return true;
     }
     if (sortBy === 'alphabet') {
         notes.sort(sortMultiplier * sortByAlphabet);
 
-        return;
+        return true;
     }
     if (sortBy === 'date') {
         notes.sort(sortMultiplier * sortByDate);
 
-        return;
+        return true;
     }
-    res.sendStatus(400);
+
+    return false;
 }
 
 function clearList(req, res) {
-    global.notes = [];
+    let notesModel = new Notes(req.storage);
+    notesModel.clear();
     res.sendStatus(200);
 }
 
 function editList(req, res) {
     let permutations = req.body.permutations;
+    const notesModel = new Notes(req.storage);
+    const length = notesModel.getLength();
+
     if (permutations === undefined ||
         !Array.isArray(permutations)) {
         res.sendStatus(400);
@@ -92,24 +103,23 @@ function editList(req, res) {
         return;
     }
     if (permutations.some(permutation =>
-        isBadPermutationPart(permutation.was) || isBadPermutationPart(permutation.become))) {
+        isBadPermutationPart(permutation.was, length) ||
+        isBadPermutationPart(permutation.become, length))) {
         res.sendStatus(400);
 
         return;
     }
     permutations.forEach(permutation => {
-        let temp = global.notes[permutation.was];
-        global.notes[permutation.was] = global.notes[permutation.become];
-        global.notes[permutation.become] = temp;
+        notesModel.swap(permutation.was, permutation.become);
     });
     res.sendStatus(200);
 }
 
-function isBadPermutationPart(permutationValue) {
+function isBadPermutationPart(permutationValue, length) {
     return permutationValue === undefined ||
         !Number.isInteger(permutationValue) ||
         permutationValue < 0 ||
-        permutationValue >= global.notes.length;
+        permutationValue >= length;
 }
 
 exports.clearList = clearList;

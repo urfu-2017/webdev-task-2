@@ -1,14 +1,14 @@
 'use strict';
-const { findIndexByName } = require('../utils/utils');
 
-function checkData(req, res) {
+const { Notes } = require('../models/notes');
+function checkData(req) {
     const note = req.body;
     const name = req.params.name;
+    const notesModel = new Notes(req.storage);
+    let notes = notesModel.getAll();
 
     if (name === undefined || name.length === 0 || note.description === undefined ||
-        global.notes.some(savedNote => savedNote.name === name)) {
-        res.sendStatus('400');
-
+        notes.some(savedNote => savedNote.name === name)) {
         return false;
     }
 
@@ -16,31 +16,42 @@ function checkData(req, res) {
 }
 
 function saveNote(req, res) {
-    const resultChecking = checkData(req, res);
+    const resultChecking = checkData(req);
     if (!resultChecking) {
+        res.sendStatus('400');
+
         return;
     }
     const { note, name } = resultChecking;
 
-    global.notes.push({
-        name,
-        description: note.description,
-        date: new Date(),
-        visited: false
-    });
+    const notesModel = new Notes(req.storage);
+
+    notesModel.add(name, note.description);
     res.sendStatus(200);
 }
 
 function editNote(req, res) {
-    const { note, name } = checkData(req, res);
+    const resultChecking = checkData(req);
+    if (!resultChecking) {
+        res.sendStatus('400');
 
-    const foundIndex = findIndexByName(name);
+        return;
+    }
+    const { note, name } = resultChecking;
+
+    const notesModel = new Notes(req.storage);
+
+    const foundIndex = notesModel.findIndexByName(name);
 
     if (foundIndex === -1) {
         res.sendStatus(404);
+
+        return;
     }
 
-    global.notes[foundIndex].description = note.description;
+
+    notesModel.editDescription(foundIndex, note.description);
+
     res.sendStatus(200);
 }
 
@@ -49,13 +60,18 @@ function getNote(req, res) {
 
     if (name === undefined) {
         res.sendStatus(404);
-    }
 
-    const foundIndex = findIndexByName(name);
+        return;
+    }
+    const notesModel = new Notes(req.storage);
+    const foundIndex = notesModel.findIndexByName(name);
     if (foundIndex === -1) {
         res.sendStatus(404);
+
+        return;
     }
-    res.json(global.notes[foundIndex]);
+
+    res.json(notesModel.getByIndex(foundIndex));
 }
 
 function deleteNote(req, res) {
@@ -63,41 +79,39 @@ function deleteNote(req, res) {
 
     if (name === undefined) {
         res.sendStatus(404);
-    }
 
-    const foundIndex = findIndexByName(name);
+        return;
+    }
+    const notesModel = new Notes(req.storage);
+
+    const foundIndex = notesModel.findIndexByName(name);
     if (foundIndex === -1) {
         res.sendStatus(404);
     }
 
-    delete global.notes[foundIndex];
+    notesModel.delete(foundIndex);
     res.sendStatus(200);
 }
 
 function changeNoteState(req, res) {
-    const name = req.params.name;
-
-    if (name === undefined) {
+    if (req.params.name === undefined) {
         res.sendStatus(404);
+
+        return;
     }
 
-    const visited = -1;
-    if (req.params.state === 'visit') {
-        visited = true;
-    }
-    if (req.params.state === 'unvisit') {
-        visited = false;
-    }
-    if (visited === -1) {
-        res.sendStatus(400);
-    }
+    const visitState = req.params.state === 'visit';
 
-    const foundIndex = findIndexByName(name);
+    const notesModel = new Notes(req.storage);
+
+    const foundIndex = notesModel.findIndexByName(req.params.name);
     if (foundIndex === -1) {
         res.sendStatus(404);
+
+        return;
     }
 
-    global.notes[foundIndex].visited = visited;
+    notesModel.setVisitState(foundIndex, visitState);
     res.sendStatus(200);
 }
 
@@ -106,13 +120,15 @@ function findNotes(req, res) {
     if (body.description === undefined) {
         res.sendStatus(400);
     }
+    const notesModel = new Notes(req.storage);
 
+    const notes = notesModel.getAll();
     let description = body.description;
     description.split(' ')
         .filter((word) => word.length !== 0)
         .forEach((word) => {
             let countWords = [];
-            global.notes.forEach((note, index) => {
+            notes.forEach((note, index) => {
                 const findWord = new RegExp(word, 'gi');
                 while (findWord.exec(note.description) !== null) {
                     if (countWords[index] === undefined) {
@@ -124,7 +140,7 @@ function findNotes(req, res) {
             });
             let result = countWords
                 .sort(sortByCount)
-                .map(countContainer => global.notes[countContainer.index]);
+                .map(countContainer => notes[countContainer.index]);
             res.json(result);
         });
 }

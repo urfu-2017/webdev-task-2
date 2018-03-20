@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "start" : "node start.js",
     "lint": "eslint .",
     "test": "npm run lint",
     "mocha": "node_modules/.bin/mocha ./tests/tests.js"
