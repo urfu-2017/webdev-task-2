@@ -19,7 +19,7 @@ class Place {
 
     save() {
         this.id = idCounter++;
-        this.creationTime = Date.now();
+        this.creationTime = new Date();
 
         storage.push(this);
     }
@@ -28,6 +28,10 @@ class Place {
         const index = storage.findIndex(place => place.id === this.id);
 
         storage.splice(index, 1);
+    }
+
+    static create(description) {
+        return new Place(description);
     }
 
     static swap(id1, id2) {
@@ -66,7 +70,7 @@ class Place {
             ? arr => arr.slice(offset, limit)
             : arr => arr.slice(offset);
 
-        return slice(storage.sort(compareBy[sortName]));
+        return slice(storage.slice().sort(compareBy[sortName]));
     }
 }
 

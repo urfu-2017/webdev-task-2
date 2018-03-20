@@ -20,44 +20,45 @@ module.exports.find = (req, res) => {
 
 module.exports.create = (req, res) => {
     if (!req.body.description || Place.findByDescription(req.body.description)) {
-        res.sendStatus(409);
-    } else {
-        new Place(req.body.description).save();
-        res.sendStatus(201);
+        return res.sendStatus(400);
     }
+
+    Place.create(req.body.description).save();
+    res.sendStatus(201);
 };
 
 module.exports.update = (req, res) => {
     const place = Place.findById(req.params.id);
     const description = req.body.description;
 
-    if (place) {
-        if (description) {
-            place.description = description;
-
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(204);
-        }
-    } else {
-        res.sendStatus(404);
+    if (!place) {
+        return res.sendStatus(404);
     }
+    if (!description) {
+        return res.sendStatus(204);
+    }
+
+    place.description = description;
+
+    res.sendStatus(200);
 };
 
 module.exports.visit = (req, res) => {
-    const place = Place.findById(req.params.id);
+    const id = Number(req.params.id);
+    const place = Place.findById(id);
 
-    if (place) {
-        place.visited = true;
-
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(404);
+    if (!place) {
+        return res.sendStatus(404);
     }
+
+    place.visited = true;
+
+    res.sendStatus(200);
 };
 
 module.exports.swap = (req, res) => {
-    const success = Place.swap(req.params.id1, req.params.id2);
+    const [id1, id2] = [Number(req.params.id1), Number(req.params.id2)];
+    const success = Place.swap(id1, id2);
 
     res.sendStatus(success ? 200 : 404);
 };
@@ -68,12 +69,13 @@ module.exports.removeAll = (req, res) => {
 };
 
 module.exports.remove = (req, res) => {
-    const place = Place.findById(req.params.id);
+    const id = Number(req.params.id);
+    const place = Place.findById(id);
 
-    if (place) {
-        place.remove();
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(404);
+    if (!place) {
+        return res.sendStatus(404);
     }
+
+    place.remove();
+    res.sendStatus(200);
 };
