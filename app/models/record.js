@@ -7,7 +7,7 @@ const storage = [];
 
 class Record {
   constructor({
-    place, description, isVisited, date,
+    place, description, isVisited = false, date,
   }) {
     this.place = place;
     this.description = description;

@@ -1,7 +1,7 @@
 const Record = require('../models/record');
 
 exports.create = (req, res) => {
-  const record = new Record({ ...req.body, isVisited: false });
+  const record = new Record({ ...req.body });
   record.save();
 
   res.redirect(200, '/api');
