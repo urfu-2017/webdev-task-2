@@ -17,9 +17,9 @@ router.put('/', create)
 router.patch('/', swap)
 router.delete('/', clear)
 router.options('/', options)
-router.get('/:uuid', get)
-router.post('/:uuid', visit)
-router.patch('/:uuid', update)
-router.delete('/:uuid', remove)
+router.get('/:id', get)
+router.post('/:id', visit)
+router.patch('/:id', update)
+router.delete('/:id', remove)
 
 export default router

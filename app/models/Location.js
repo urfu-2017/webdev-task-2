@@ -1,11 +1,10 @@
 import Realm from 'realm'
-import generateUUID from 'uuid/v1'
 
 export class Location {
     static NAME = 'Location'
 
     static FIELDS = {
-        UUID: 'uuid',
+        ID: 'id',
         TYPE: 'type',
         TITLE: 'title',
         DESCRIPTION: 'description',
@@ -22,9 +21,9 @@ export class Location {
 
     static schema = {
         name: Location.NAME,
-        primaryKey: Location.FIELDS.UUID,
+        primaryKey: Location.FIELDS.ID,
         properties: {
-            [Location.FIELDS.UUID]: 'string',
+            [Location.FIELDS.ID]: 'int',
             [Location.FIELDS.TYPE]: 'string',
             [Location.FIELDS.TITLE]: 'string',
             [Location.FIELDS.DESCRIPTION]: 'string?',
@@ -34,18 +33,19 @@ export class Location {
         }
     }
 
-    static create = ({ type, title, description, visited = false, date = new Date(), order }) => ({
-        [Location.FIELDS.UUID]: generateUUID(),
+    static create = ({ id, type, title, description, visited = false, date, order }) => ({
+        [Location.FIELDS.ID]: id,
         [Location.FIELDS.TYPE]: Location.PLACE_TYPE[type],
         [Location.FIELDS.TITLE]: title,
         [Location.FIELDS.DESCRIPTION]: description,
         [Location.FIELDS.VISITED]: visited,
-        [Location.FIELDS.DATE]: date,
+        [Location.FIELDS.DATE]: date || new Date(),
         [Location.FIELDS.ORDER]: order
     })
 }
 
 export default new Realm({
-    path: `${Location.NAME}.realm`,
-    schema: [Location]
+    path: `/tmp/${Location.NAME}.realm`,
+    schema: [Location],
+    inMemory: true
 })

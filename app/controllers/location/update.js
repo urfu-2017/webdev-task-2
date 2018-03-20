@@ -17,7 +17,7 @@ const mapKeyToValue = (key, value) => {
 }
 
 export default ({ body, params }, res) => DB.write(() => {
-    const location = DB.objectForPrimaryKey(Location.NAME, params.uuid)
+    const location = DB.objectForPrimaryKey(Location.NAME, Number(params.id))
 
     if (location) {
         Object.entries(body)
