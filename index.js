@@ -1,13 +1,7 @@
 'use strict';
-require('dotenv').config();
 
-const express = require('express');
+const app = require('./app');
 
-const routes = require('./routes');
-const app = express();
-
-app.use(express.json());
-
-routes(app);
-
-module.exports = app;
+app.listen(process.env.PORT, () => {
+    console.info(`Server is listening on http://localhost:${process.env.PORT}`);
+});
