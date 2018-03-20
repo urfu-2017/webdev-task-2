@@ -14,6 +14,19 @@ module.exports.allowContentType = contentType => (req, res, next) => {
 
 module.exports.jsonOnly = module.exports.allowContentType('application/json');
 
+module.exports.preFlightCorsOnAllDomains = function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PATCH,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    if (req.method === 'OPTIONS') {
+        res.status(HttpStatus.OK).send();
+    } else {
+        next();
+    }
+};
+
 module.exports.ensureNoErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
