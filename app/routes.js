@@ -1,4 +1,3 @@
-const { error404 } = require('./controllers/errors');
 const {
   create, list, search, update, remove,
 } = require('./controllers/records');
@@ -19,8 +18,4 @@ apiRoutes.route('/record')
 apiRoutes.route('/search')
   .get(search);
 
-const otherRoutes = (app) => {
-  app.all('*', error404);
-};
-
-module.exports = { apiRoutes, otherRoutes };
+module.exports = apiRoutes;

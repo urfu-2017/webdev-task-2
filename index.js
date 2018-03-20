@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { apiRoutes, otherRoutes } = require('./app/routes');
+const apiRoutes = require('./app/routes');
 const errorHandler = require('./app/middlewares/handle-errors');
+const { error404 } = require('./app/controllers/errors');
 const accessLog = require('./app/middlewares/access-log');
 const config = require('./config');
 
@@ -17,8 +18,7 @@ if (config.debug === true) {
 }
 
 app.use('/api', apiRoutes);
-
-otherRoutes(app);
+app.all('*', error404);
 
 const { port } = config;
 
