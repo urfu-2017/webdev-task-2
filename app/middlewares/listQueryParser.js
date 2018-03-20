@@ -3,7 +3,7 @@
 module.exports = (req, res, next) => {
     if (req.query.offset !== undefined && req.query.limit !== undefined) {
         req.query.offset = parseInt(req.query.offset);
-        req.query.limit = parseInt(req.query.offset);
+        req.query.limit = parseInt(req.query.limit);
     }
 
     if (!isValidQuery(req.query)) {
@@ -21,7 +21,7 @@ function isValidSortQuery(sort) {
 }
 
 function isValidQuery(query) {
-    return (query.offset === undefined || typeof query.offset === 'string') &&
-           (query.limit === undefined || typeof query.limit === 'string') &&
+    return (query.offset === undefined || typeof query.offset === 'number') &&
+           (query.limit === undefined || typeof query.limit === 'number') &&
             isValidSortQuery(query.sort);
 }
