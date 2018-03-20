@@ -92,7 +92,7 @@ module.exports = app => {
      *           items:
      *             $ref: '#/definitions/Site'
      */
-    app.get('/sites/search', siteController.findBy);
+    app.get('/sites/search', siteController.findByDescription);
 
     /**
      * @swagger
@@ -143,25 +143,32 @@ module.exports = app => {
      *     responses:
      *       200:
      *         description: Site was edited
-     *       400:
-     *         description: Id must be an integer
      *       404:
      *         description: Site was not found
      */
-    app.patch('/sites/:id', siteController.edit);
+    app.patch('/sites/:id(\\d+)', siteController.edit);
 
     /**
      * @swagger
-     * /api/v1.0/sites/shuffle:
+     * /api/v1.0/sites/swap/{id1}/{id2}:
      *   put:
      *     tags:
      *       - sites
-     *     description: Change order sites will be returned
+     *     description: Swap sites with specified ids
+     *     parameters:
+     *       - name: id1
+     *         in: path
+     *         description: site id
+     *         type: integer
+     *       - name: id2
+     *         in: path
+     *         description: site id
+     *         type: integer
      *     responses:
      *       204:
-     *         description: Sites were shuffled
+     *         description: Sites were swapped
      */
-    app.put('/sites/shuffle', siteController.shuffle);
+    app.put('/sites/swap/:id1(\\d+)/:id2(\\d+)', siteController.swap);
 
     /**
      * @swagger
@@ -179,12 +186,10 @@ module.exports = app => {
      *     responses:
      *       204:
      *         description: Site was deleted
-     *       400:
-     *         description: Id must be an integer
      *       404:
      *         description: Site was not found
      */
-    app.delete('/sites/:id', siteController.delete);
+    app.delete('/sites/:id(\\d+)', siteController.delete);
 
     /**
      * @swagger

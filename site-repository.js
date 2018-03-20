@@ -1,7 +1,6 @@
 'use strict';
 
 const Site = require('./models/site');
-const shuffle = require('shuffle-array');
 
 const sortByProperty = (property, order = 'asc') => {
     return (a, b) => {
@@ -20,6 +19,10 @@ module.exports = class SiteRepository {
     constructor() {
         this._sites = [];
         this._currentId = 1;
+    }
+
+    contains(id) {
+        return this._sites.find(site => site.id === id);
     }
 
     getById(id) {
@@ -67,8 +70,17 @@ module.exports = class SiteRepository {
         return newSite;
     }
 
-    shuffle() {
-        shuffle(this._sites);
+    swap(id1, id2) {
+        const idx1 = this._sites.findIndex(site => site.id === id1);
+        const idx2 = this._sites.findIndex(site => site.id === id2);
+
+        if (idx1 === -1 || idx2 === -1) {
+            throw new Error('Site with specified id not found');
+        }
+
+        const temp = this._sites[idx1];
+        this._sites[idx1] = this._sites[idx2];
+        this._sites[idx2] = temp;
     }
 
     delete(id) {

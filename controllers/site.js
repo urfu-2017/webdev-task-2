@@ -5,7 +5,7 @@ const repo = new SiteRepository();
 
 exports.create = (req, res) => {
     const site = req.body;
-    if (!site.name || !site.description) {
+    if (!(site.name && site.description)) {
         res.sendStatus(400);
     }
 
@@ -14,10 +14,6 @@ exports.create = (req, res) => {
 
 exports.edit = (req, res) => {
     const id = Number(req.params.id);
-    if (isNaN(id)) {
-        return res.sendStatus(400);
-    }
-
     const { description, isVisited } = req.body;
 
     try {
@@ -32,7 +28,7 @@ exports.edit = (req, res) => {
 
 };
 
-exports.findBy = (req, res) => {
+exports.findByDescription = (req, res) => {
     const { description } = req.query;
 
     res.json(repo.findByDescription(description));
@@ -45,17 +41,20 @@ exports.get = (req, res) => {
     res.json(result);
 };
 
-exports.shuffle = (req, res) => {
-    repo.shuffle();
+exports.swap = (req, res) => {
+    const [id1, id2] = Object.values(req.params).map(x => Number(x));
 
-    res.sendStatus(204);
+    try {
+        repo.swap(id1, id2);
+        res.sendStatus(204);
+    } catch (err) {
+        res.sendStatus(404);
+    }
+
 };
 
 exports.delete = (req, res) => {
     const id = Number(req.params.id);
-    if (isNaN(id)) {
-        return res.sendStatus(400);
-    }
 
     try {
         repo.delete(id);
@@ -63,7 +62,6 @@ exports.delete = (req, res) => {
     } catch (err) {
         res.sendStatus(404);
     }
-
 };
 
 exports.deleteAll = (req, res) => {
