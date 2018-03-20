@@ -12,6 +12,4 @@ app.use(express.json());
 module.exports = app;
 routes(app);
 
-app.listen(port, () => {
-    console.info(`server is running: http://localhost:${port}/`);
-});
+app.listen(port);

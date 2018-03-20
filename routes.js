@@ -1,9 +1,7 @@
 'use strict';
 
 const { error404 } = require('./controllers/errors');
-const { append, search } = require('./controllers/places');
-const { edit } = require('./controllers/placeEditor');
-const { deletePlace, deleteAll } = require('./controllers/placeRemover');
+const { append, search, patch, deletePlace, deleteAll } = require('./controllers/places');
 
 module.exports = app => {
     app
@@ -13,7 +11,7 @@ module.exports = app => {
         .delete(deleteAll);
     app
         .route('/places/:id')
-        .patch(edit)
+        .patch(patch)
         .delete(deletePlace);
     app.all('*', error404);
 };

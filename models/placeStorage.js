@@ -1,16 +1,20 @@
 'use strict';
 
-let places = [];
-let currentId = 0;
 
 class Storage {
-    static search({ sort, start, count, description }) {
-        let res = places.slice();
+
+    constructor() {
+        this.places = [];
+        this.currentId = 0;
+    }
+
+    search({ sort, start, count, description }) {
+        let res = this.places.slice();
         if (sort === 'lex') {
             res = res.sort((a, b) => a.description.localeCompare(b.description));
         }
         if (description) {
-            res = res.filter(x => x.description.indexOf(description) !== -1);
+            res = res.filter(x => x.description.includes(description));
         }
         if (sort === 'date') {
             res = res.sort((a, b) => b.date - a.date);
@@ -22,20 +26,20 @@ class Storage {
         return res;
     }
 
-    static append(place) {
-        places.push(Object.assign({}, place,
-            { visited: false, id: currentId++, date: Date.now() }));
+    append({ description }) {
+        this.places.push({ description,
+            visited: false, id: this.currentId++, date: Date.now() });
     }
 
-    static edit(id, newData) {
-        const targetPlace = places.find(place => place.id === Number(id));
+    edit(id, newData) {
+        const targetPlace = this.places.find(place => place.id === Number(id));
         if (targetPlace === undefined) {
             return false;
         }
         const { description, visited, index } = newData;
-        if (index >= 0) {
-            places = places.filter(place => place.id !== Number(id));
-            places.splice(index, 0, targetPlace);
+        if (index >= 0 && index !== null) {
+            this.places = this.places.filter(place => place.id !== Number(id));
+            this.places.splice(index, 0, targetPlace);
         }
         if (visited !== undefined) {
             targetPlace.visited = visited;
@@ -43,18 +47,17 @@ class Storage {
         if (description !== undefined) {
             targetPlace.description = description;
         }
-        targetPlace.date = Date.now();
 
         return true;
     }
 
-    static delete(id) {
-        places = places.filter(place => place.id !== Number(id));
+    delete(id) {
+        this.places = this.places.filter(place => place.id !== Number(id));
     }
 
-    static deleteAll() {
-        places = [];
+    deleteAll() {
+        this.places = [];
     }
 }
 
-module.exports = Storage;
+module.exports = new Storage();
