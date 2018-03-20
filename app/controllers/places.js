@@ -1,49 +1,48 @@
 'use strict';
 
 const Place = require('../models/place');
-const placesStorage = require('../models/placesStorage');
 
 exports.deleteAll = (req, res) => {
-    placesStorage.deleteAll();
+    Place.deleteAll();
     res.sendStatus(200);
 };
 
 exports.list = (req, res) => {
-    let places = placesStorage.getList(req.query);
+    let places = Place.getList(req.query);
     res.json(places);
 };
 
 exports.create = (req, res) => {
     const place = new Place(req.body);
-    placesStorage.add(place);
+    Place.add(place);
     res.sendStatus(200);
 };
 
 exports.deleteById = (req, res) => {
-    if (!placesStorage.tryDeletePlace(req.params.id)) {
-        sendIdNotExistsError(req.params.id);
+    if (!Place.tryDeletePlace(req.params.id)) {
+        _sendIdNotExistsError(req.params.id);
     } else {
         res.sendStatus(200);
     }
 };
 
 exports.getById = (req, res) => {
-    const place = placesStorage.getById(req.params.id);
+    const place = Place.getById(req.params.id);
     if (place === null) {
-        sendIdNotExistsError(req.params.id);
+        _sendIdNotExistsError(req.params.id);
     } else {
         res.json(place);
     }
 };
 
 exports.findByDescription = (req, res) => {
-    const places = placesStorage.findByDescription(req.params.description);
+    const places = Place.findByDescription(req.params.description);
     res.json(places);
 };
 
 exports.updateDescription = (req, res) => {
-    if (placesStorage.tryUpdateDescription(req.params.id, req.params.newValue)) {
-        sendIdNotExistsError(req.params.id);
+    if (Place.tryUpdateDescription(req.params.id, req.params.newValue)) {
+        _sendIdNotExistsError(req.params.id);
     } else {
         res.sendStatus(200);
     }
@@ -55,18 +54,21 @@ exports.updateMark = (req, res) => {
         res.status(400).send(`parameter type = ${typeof newValue}, expected boolean `);
     }
 
-    if (newValue === undefined || !placesStorage.tryUpdateMark(req.params.id, newValue)) {
-        sendIdNotExistsError(req.params.id);
+    if (newValue === undefined || !Place.tryUpdateMark(req.params.id, newValue)) {
+        _sendIdNotExistsError(req.params.id);
     } else {
         res.sendStatus(200);
     }
 };
 
-exports.shuffle = (req, res) => {
-    placesStorage.shuffle();
+exports.swap = (req, res) => {
+    if (!Place.trySwap(req.query.oldIndex, req.query.newIndex)) {
+        return res.status(400).send('one of the indexes is out of range');
+    }
+
     res.sendStatus(200);
 };
 
-function sendIdNotExistsError(res, id) {
+function _sendIdNotExistsError(res, id) {
     return res.status(400).send(`place with id = ${id} doesn't exist`);
 }
