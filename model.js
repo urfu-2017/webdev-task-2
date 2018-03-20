@@ -3,9 +3,9 @@
 const { isUndefined } = require('util');
 const ObjectID = require('mongodb').ObjectID;
 
-module.exports.addPlace = function (req, res, database, site) {
+module.exports.addPlace = function (req, database, site, { errRes, resultRes }) {
     if (isUndefined(req.body.description) || isUndefined(req.body.name)) {
-        res.send({ 'error': 'empty description or name of place' });
+        errRes();
     } else {
         const place = {
             name: req.body.name,
@@ -15,32 +15,32 @@ module.exports.addPlace = function (req, res, database, site) {
             site: site };
         database.insert(place, (err, result) => {
             if (err) {
-                res.send({ 'error': 'An error has occurred' });
+                errRes();
             } else {
-                res.send(result.ops[0]);
+                resultRes(result.ops[0]);
             }
         });
     }
 };
 
-module.exports.deleteOne = function (req, res, database) {
+module.exports.deleteOne = function (req, database, errRes, resultRes) {
     const id = req.params.id;
     const details = { '_id': new ObjectID(id) };
     database.remove(details, (err) => {
         if (err) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
-            res.send('Item with id ' + id + ' deleted');
+            resultRes('Item with id ' + id + ' deleted');
         }
     });
 };
 
-module.exports.deleteAll = function (req, res, database) {
+module.exports.deleteAll = function (req, database, errRes, resultRes) {
     database.remove({}, (err) => {
         if (err) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
-            return res.send('All item deleted');
+            resultRes('All item deleted');
         }
     });
 };
@@ -66,14 +66,14 @@ function sortPlaces(places, param) {
     }
 }
 
-module.exports.getPlaces = function (req, res, database) {
+module.exports.getPlaces = function (req, database, errRes, resultRes) {
     database.find((err, cursor) => {
         if (err) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
             cursor.toArray(function (subErr, items) {
                 if (subErr) {
-                    res.send({ 'error': 'An error has occurred' });
+                    errRes();
                 } else {
                     if (!isUndefined(req.query.sort)) {
                         sortPlaces(items, req.query.sort);
@@ -82,53 +82,51 @@ module.exports.getPlaces = function (req, res, database) {
                             return first.site - second.site;
                         });
                     }
-                    res.send(items);
+                    resultRes(items);
                 }
             });
         }
 
-        return {};
+        return null;
     });
 };
 
-module.exports.getPlacesPage = function (req, res, database) {
+module.exports.getPlacesPage = function (req, res, database, { errRes, resultRes }) {
     database.find((err, cursor) => {
         if (err) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
             cursor.toArray(function (subErr, items) {
                 if (subErr) {
-                    res.send({ 'error': 'An error has occurred' });
+                    errRes();
                 } else {
                     if (!isUndefined(req.query.sort)) {
                         sortPlaces(items, req.query.sort);
                     } else {
-                        items.sort((first, second) => {
-                            return first.site - second.site;
-                        });
+                        items.sort((first, second) => first.site - second.site);
                     }
                     let size = isUndefined(req.query.count) ? 10 : parseInt(req.query.count);
                     let subarray = [];
                     for (let i = 0; i < Math.ceil(items.length / size); i++) {
                         subarray[i] = items.slice((i * size), (i * size) + size);
                     }
-                    res.send(subarray[parseInt(req.params.numberofpage)]);
+                    resultRes(subarray[parseInt(req.params.numberofpage)]);
                 }
             });
         }
 
-        return {};
+        return null;
     });
 };
 
-module.exports.findByDescription = function (req, res, database) {
+module.exports.findByDescription = function (req, database, errRes, resultRes) {
     database.find((err, cursor) => {
         if (err || isUndefined(req.query.description)) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
             cursor.toArray(function (subErr, items) {
                 if (subErr) {
-                    res.send({ 'error': 'An error has occurred' });
+                    errRes();
                 } else {
                     let subDescription = req.query.description;
                     let places = [];
@@ -137,21 +135,21 @@ module.exports.findByDescription = function (req, res, database) {
                             places.push(place);
                         }
                     });
-                    res.send(places);
+                    resultRes(places);
                 }
             });
         }
 
-        return {};
+        return null;
     });
 };
 
-module.exports.updatePlace = function (req, res, database) {
+module.exports.updatePlace = function (req, database, errRes, resultRes) {
     const id = req.params.id;
     const details = { '_id': new ObjectID(id) };
     database.findOne(details, function (err, doc) {
         if (err) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
             var _visit = false;
             if (req.query.visit === 'true') {
@@ -171,31 +169,31 @@ module.exports.updatePlace = function (req, res, database) {
             };
             database.update(details, place, (subErr) => {
                 if (subErr) {
-                    res.send({ 'error': 'An error has occurred' });
+                    errRes();
                 } else {
-                    res.send(place);
+                    resultRes(place);
                 }
             });
         }
     });
 };
 
-module.exports.changeSite = function (req, res, database) {
+module.exports.changeSite = function (req, database, errRes, resultRes) {
     const firstID = { '_id': new ObjectID(req.query.first) };
     const secondID = { '_id': new ObjectID(req.query.second) };
     database.findOne(firstID, { site: 1 }, function (err, firstDoc) {
         if (err) {
-            res.send({ 'error': 'An error has occurred' });
+            errRes();
         } else {
             var firstSite = firstDoc.site;
             database.findOne(secondID, { site: 1 }, function (subErr, secondDoc) {
                 if (subErr) {
-                    res.send({ 'error': 'An error has occurred' });
+                    errRes();
                 } else {
                     var secondSite = secondDoc.site;
                     database.update(firstID, { $set: { site: secondSite } });
                     database.update(secondID, { $set: { site: firstSite } });
-                    res.send('Swap done.');
+                    resultRes('Swap done.');
                 }
             });
         }

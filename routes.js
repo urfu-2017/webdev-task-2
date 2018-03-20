@@ -4,37 +4,47 @@ const model = require('./model');
 
 module.exports = function (app, database, countOfPlaces) {
 
-    app.post('/places/add', (req, res) => {
-        model.addPlace(req, res, database, countOfPlaces);
+    var errRes = (res) => {
+        return () => res.send({ 'error': 'An error has occurred' });
+    };
+
+    var resultRes = (res) => {
+        return (result) => res.send(result);
+    };
+
+    app.post('/places/add', async (req, res) => {
+        model.addPlace(req, database, countOfPlaces,
+            { errRes: errRes(res), resultRes: resultRes(res) });
         countOfPlaces += 1;
     });
 
     app.delete('/places/delete/:id', (req, res) => {
-        model.deleteOne(req, res, database);
+        model.deleteOne(req, database, errRes(res), resultRes(res));
     });
 
     app.delete('/places/deleteall', (req, res) => {
-        model.deleteAll(req, res, database);
+        model.deleteAll(req, database, errRes(res), resultRes(res));
         countOfPlaces = 0;
     });
 
     app.get('/places', (req, res) => {
-        model.getPlaces(req, res, database);
+        model.getPlaces(req, database, errRes(res), resultRes(res));
     });
 
     app.get('/places/pages/:numberofpage', (req, res) => {
-        model.getPlacesPage(req, res, database);
+        model.getPlacesPage(req, database,
+            { errRes: errRes(res), resultRes: resultRes(res) });
     });
 
     app.put ('/places/update/:id', (req, res) => {
-        model.updatePlace(req, res, database);
+        model.updatePlace(req, database, errRes(res), resultRes(res));
     });
 
     app.get('/places/description', (req, res) => {
-        model.findByDescription(req, res, database);
+        model.findByDescription(req, database, errRes(res), resultRes(res));
     });
 
     app.put('/places/site/update', (req, res) => {
-        model.changeSite(req, res, database);
+        model.changeSite(req, database, errRes(res), resultRes(res));
     });
 };
