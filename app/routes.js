@@ -1,5 +1,5 @@
 const {
-  create, list, search, update, remove,
+  create, list, search, update, remove, move,
 } = require('./controllers/records');
 const express = require('express');
 
@@ -14,6 +14,9 @@ apiRoutes.route('/record')
   .put(update)
   .delete(remove)
   .post(create);
+
+apiRoutes.route('/record/move')
+  .put(move);
 
 apiRoutes.route('/search')
   .get(search);

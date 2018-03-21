@@ -5,33 +5,55 @@ const { recordsPerPage, accessibleProperties } = require('../../config');
 
 const storage = [];
 
+const sorters = {
+  alph: ({ order, sortBy }) => {
+    if (order === 'asc') {
+      return (a, b) => a[sortBy].localeCompare(b[sortBy]);
+    }
+    return (a, b) => -a[sortBy].localeCompare(b[sortBy]);
+  },
+  date: ({ order }) => {
+    if (order === 'asc') {
+      return (a, b) => {
+        if (a.creationDate > b.creationDate) {
+          return 1;
+        } else if (a.creationDate < b.creationDate) {
+          return -1;
+        }
+        return 0;
+      };
+    }
+    return (a, b) => {
+      if (a.creationDate > b.creationDate) {
+        return -1;
+      } else if (a.creationDate < b.creationDate) {
+        return 1;
+      }
+      return 0;
+    };
+  },
+};
+
 class Record {
   constructor({
-    place, description, isVisited = false, date,
+    place, description, isVisited = false,
   }) {
     this.place = place;
     this.description = description;
     this.isVisited = isVisited;
     this.id = uuid();
-
-    if (date) {
-      this.creationDate = date;
-    } else {
-      this.creationDate = new Date().toLocaleDateString('en-US');
-    }
+    this.creationDate = new Date();
+    this.error = null;
   }
 
   static getAll() {
     return storage;
   }
 
-  static getSorted(sortType) {
-    if (sortType === 'date') {
-      return storage.concat().sort((a, b) => a.creationDate.localeCompare(b.creationDate));
-    }
-
-    if (sortType === 'alph' || sortType === 'alphabet') {
-      return storage.concat().sort((a, b) => a.place.localeCompare(b.place));
+  static getSorted({ sort, sortBy = 'place', order = 'asc' }) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (sorters.hasOwnProperty(sort)) {
+      return storage.sort(sorters[sort]({ sortBy, order }));
     }
     return Record.getAll();
   }
@@ -46,61 +68,80 @@ class Record {
     );
   }
 
-  static searchByDescription({ substring }) {
+  static searchByDescription(substring) {
     return storage.filter(record => record.description.indexOf(substring) !== -1);
   }
 
-  static updateProperty({ id, property, update }) {
+  static update(id, update) {
     const record = storage.find(element => element.id === id);
     if (!record) {
-      return `Record ${id} doesn't exist`;
+      return false;
     }
-    // eslint-disable-next-line no-prototype-builtins
-    if (!record.hasOwnProperty(property)) {
-      return `Record's ${id} property '${property}' doesn't exist`;
-    }
-    if (!accessibleProperties.includes(property)) {
-      return `Record's ${id} property '${property}' is not accessible`;
-    }
+    Object.keys(update).forEach((key) => {
+      // eslint-disable-next-line no-prototype-builtins
+      if (!record.hasOwnProperty(key)) {
+        if (!this.error) {
+          this.error = [];
+        }
+        this.error.append(`Record's ${id} property '${key}' doesn't exist`);
+      }
+      if (!accessibleProperties.includes(key)) {
+        if (!this.error) {
+          this.error = [];
+        }
+        this.error.append(`Record's ${id} property '${key}' is not accessible`);
+      }
+      if (key === 'isVisited') {
+        record[key] = update[key] === 'true';
+      } else {
+        record[key] = update[key];
+      }
+      return true;
+    });
 
-    if (property === 'isVisited') {
-      record[property] = update === 'true';
-    } else {
-      record[property] = update;
-    }
-    return `Property '${property}' update successful`;
+    return record;
   }
 
   static delete(id) {
     const recordIndex = storage.findIndex(record => record.id === id);
     if (recordIndex === -1) {
-      return `Record ${id} doesn't exist`;
+      return false;
     }
 
     storage.splice(recordIndex, 1);
-    return `Record ${id} successfully deleted`;
+    return true;
   }
 
   static deleteAll() {
     storage.length = 0;
-    return 'All records are deleted';
+    return true;
   }
 
-  static move(id, direction) {
+  static move({ id, direction }) {
     const recordIndex = storage.findIndex(record => record.id === id);
     if (recordIndex === -1) {
-      return `Record ${id} doesn't exist`;
+      return false;
     }
     if (direction === 'up') {
       move.mut(storage, recordIndex, recordIndex - 1);
-      return `Record ${id} moved up in list`;
+      return true;
     }
 
     if (direction === 'down') {
       move.mut(storage, recordIndex, recordIndex + 1);
-      return `Record ${id} moved down in list`;
+      return true;
     }
-    return 'Wrong move parameter';
+    return false;
+  }
+
+  toJSON() {
+    return {
+      place: this.place,
+      description: this.description,
+      isVisited: this.isVisited,
+      id: this.id,
+      date: this.creationDate.toLocaleDateString('en-US'),
+    };
   }
 
   save() {

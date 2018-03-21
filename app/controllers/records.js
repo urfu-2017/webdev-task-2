@@ -4,45 +4,72 @@ exports.create = (req, res) => {
   const record = new Record({ ...req.body });
   record.save();
 
-  res.redirect(200, '/api');
+  res.send(record.toJSON());
 };
 
 exports.list = (req, res) => {
   if (req.query.sort) {
-    res.json(Record.getSorted(req.query.sort));
-    return;
+    res.send(Record.getSorted(req.query));
   }
   if (req.query.page) {
-    res.json(Record.getPage(req.query.page));
-    return;
+    res.send(Record.getPage(req.query.page));
   }
-  res.json(Record.getAll());
+  if (!res.headersSent) {
+    res.send(Record.getAll());
+  }
 };
 
 exports.search = (req, res) => {
-  res.json(Record.searchByDescription(req.query));
+  if (!req.query.substring) {
+    res.sendStatus(400);
+  }
+  res.send(Record.searchByDescription(req.query.substring).toJSON());
 };
 
 exports.update = (req, res) => {
-  const { property, update } = req.body;
-  const { id, move } = req.query;
-  const json = { message: '' };
-  if (id && property && update) {
-    json.message = `${json.message + Record.updateProperty({ id, property, update })}; `;
+  const id = req.query.id;
+  const update = req.body;
+  if (!(id && update)) {
+    res.sendStatus(400);
+    return;
   }
-  if (id && move) {
-    json.message = `${json.message + Record.move(id, move)}`;
+  const updated = Record.update(id, update);
+  if (!updated) {
+    res.sendStatus(404);
+    return;
   }
-  if (!json.message) {
-    json.message = 'Missing parameters';
+  if (updated.error) {
+    res.sendStatus(400).send(updated.error);
+  } else {
+    res.send(updated);
   }
-  res.json(json);
+};
+
+exports.move = (req, res) => {
+  if (!req.query) {
+    res.sendStatus(400);
+    return;
+  }
+  if (Record.move(req.query)) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(404);
+  }
 };
 
 exports.remove = (req, res) => {
   if (req.query.all) {
-    res.json({ message: Record.deleteAll() });
+    Record.deleteAll();
+    res.sendStatus(200);
     return;
   }
-  res.json({ message: Record.delete(req.body.id) });
+  if (!req.body.id) {
+    res.sendStatus(400);
+    return;
+  }
+  if (Record.delete(req.body.id)) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(404);
+  }
 };
