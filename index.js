@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const apiRoutes = require('./app/routes');
 const errorHandler = require('./app/middlewares/handle-errors');
@@ -12,6 +13,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(errorHandler);
+app.use(cors());
 
 if (config.debug === true) {
   app.use(accessLog);

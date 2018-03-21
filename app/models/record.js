@@ -40,7 +40,7 @@ class Record {
   }) {
     this.place = place;
     this.description = description;
-    this.isVisited = isVisited;
+    this.isVisited = isVisited === 'true';
     this.id = uuid();
     this.creationDate = new Date();
     this.error = null;

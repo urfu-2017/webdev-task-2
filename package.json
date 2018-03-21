@@ -6,6 +6,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "cors": "^2.8.4",
     "array-move": "1.0.0",
     "body-parser": "1.18.2",
     "express": "4.16.3",
