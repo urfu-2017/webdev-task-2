@@ -11,7 +11,7 @@ module.exports = app => {
         .delete(places.deleteAll)
         .post(places.create);
 
-    app.get('/places/search/:description', places.findByDescription);
+    app.get('/places/search', places.find);
     app.route('/places/:id')
         .delete(parseId, places.deleteById)
         .get(parseId, places.getById);

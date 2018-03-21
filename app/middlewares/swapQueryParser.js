@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     }
 
     if (!_isValidQuery(req.query)) {
-        res.sendStatus(400);
+        res.status(400).send('failed oldIndex and newIndex parsing to int');
 
         return;
     }

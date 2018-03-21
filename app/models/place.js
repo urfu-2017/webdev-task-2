@@ -11,9 +11,9 @@ class Place {
         this.description = description;
     }
 
-    static trySwap(placeIndex1, placeIndex2) {
+    static swap(placeIndex1, placeIndex2) {
         if (placeIndex1 >= _places.data.length || placeIndex2 >= _places.data.length) {
-            return false;
+            throw Error('one of the index is out of range');
         }
         const savedPlace = _places.data[placeIndex1];
         _places.data[placeIndex1] = _places.data[placeIndex2];
@@ -45,34 +45,35 @@ class Place {
 
     static getById(placeId) {
         const placeRecord = _places.get(placeId);
+        if (placeRecord === null) {
+            throw Error(`place with id = ${placeId} doesn't exist`);
+        }
 
-        return placeRecord !== null ? new Place(placeRecord) : null;
+        return new Place(placeRecord);
     }
 
-    static tryDeletePlace(placeId) {
+    static deletePlace(placeId) {
         const place = _places.find({ '$loki': placeId });
         if (place.length !== 1) {
-            return false;
+            throw Error(`place with id = ${placeId} doesn't exist`);
         }
 
         _places.remove(place);
-
-        return true;
     }
 
-    static tryUpdateDescription(id, description) {
-        return Place._tryUpdateValue(id, place => {
+    static UpdateDescription(id, description) {
+        return Place.updateValue(id, place => {
             place.description = description || place.description;
         });
     }
 
-    static tryUpdateMark(id, mark) {
-        return Place._tryUpdateValue(id, place => {
+    static updateMark(id, mark) {
+        return Place.updateValue(id, place => {
             place.isVisited = mark;
         });
     }
 
-    static _tryUpdateValue(id, updateFunc) {
+    static updateValue(id, updateFunc) {
         let isUpdated = false;
         _places.findAndUpdate({ '$loki': id },
             place => {
@@ -81,12 +82,14 @@ class Place {
             }
         );
 
-        return isUpdated;
+        if (!isUpdated) {
+            throw Error(`place with id = ${id} doesn't exist`);
+        }
     }
 
-    static findByDescription(description) {
-        return _places.chain()
-            .find({ description })
+    static find(query) {
+        return _places.data
+            .filter(place => place.description.includes(query))
             .map(x => new Place(x));
     }
 }
