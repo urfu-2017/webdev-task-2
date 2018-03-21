@@ -23,7 +23,7 @@ exports.addPlace = (req, res) => {
 
         res.status(201).json(place);
     } else {
-        res.status(204);
+        res.sendStatus(204);
     }
 };
 
@@ -36,7 +36,7 @@ exports.changeDescription = (req, res) => {
     if (place) {
         res.status(200).json(place);
     } else {
-        res.response(404);
+        res.sendStatus(404);
     }
 };
 
@@ -45,29 +45,29 @@ exports.updateVisited = (req, res) => {
     if (place) {
         res.status(200).json(place);
     } else {
-        res.status(404);
+        res.sendStatus(404);
     }
 };
 
 exports.deletePlace = (req, res) => {
     if (places.delete(req.params.id)) {
-        res.status(200);
+        res.sendStatus(200);
     } else {
-        res.status(404);
+        res.sendStatus(404);
     }
 };
 
 exports.deleteAll = (req, res) => {
     places.deleteAll();
 
-    res.status(200);
+    res.sendStatus(204);
 };
 
 exports.swap = (req, res) => {
     if (places.swap(req.params.id1, req.params.id2)) {
-        res.response(200);
+        res.sendStatus(200);
     } else {
-        res.response(404);
+        res.sendStatus(404);
     }
 };
 

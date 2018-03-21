@@ -10,6 +10,8 @@ module.exports = class PlacesRepo {
     add(placeDescription) {
         const place = new Place(this.nextId++, placeDescription);
         this.places.push(place);
+
+        return place;
     }
 
     getAll() {
@@ -17,6 +19,8 @@ module.exports = class PlacesRepo {
     }
 
     getById(id) {
+        id = parseInt(id);
+
         return this.places.find(p => p.id === id);
     }
 
@@ -44,14 +48,20 @@ module.exports = class PlacesRepo {
         if (!this.getById(id)) {
             return false;
         }
+        id = parseInt(id);
         this.places = this.places.filter(place => place.id !== id);
+
+        return true;
     }
 
     deleteAll() {
         this.places = [];
+        this.nextId = 0;
     }
 
     swap(id1, id2) {
+        id1 = parseInt(id1);
+        id2 = parseInt(id2);
         let i1 = -1;
         let i2 = -1;
 
