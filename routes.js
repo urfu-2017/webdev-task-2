@@ -1,5 +1,9 @@
 'use strict';
 
+var { Router } = require('express');
+
+var appRouter = new Router();
+
 const { error404 } = require('./controllers/errors');
 const {
     create,
@@ -12,23 +16,21 @@ const {
     deleteAll
 } = require('./controllers/options');
 
-const url = '/api';
+appRouter
+    .get('', list)
+    .get('/:feature', find)
+    .get('/find/:id', itemId);
 
-module.exports = app => {
-    app
-        .get(url + '/places', list)
-        .get(url + '/find/:id', itemId)
-        .get(url + '/:feature', find);
+appRouter.post('/', create);
 
-    app.post(url + '/', create);
+appRouter
+    .put('/:id', update)
+    .put('/visit/:id', visit);
 
-    app
-        .put(url + '/:id', update)
-        .put(url + '/visit/:id', visit);
+appRouter
+    .delete('/all', deleteAll)
+    .delete('/:id', deleteItem);
 
-    app
-        .delete(url + '/all', deleteAll)
-        .delete(url + '/:id', deleteItem);
+appRouter.all('*', error404);
 
-    app.all('*', error404);
-};
+module.exports = appRouter;

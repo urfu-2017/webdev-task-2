@@ -12,12 +12,12 @@ class Place {
         this.country = country;
         this.city = city;
         this.isVisited = false;
-        this.date = null;
+        this.createdDate = null;
     }
 
     save() {
         this.id = shortid.generate();
-        this.date = Date.now();
+        this.createdDate = Date.now();
         storage.push(this);
     }
 
@@ -40,7 +40,7 @@ class Place {
         });
     }
 
-    static findAll({ sort = 'date', pageNumber = 1, pageSize = 8, reverse = false }) {
+    static findAll({ sort = 'createdDate', pageNumber = 1, pageSize = 8, reverse = false }) {
         sort = reverse ? '-' + sort : sort;
 
         return answerByPage(pageNumber, storage.sort(sortBy(sort)), pageSize);
@@ -52,7 +52,7 @@ class Place {
             storage[index].name = name ? name : storage[index].name;
             storage[index].country = country ? country : storage[index].country;
             storage[index].city = city ? city : storage[index].city;
-            storage[index].date = Date.now();
+            storage[index].createdDate = Date.now();
 
             return true;
         }
@@ -87,23 +87,6 @@ class Place {
 
         return storage.length === 0;
     }
-
-    /* static move(id, { site }) {
-        if (site === 'start' && site === 0) {
-            storage.unshift(storage[id]);
-            storage.splice(id + 1, 1);
-
-            return true;
-        }
-        if (site === 'end' && site === storage.length) {
-            storage.unpop(storage[id]);
-            storage.splice(id, 1);
-
-            return true;
-        }
-
-        return shiftSite(site, id);
-    }*/
 }
 
 module.exports = Place;
@@ -116,17 +99,3 @@ function answerByPage(pageNumber, storageSort, pageSize) {
 
     return storageSort;
 }
-
-/* function shiftSite(site, id) {
-    if (site < storage.length) {
-        let newStorage = storage.slice(site, storage.length);
-        storage.push(storage[id]);
-        storage = storage.concat(newStorage);
-        let idOld = id < site ? id : id + 1;
-        storage.splice(idOld, 1);
-
-        return true;
-    }
-
-    return false;
-}*/

@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-routes(app);
+app.use('/api/places', routes);
 
 app.use((err, req, res) => {
     console.error(err.stack);
@@ -32,5 +32,5 @@ app.use((err, req, res) => {
 });
 
 app.listen(3000, function () {
-    console.info('Open http://localhost:3000');
+    console.info('Open http://localhost:3000/api/places');
 });
