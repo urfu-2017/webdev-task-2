@@ -10,30 +10,29 @@ class Place {
         this.creationDate = new Date();
         this.description = description;
         this.isVisited = false;
-        this.indexNumber = null;
     }
 
     save() {
         STORAGE.push(this);
-        this.indexNumber = STORAGE.length - 1;
     }
 
-    update({ description, isVisited, indexNumber = this.indexNumber }) {
+    update({ description, isVisited, indexNumber }) {
         this.description = description ? description : this.description;
         this.isVisited = isVisited ? isVisited : this.isVisited;
-        this.movePlace(indexNumber);
+        if (indexNumber) {
+            this.movePlace(indexNumber);
+        }
     }
 
     movePlace(toIndex) {
-        toIndex = Math.floor(toIndex);
-        if (toIndex < 0 || toIndex >= STORAGE.length || toIndex === this.indexNumber) {
+        const index = STORAGE.indexOf(this);
+        toIndex = Math.floor(toIndex) - 1;
+        if (toIndex < 0 || toIndex >= STORAGE.length || toIndex === index) {
             return;
         }
 
-        STORAGE[toIndex].indexNumber = this.indexNumber;
-        STORAGE[this.indexNumber] = STORAGE[toIndex];
+        STORAGE[index] = STORAGE[toIndex];
         STORAGE[toIndex] = this;
-        this.indexNumber = toIndex;
     }
 
     static findByDescription(description) {
@@ -62,9 +61,6 @@ class Place {
             description: (place1, place2) => place1.description < place2.description ? -1 : 1
         };
         STORAGE.sort(sortings[sortBy.toLowerCase()]);
-        STORAGE.forEach((place, index) => {
-            place.indexNumber = index;
-        });
     }
 }
 
