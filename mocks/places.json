@@ -1,0 +1,20 @@
+[
+    {
+      "country": "Russia",
+      "city": "Moscow",
+      "name": "Red Square",
+      "description": "Red Square in Moscow"
+    },
+    {
+        "country": "Russia",
+        "city": "Moscow",
+        "name": "Red Square",
+        "description": "Red Square in Moscow"
+    },
+    {
+        "country": "Russia",
+        "city": "Moscow",
+        "name": "Red Square",
+        "description": "Red Square in Moscow"
+    }
+]
