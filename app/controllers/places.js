@@ -32,12 +32,7 @@ exports.get = (req, res) => {
         requestedPlaces.sort(sortingFun);
     }
 
-    if (requestedPlaces.length) {
-        res.json(requestedPlaces);
-    } else {
-        // Лучше возвращать пустой список или 404?
-        errors.error404(req, res).send('Places not found');
-    }
+    res.json(requestedPlaces);
 };
 
 exports.getByName = (req, res) => {
