@@ -4,47 +4,37 @@ const model = require('./model');
 
 module.exports = function (app, database, countOfPlaces) {
 
-    var errRes = (res) => {
-        return () => res.send({ 'error': 'An error has occurred' });
-    };
-
-    var resultRes = (res) => {
-        return (result) => res.send(result);
-    };
-
     app.post('/places/add', async (req, res) => {
-        model.addPlace(req, database, countOfPlaces,
-            { errRes: errRes(res), resultRes: resultRes(res) });
+        res.send(await model.addPlace(req, database, countOfPlaces));
         countOfPlaces += 1;
     });
 
-    app.delete('/places/delete/:id', (req, res) => {
-        model.deleteOne(req, database, errRes(res), resultRes(res));
+    app.delete('/places/delete/:id', async (req, res) => {
+        res.send(await model.deleteOne(req, database));
     });
 
-    app.delete('/places/deleteall', (req, res) => {
-        model.deleteAll(req, database, errRes(res), resultRes(res));
+    app.delete('/places/deleteall', async (req, res) => {
+        res.send(await model.deleteAll(req, database));
         countOfPlaces = 0;
     });
 
-    app.get('/places', (req, res) => {
-        model.getPlaces(req, database, errRes(res), resultRes(res));
+    app.get('/places', async (req, res) => {
+        res.send(await model.getPlaces(req, database));
     });
 
-    app.get('/places/pages/:numberofpage', (req, res) => {
-        model.getPlacesPage(req, database,
-            { errRes: errRes(res), resultRes: resultRes(res) });
+    app.get('/places/pages/:numberofpage', async (req, res) => {
+        res.send(await model.getPlacesPage(req, database));
     });
 
-    app.put ('/places/update/:id', (req, res) => {
-        model.updatePlace(req, database, errRes(res), resultRes(res));
+    app.put ('/places/update/:id', async (req, res) => {
+        res.send(await model.updatePlace(req, database));
     });
 
-    app.get('/places/description', (req, res) => {
-        model.findByDescription(req, database, errRes(res), resultRes(res));
+    app.get('/places/description', async (req, res) => {
+        res.send(await model.findByDescription(req, database));
     });
 
-    app.put('/places/site/update', (req, res) => {
-        model.changeSite(req, database, errRes(res), resultRes(res));
+    app.put('/places/site/update', async (req, res) => {
+        res.send(await model.changeSite(req, database));
     });
 };

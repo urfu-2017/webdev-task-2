@@ -1,26 +1,13 @@
 'use strict';
 
-const express = require('express');
-const MongoClient = require('mongodb').MongoClient;
-const bodyParser = require('body-parser');
-const db = require('./config/db');
-const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-MongoClient.connect(db.url, (err, client) => {
-    if (err) {
-        console.error(err);
-    }
-    client.db('places').collection('places')
-        .find()
-        .sort({ site: -1 })
-        .limit(1)
-        .toArray((subErr, items) => {
-            if (subErr) {
-                console.error(subErr);
-            }
-            let count = items.length === 0 ? 0 : items[0].site + 1;
-            require('./routes.js')(app, client.db('places').collection('places'), count);
-        });
-});
+module.exports.getApp = async function () {
+    const express = require('express');
+    const bodyParser = require('body-parser');
+    const app = express();
+    const { getMongo } = require('./mongo');
+    app.use(bodyParser.urlencoded({ extended: true }));
+    let { client, maxSite } = await getMongo();
+    require('./routes.js')(app, client.db('places').collection('places'), maxSite);
 
-module.exports = app;
+    return app;
+};
