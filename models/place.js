@@ -6,4 +6,8 @@ module.exports = class Place {
         this.visited = false;
         this.creationDate = new Date();
     }
+
+    mark(flag) {
+        this.visited = flag;
+    }
 };

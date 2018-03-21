@@ -13,29 +13,30 @@ function sortByParam(param) {
     };
 }
 
-module.exports = class Schedule {
+class Schedule {
     constructor() {
         this.schedule = [];
+    }
+
+    get list() {
+        return this.schedule;
     }
 
     add(place) {
         this.schedule.push(place);
     }
 
-    getList() {
-        return this.schedule;
+    sortBy(method) {
+        if (method === 'date') {
+            this.schedule.sort(sortByParam('creationDate'));
+        }
+        if (method === 'name') {
+            this.schedule.sort(sortByParam('name'));
+        }
     }
 
-    sortByDate() {
-        this.schedule.sort(sortByParam('creationDate'));
-    }
-
-    sortByName() {
-        this.schedule.sort(sortByParam('name'));
-    }
-
-    findPlace(name) {
-        return this.schedule.find(elem => elem.name === name);
+    find(name) {
+        return this.schedule.filter(elem => elem.name === name);
     }
 
     changeName(oldName, newName) {
@@ -43,16 +44,16 @@ module.exports = class Schedule {
         this.schedule[index].name = newName;
     }
 
-    markPlace(name, flag) {
+    mark(name, flag) {
         let index = this.schedule.findIndex(elem => elem.name === name);
-        this.schedule[index].visited = flag;
+        this.schedule[index].mark(flag);
     }
 
     delete(place) {
         this.schedule = this.schedule.filter(elem => elem.name !== place);
     }
 
-    swapPlaces(name1, name2) {
+    swap(name1, name2) {
         let index1 = this.schedule.findIndex(elem => elem.name === name1);
         let index2 = this.schedule.findIndex(elem => elem.name === name2);
 
@@ -64,4 +65,6 @@ module.exports = class Schedule {
     clear() {
         this.schedule = [];
     }
-};
+}
+
+module.exports = new Schedule();

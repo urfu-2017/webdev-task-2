@@ -1,51 +1,44 @@
 'use strict';
 
 const Place = require('../models/place');
-const Schedule = require('../models/schedule');
-
-let schedule = new Schedule();
+const schedule = require('../models/schedule');
 
 exports.addNewPlace = (req, res) => {
     schedule.add(new Place(req.query.name));
-    res.json(schedule.schedule);
+    res.json(schedule.list);
 };
 
-exports.getListPlaces = (req, res) => {
+exports.getPlacesList = (req, res) => {
     let method = req.query.sort;
-    if (method === 'date') {
-        schedule.sortByDate();
-    }
-    if (method === 'name') {
-        schedule.sortByName();
-    }
-    res.json(schedule.schedule);
+    schedule.sortBy(method);
+    res.json(schedule.list);
 };
 
 exports.searchByName = (req, res) => {
-    res.json(schedule.findPlace(req.query.name));
+    res.json(schedule.find(req.query.name));
 };
 
 exports.editPlace = (req, res) => {
     schedule.changeName(req.query.oldName, req.query.newName);
-    res.json(schedule.schedule);
+    res.json(schedule.list);
 };
 
 exports.markPlace = (req, res) => {
-    schedule.markPlace(req.query.name, req.query.flag);
-    res.json(schedule.schedule);
+    schedule.mark(req.query.name, req.query.flag);
+    res.json(schedule.list);
 };
 
 exports.deletePlace = (req, res) => {
     schedule.delete(req.query.name);
-    res.json(schedule.schedule);
+    res.json(schedule.list);
 };
 
 exports.swapPlaces = (req, res) => {
-    schedule.delete(req.query.name1, req.query.name2);
-    res.json(schedule.schedule);
+    schedule.swap(req.query.name1, req.query.name2);
+    res.json(schedule.list);
 };
 
-exports.clearShdule = (req, res) => {
+exports.clearSchedule = (req, res) => {
     schedule.clear();
-    res.json(schedule.schedule);
+    res.json(schedule.list);
 };
