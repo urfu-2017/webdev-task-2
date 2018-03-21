@@ -42,7 +42,8 @@ exports.list = (req, res) => {
 
 exports.update = (req, res) => {
     const { id } = req.params;
-    const isUpdate = Place.update(id, req.body[0]);
+    const { name, country, city } = req.body;
+    const isUpdate = Place.update(id, { name, country, city });
     if (isUpdate) {
         res.sendStatus(200);
     } else {
