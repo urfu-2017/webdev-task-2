@@ -22,13 +22,13 @@ module.exports = app => {
 
     app.post(url + '/', create);
 
-    app.put(url + '/:id', update);
-    // .put(url + '/move/:id', move);
+    app
+        .put(url + '/:id', update)
+        .put(url + '/visit/:id', visit);
 
-    app.patch(url + '/visit/:id', visit);
-
-    app.delete(url + '/all', deleteAll);
-    app.delete(url + '/:id', deleteItem);
+    app
+        .delete(url + '/all', deleteAll)
+        .delete(url + '/:id', deleteItem);
 
     app.all('*', error404);
 };
