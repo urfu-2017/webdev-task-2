@@ -11,11 +11,11 @@ exports.findAll = (req, res) => {
             break;
 
         case 'sortDate':
-            res.send(getSortedPlacesByDate(sort, Place.findAll()));
+            res.send(Place.getSortedPlacesByDate(sort));
             break;
 
         case 'sortAlphabet':
-            res.send(getSortedPlacesByAlphabet(sort, Place.findAll()));
+            res.send(Place.getSortedPlacesByAlphabet(sort));
             break;
 
         default:
@@ -83,42 +83,13 @@ exports.edit = (req, res) => {
 exports.reshuffle = (req, res) => {
     const { id1, id2 } = req.query;
 
-    if (id1 !== undefined && id2 !== undefined) {
+    if (id1 !== undefined && id2 !== undefined &&
+        Place.findById(Number(id1)) !== undefined && Place.findById(Number(id2)) !== undefined) {
         Place.reshuffle(Number(id1), Number(id2));
         res.sendStatus(200);
     }
     res.send(Place.findAll());
 };
-
-function getSortedPlacesByDate(order, storage) {
-    let storageCopy = JSON.parse(JSON.stringify(storage));
-
-    if (order === 'asc') {
-        return storageCopy.sort((firstPlace, secondPlace) =>
-            firstPlace.creationDate < secondPlace.creationDate);
-    }
-    if (order === 'desc') {
-        return storageCopy.sort((firstPlace, secondPlace) =>
-            firstPlace.creationDate > secondPlace.creationDate);
-    }
-
-    return storage;
-}
-
-function getSortedPlacesByAlphabet(order, storage) {
-    let storageCopy = JSON.parse(JSON.stringify(storage));
-
-    if (order === 'asc') {
-        return storageCopy.sort((firstPlace, secondPlace) =>
-            firstPlace.name < secondPlace.name);
-    }
-    if (order === 'desc') {
-        return storageCopy.sort((firstPlace, secondPlace) =>
-            firstPlace.name > secondPlace.name);
-    }
-
-    return storage;
-}
 
 function getPageByNumber(page, countOnPage, storage) {
     let storageCopy = JSON.parse(JSON.stringify(storage));

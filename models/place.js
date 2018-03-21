@@ -57,6 +57,36 @@ class Place {
         storage[index1] = place2;
         storage[index2] = place1;
     }
+
+    static getSortedPlacesByDate(order) {
+        let storageCopy = JSON.parse(JSON.stringify(storage));
+
+        if (order === 'asc') {
+            return storageCopy.sort((firstPlace, secondPlace) =>
+                firstPlace.creationDate < secondPlace.creationDate);
+        }
+        if (order === 'desc') {
+            return storageCopy.sort((firstPlace, secondPlace) =>
+                firstPlace.creationDate > secondPlace.creationDate);
+        }
+
+        return storage;
+    }
+
+    static getSortedPlacesByAlphabet(order) {
+        let storageCopy = JSON.parse(JSON.stringify(storage));
+
+        if (order === 'asc') {
+            return storageCopy.sort((firstPlace, secondPlace) =>
+                firstPlace.name < secondPlace.name);
+        }
+        if (order === 'desc') {
+            return storageCopy.sort((firstPlace, secondPlace) =>
+                firstPlace.name > secondPlace.name);
+        }
+
+        return storage;
+    }
 }
 
 module.exports = Place;
