@@ -1,6 +1,6 @@
 'use strict';
-const deleteAll = require('../models/deleteAll.js');
+const base = require('../models/db');
 
-module.exports = async (req, res, db) => {
-    return await deleteAll.all(db, res);
+module.exports = async (req, res) => {
+    return await base.deleteAll(res);
 };

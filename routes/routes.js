@@ -8,21 +8,21 @@ const copyPlace = require('../controllers/copy');
 const removePlace = require('../controllers/remove');
 const updatePlace = require('../controllers/update');
 
-module.exports = function (app, db) {
+module.exports = function (app) {
 
-    app.get('/notes/:id', async (req, res) =>await find(req, res, db));
+    app.get('/notes/:id', async (req, res) =>await find(req, res));
 
-    app.get('/notes', async (req, res) => await getAll(req, res, db));
+    app.get('/notes', async (req, res) => await getAll(req, res));
 
-    app.purge('/notes', async (req, res) => await purgeAll(req, res, db));
+    app.delete('/notes', async (req, res) => await purgeAll(req, res));
 
-    app.post('/notes', async (req, res) => await posts(req, res, db));
+    app.post('/notes', async (req, res) => await posts(req, res));
 
-    app.copy('/notes', async (req, res) => await copyPlace(req, res, db));
+    app.copy('/notes', async (req, res) => await copyPlace(req, res));
 
-    app.delete('/notes/:id', async (req, res) => await removePlace(req, res, db));
+    app.delete('/notes/:id', async (req, res) => await removePlace(req, res));
 
-    app.put ('/notes/:id', async (req, res) => await updatePlace(req, res, db));
+    app.put ('/notes/:id', async (req, res) => await updatePlace(req, res));
 
     app.get('/ping', function (req, res) {
         res.send('API is running');

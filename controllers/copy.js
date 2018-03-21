@@ -1,9 +1,7 @@
 'use strict';
-const copy = require('../models/copyModel.js');
+const copy = require('../models/db');
 
-module.exports = async (req, res, db) => {
-    let from = req.query.from;
-    let to = req.query.to;
+module.exports = async (req, res) => {
 
-    return await copy.cop(db, res, from, to);
+    return await copy.cop(res, req);
 };

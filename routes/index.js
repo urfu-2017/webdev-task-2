@@ -2,7 +2,7 @@
 'use strict';
 const noteRoutes = require('./routes');
 
-module.exports = function (app, db) {
-    noteRoutes(app, db);
+module.exports = function (app) {
+    noteRoutes(app);
     // Тут, позже, будут и другие обработчики маршрутов
 };

@@ -3,7 +3,9 @@
 const log = require('../libs/log')(module);
 
 module.exports = class Search {
-    static cop(db, res, from, to) {
+    static cop(db, res, req) {
+        let from = req.query.from;
+        let to = req.query.to;
         db.collection('notes').find()
             .toArray((err, item) => {
                 if (err) {

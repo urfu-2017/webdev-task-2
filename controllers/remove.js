@@ -1,10 +1,7 @@
 'use strict';
-const remove = require('../models/removeModel.js');
-const ObjectID = require('mongodb').ObjectID;
+const base = require('../models/db.js');
 
-module.exports = async (req, res, db) => {
-    const id = req.params.id;
-    const details = { '_id': new ObjectID(id) };
+module.exports = async (req, res) => {
 
-    return await remove.get(db, details, id, res);
+    return await base.remove(req, res);
 };
