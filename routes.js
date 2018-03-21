@@ -6,9 +6,9 @@ module.exports = app => {
     app
         .route('/')
         .post(actions.addNewPlace)
-        .get(actions.getListPlaces)
+        .get(actions.getPlacesList)
         .patch(actions.swapPlaces)
-        .delete(actions.clearShdule);
+        .delete(actions.clearSchedule);
     app
         .route('/place')
         .get(actions.searchByName)
