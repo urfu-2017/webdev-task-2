@@ -2,54 +2,91 @@
 
 const fs = require('fs');
 const Place = require('../models/place');
+const errors = require('../models/errors');
 
-exports.swap = (req, res) => {
-    const { firstId } = req.params;
-    const { secondId } = req.params;
-    res.sendStatus(Place.swap({ firstId, secondId }));
-};
-
-exports.change = (req, res) => {
-    const { id } = req.params;
-    res.sendStatus(Place.change({ id, body: req.body }));
-};
-
-exports.remove = (req, res) => {
-    const { id } = req.params;
-    if (id) {
-        res.sendStatus(Place.remove(id));
-    } else {
-        res.sendStatus(Place.remove());
-    }
-};
-
-exports.list = (req, res) => {
-    const { query } = req;
-    const places = Place.findAll({ sort: query.sort, page: query.page });
-
-    res.json(places);
-};
-
-exports.item = (req, res) => {
-    const { description } = req.params;
-    const place = Place.find(description);
-
-    if (place) {
-        res.json(place);
-    } else {
-        res.sendStatus(404);
-    }
-};
-
-exports.create = (req, res) => {
-    const place = new Place(req.body);
-    place.save();
-    fs.writeFile('./storage/places.json', JSON.stringify(Place.findAll()),
+function __updateStorage() {
+    fs.writeFile('./storage/places.json', JSON.stringify(Place.findAll({}), null, '\t'),
         (error) => {
             if (error) {
                 console.error(error.stack);
             }
         });
+}
 
+exports.swap = async (req, res) => {
+    const { firstId, secondId } = req.params;
+
+    const result = Place.swap({ firstId, secondId });
+    if (!result) {
+        return res.status(400).send({ error: errors.BAD_PARAMS });
+    }
+
+    await __updateStorage();
+
+    return res.sendStatus(200);
+};
+
+exports.change = async (req, res) => {
+    const { id } = req.params;
+
+    const result = Place.change({ id, body: req.body });
+    if (!result) {
+        return res.status(400).send({ error: errors.BAD_PARAMS });
+    }
+
+    await __updateStorage();
+
+    return res.sendStatus(200);
+};
+
+exports.remove = async (req, res) => {
+    const { id } = req.params;
+
+    let result;
+    if (id) {
+        result = Place.remove(id);
+    } else {
+        result = Place.remove();
+    }
+
+    if (!result) {
+        return res.status(400).send({ error: errors.BAD_PARAMS });
+    }
+
+    await __updateStorage();
+
+    return res.sendStatus(200);
+};
+
+exports.list = (req, res) => {
+    const { sort, page } = req.query;
+
+    const result = Place.findAll({ sort, page });
+    if (!result) {
+        return res.status(400).send({ error: errors.BAD_PARAMS });
+    }
+
+    res.json(result);
+};
+
+exports.item = (req, res) => {
+    const { description } = req.params;
+
+    const result = Place.findByDescription(description);
+    if (!result) {
+        return res.status(400).send({ error: errors.BAD_PARAMS });
+    }
+
+    res.json(result);
+};
+
+exports.create = async (req, res) => {
+    const { body } = req;
+    const result = new Place(body);
+    if (!result) {
+        return res.status(400).send({ error: errors.BAD_PARAMS });
+    }
+    result.save();
+    await __updateStorage();
     res.sendStatus(201);
 };

@@ -4,12 +4,16 @@ let storage = [];
 let currentId = 0;
 
 
+function findIndexById(id) {
+    return storage.findIndex((place) => (place.id === id));
+}
+
 class Place {
     constructor({ name, description }) {
         this.name = name;
         this.description = description;
         this.visited = false;
-        this.date = Date.now();
+        this.createdAt = Date.now();
         this.id = currentId++;
     }
 
@@ -18,81 +22,73 @@ class Place {
     }
 
     static swap({ firstId, secondId }) {
-        const firstIndex = storage.findIndex((place) => (place.id === firstId));
-        const secondIndex = storage.findIndex((place) => (place.id === secondId));
+        const firstIndex = findIndexById(firstId);
+        const secondIndex = findIndexById(secondId);
         if (firstIndex === -1 || secondIndex === -1) {
-            return 404;
+            return false;
         }
         storage[firstIndex] = storage.splice(secondIndex, 1, storage[firstIndex])[0];
 
-        return 200;
+        return true;
     }
 
     static change({ id, body }) {
         const changedPlace = storage.find((place) => (place.id === id));
         if (changedPlace === -1) {
-            return 404;
+            return false;
         }
 
-        if (body.newDescription) {
-            changedPlace.description = body.newDescription;
-        }
+        Object.keys(body).forEach(key => {
+            changedPlace[key] = body[key];
+        });
 
-        if (body.isVisited) {
-            changedPlace.visited = true;
-        }
-
-        return 200;
+        return true;
     }
 
     static remove(id) {
         if (id) {
-            const index = storage.findIndex((place) => (place.id === id));
+            const index = findIndexById(id);
             if (index === -1) {
-                return 404;
+                return false;
             }
             storage.splice(index, 1);
 
-            return 200;
+            return true;
         }
         if (!id) {
             storage = [];
 
-            return 200;
+            return true;
         }
     }
 
     static findAll({ sort, page }) {
         let localStorage = storage.slice();
-        switch (sort) {
-            case 'alph':
-                localStorage = localStorage.sort(
-                    (firstPlace, secondPlace) => (firstPlace > secondPlace ? -1 : 1));
-                break;
-            case 'date':
-            default:
-                localStorage = localStorage.sort(
-                    (firstPlace, secondPlace) => (secondPlace.date - firstPlace.date));
-                break;
+        const sortPlacesMap = {
+            'alph': (firstPlace, secondPlace) => (secondPlace.name > firstPlace.name ? -1 : 1),
+            '-alph': (firstPlace, secondPlace) => (firstPlace.name > secondPlace.name ? -1 : 1),
+            'date': (firstPlace, secondPlace) => (firstPlace.date - secondPlace.date),
+            '-date': (firstPlace, secondPlace) => (secondPlace.date - firstPlace.date)
+        };
+        if (sort) {
+            const comparator = sortPlacesMap[sort];
+            localStorage = localStorage.sort(comparator);
         }
 
         if (page) {
-            const subarrayLen = Math.ceil(localStorage.length / page);
+            const pageLenght = Number(page);
+            let resultStorage = [];
+            for (let i = 0; i < localStorage.length; i += pageLenght) {
+                resultStorage.push(localStorage.slice(i, i + pageLenght));
+            }
 
-            return localStorage.reduce((accumulator, currentValue, index) => {
-                if (index % subarrayLen === 0) {
-                    accumulator.push([]);
-                }
-                accumulator[accumulator.length - 1].push(currentValue);
-
-                return accumulator;
-            }, []);
+            return resultStorage;
         }
 
         return localStorage;
     }
 
-    static find(description) {
+    static findByDescription(description) {
         return storage.find((place) => (place.description === description));
     }
 }

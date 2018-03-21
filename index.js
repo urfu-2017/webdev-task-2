@@ -4,13 +4,10 @@ const config = require('config');
 const bodyParser = require('body-parser');
 const express = require('express');
 
-const Place = require('./models/place');
+const { loadPlaces } = require('./place-loader');
 const routes = require('./routes');
-const places = require('./storage/places');
 
-for (const place of places) {
-    new Place(place).save();
-}
+loadPlaces();
 
 const app = express();
 
