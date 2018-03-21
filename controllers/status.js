@@ -1,14 +1,10 @@
 'use strict';
 
-const storage = require('../storage');
+const User = require('../models/user');
 
 module.exports = ({ query, params }, res) => {
     try {
-        if (!storage[query.user]) {
-            res.sendStatus(404);
-        }
-
-        storage[query.user].togglePlace(params.id);
+        User.togglePlace(query.user, params.id);
         res.sendStatus(200);
     } catch (e) {
         res.sendStatus(404);

@@ -1,15 +1,10 @@
 'use strict';
 
 const User = require('../models/user');
-const storage = require('../storage');
 
-module.exports = (req, res) => {
+module.exports = ({ query, body }, res) => {
     try {
-        if (!storage[req.query.user]) {
-            storage[req.query.user] = new User();
-        }
-
-        storage[req.query.user].addPlace(req.body.name, req.body.description);
+        User.addPlace(query.user, body.name, body.description);
         res.sendStatus(201);
     } catch (e) {
         res.sendStatus(400);

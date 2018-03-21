@@ -8,8 +8,10 @@ const edit = require('./controllers/edit');
 const find = require('./controllers/find');
 const toggle = require('./controllers/status');
 const switchPlaces = require('./controllers/switch');
+const register = require('./controllers/register');
 
 module.exports = (app) => {
+    app.post('/register', register);
     app.post('/places/add', add);
     app.get('/places/list/:type', list);
     app.get('/places/list/:type/pages/:page', listPage);

@@ -4,8 +4,9 @@ const User = require('../models/user');
 
 module.exports = ({ query }, res) => {
     try {
-        res.json(User.findPlaceByDescription(query.user, query.description));
+        User.createUser(query.user);
+        res.sendStatus(201);
     } catch (e) {
-        res.sendStatus(404);
+        res.sendStatus(400);
     }
 };

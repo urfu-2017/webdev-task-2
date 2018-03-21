@@ -1,5 +1,6 @@
 'use strict';
 
+const storage = {};
 const Place = require('./place');
 
 module.exports = class User {
@@ -8,7 +9,18 @@ module.exports = class User {
         this.indexes = {};
     }
 
-    addPlace(name, description = 'no description') {
+    static createUser(name) {
+        if (storage[name]) {
+            throw new Error('User is already exist');
+        }
+        storage[name] = new User();
+    }
+
+    static addPlace(user, name, description) {
+        return storage[user].__addPlace(name, description);
+    }
+
+    __addPlace(name, description = 'no description') {
         if (!name) {
             throw new Error('No name');
         }
@@ -23,7 +35,11 @@ module.exports = class User {
         return this;
     }
 
-    deletePlace(index) {
+    static deletePlace(user, index) {
+        return storage[user].__deletePlace(index);
+    }
+
+    __deletePlace(index) {
         if (!this.places[index]) {
             throw new Error('Not exist');
         }
@@ -33,7 +49,11 @@ module.exports = class User {
         return delete this.places[index];
     }
 
-    togglePlace(index) {
+    static togglePlace(user, index) {
+        storage[user].__togglePlace(index);
+    }
+
+    __togglePlace(index) {
         if (!this.places[index]) {
             throw new Error('Not exist');
         }
@@ -41,16 +61,28 @@ module.exports = class User {
         this.places[index].changeState();
     }
 
-    editPlace(index, description) {
+    static editPlace(user, index, description) {
+        storage[user].__editPlace(index, description);
+    }
+
+    __editPlace(index, description) {
         this.places[index].description = description;
     }
 
-    clear() {
+    static clear(user) {
+        storage[user].__clear();
+    }
+
+    __clear() {
         this.places = [];
         this.indexes = {};
     }
 
-    listPlaces(option) {
+    static listPlaces(user, option) {
+        return storage[user].__listPlaces(option);
+    }
+
+    __listPlaces(option) {
         let relevantPlaces = this.places.filter(place => place);
         switch (option) {
             case 'alphabet':
@@ -84,19 +116,35 @@ module.exports = class User {
         return relevantPlaces;
     }
 
-    listPage(page, option) {
+    static listPage(user, page, option) {
+        storage[user].__listPage(page, option);
+    }
+
+    __listPage(page, option) {
         return this.listPlaces(option).slice((page - 1) * 20, page * 20);
     }
 
-    getIndexesByName(name) {
+    static getIndexesByName(user, name) {
+        return storage[user].__getIndexesByName(name);
+    }
+
+    __getIndexesByName(name) {
         return this.indexes[name] || [];
     }
 
-    getPlaceByIndex(index) {
+    static getPlaceByIndex(user, index) {
+        return storage[user].getPlaceByIndex(index);
+    }
+
+    __getPlaceByIndex(index) {
         return this.places[index];
     }
 
-    findPlaceByDecription(description) {
+    static findPlaceByDescription(user, description) {
+        return storage[user].__findPlaceByDescription(description);
+    }
+
+    __findPlaceByDescription(description) {
         return this.places.filter(place => {
             const regExp = new RegExp(description, 'ig');
 
@@ -104,7 +152,11 @@ module.exports = class User {
         });
     }
 
-    switchPlaces(index1, index2) {
+    static switchPlaces(user, index1, index2) {
+        storage[user].__switchPlaces(index1, index2);
+    }
+
+    __switchPlaces(index1, index2) {
         const indexArray1 = this.indexes[this.places[index1].name];
         const indexArray2 = this.indexes[this.places[index2].name];
         indexArray1[indexArray1.indexOf(index1)] = index2;

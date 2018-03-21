@@ -1,11 +1,11 @@
 'use strict';
 
-const storage = require('../storage');
+const User = require('../models/user');
 
 module.exports = ({ query, params }, res) => {
-    if (!storage[query.user]) {
+    try {
+        res.json(User.listPlaces(query.user, params.type));
+    } catch (e) {
         res.sendStatus(404);
     }
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(storage[query.user].listPlaces(params.type)));
 };
