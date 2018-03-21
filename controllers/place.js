@@ -43,8 +43,7 @@ exports.edit = (req, res, next) => {
 
 exports.visit = (req, res, next) => {
     let { id, isVisited } = req.params;
-    isVisited = isVisited !== 'false';
-    const place = Place.edit(Number(id), { visited: isVisited });
+    const place = Place.edit(Number(id), { visited: isVisited !== 'false' });
     if (!place) {
         return next(new ServerError(errorMessages.PLACE_NOT_FOUND, 400));
     }

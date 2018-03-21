@@ -1,9 +1,8 @@
 'use strict';
 
 /* eslint-disable-next-line no-unused-vars*/
-exports.error = (err, req, res, next) => {
-    res.set('Allow', 'OPTIONS, GET, POST, PATCH, PUT, DELETE');
+module.exports = (err, req, res, next) => {
     /* eslint-disable-next-line no-console*/
-    // console.log(err);
+    console.error(err);
     res.status(err.status).send(err.message);
 };
