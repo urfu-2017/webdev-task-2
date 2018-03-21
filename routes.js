@@ -5,19 +5,19 @@ const { create, item, list, change, remove, swap } = require('./controllers/plac
 
 module.exports = app => {
     app
-        .route('/')
+        .route('/places')
         .get(list)
         .post(create)
         .delete(remove);
 
     app
-        .route('/:id')
+        .route('/places/:id')
         .patch(change)
         .delete(remove);
 
-    app.patch('/:firstId/:secondId', swap);
+    app.patch('/places/:firstId/:secondId', swap);
 
-    app.get('/:description', item);
+    app.get('/places/:description', item);
 
     app.all('*', error404);
 };

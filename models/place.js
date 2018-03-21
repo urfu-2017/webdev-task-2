@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+
+
 let storage = [];
 let currentId = 0;
 
@@ -17,22 +20,39 @@ class Place {
         this.id = currentId++;
     }
 
-    save() {
-        storage.push(this);
+    async _updateStorage() {
+        return new Promise((resolve, reject) => {
+            fs.writeFile('./storage/places.json',
+                JSON.stringify(Place.findAll({}), null, '\t') + '\n',
+                (error) => {
+                    if (error) {
+                        console.error(error.stack);
+
+                        return reject(error);
+                    }
+                    resolve();
+                });
+        });
     }
 
-    static swap({ firstId, secondId }) {
+    async save() {
+        storage.push(this);
+        await this._updateStorage();
+    }
+
+    static async swap({ firstId, secondId }) {
         const firstIndex = findIndexById(firstId);
         const secondIndex = findIndexById(secondId);
         if (firstIndex === -1 || secondIndex === -1) {
             return false;
         }
         storage[firstIndex] = storage.splice(secondIndex, 1, storage[firstIndex])[0];
+        await this._updateStorage();
 
         return true;
     }
 
-    static change({ id, body }) {
+    static async change({ id, body }) {
         const changedPlace = storage.find((place) => (place.id === id));
         if (changedPlace === -1) {
             return false;
@@ -41,22 +61,25 @@ class Place {
         Object.keys(body).forEach(key => {
             changedPlace[key] = body[key];
         });
+        await this._updateStorage();
 
         return true;
     }
 
-    static remove(id) {
+    static async remove(id) {
         if (id) {
             const index = findIndexById(id);
             if (index === -1) {
                 return false;
             }
             storage.splice(index, 1);
+            await this._updateStorage();
 
             return true;
         }
         if (!id) {
             storage = [];
+            await this._updateStorage();
 
             return true;
         }
@@ -67,8 +90,8 @@ class Place {
         const sortPlacesMap = {
             'alph': (firstPlace, secondPlace) => (secondPlace.name > firstPlace.name ? -1 : 1),
             '-alph': (firstPlace, secondPlace) => (firstPlace.name > secondPlace.name ? -1 : 1),
-            'date': (firstPlace, secondPlace) => (firstPlace.date - secondPlace.date),
-            '-date': (firstPlace, secondPlace) => (secondPlace.date - firstPlace.date)
+            'date': (firstPlace, secondPlace) => (firstPlace.createdAt - secondPlace.createdAt),
+            '-date': (firstPlace, secondPlace) => (secondPlace.createdAt - firstPlace.createdAt)
         };
         if (sort) {
             const comparator = sortPlacesMap[sort];
