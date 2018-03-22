@@ -1,5 +1,5 @@
 'use strict';
-const base = require('../models/dbModel');
+const base = require('../models/place');
 
 class Fetch {
     static async getAll(req, res) {
