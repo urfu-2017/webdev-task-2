@@ -27,7 +27,6 @@ class Place {
             .sort(sortObj)
             .toArray((err, item) => {
                 console.error(err);
-                console.info(item);
                 res.send(item);
             });
     }
