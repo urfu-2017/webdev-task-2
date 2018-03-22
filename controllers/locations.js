@@ -23,10 +23,8 @@ exports.removeLoc = (req, res) => {
 
             return;
         }
-    }
-    else
-    {
-        store.clear()
+    } else {
+        store.clear();
     }
 
     res.sendStatus(200);
