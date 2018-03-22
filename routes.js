@@ -1,7 +1,7 @@
 'use strict';
 
 const { error404 } = require('./controllers/errors');
-const PlaceController = require('./controllers/store');
+const PlaceController = require('./controllers/place');
 
 module.exports = app => {
     app.get('/', PlaceController.listPlaces);
