@@ -4,38 +4,66 @@ const Place = require('../models/place');
 
 module.exports = class PlaceController {
     static listPlaces(req, res) {
-        res.json(Place.getStore(req.body.page, req.body.itemsCount, req.body.sort));
+        const { pageNumber, pageSize, sort } = req.body;
+        res.json(Place.getList(pageNumber, pageSize, sort));
     }
 
     static addPlace(req, res) {
-        Place.add(req.body.desc);
-        res.json(Place.getStore());
+        const desc = req.body.desc;
+        if (desc && typeof (desc) === 'string') {
+            Place.add(desc);
+            res.send('OK');
+
+            return;
+        }
+        res.status(400).send('Description is empty');
     }
 
-    static clearStore(req, res) {
+    static clear(res) {
         Place.clear();
-        res.json(Place.getStore());
+        res.send('OK');
     }
 
     static deletePlace(req, res) {
-        Place.delete(req.body.id);
-        res.json(Place.getStore());
+        const id = req.body.id;
+        if (id) {
+            Place.delete(id);
+            res.send('OK');
+
+            return;
+        }
+        res.status(400).send('Id is empty');
     }
 
     static findPlace(req, res) {
-        if (req.body.desc && typeof(req.body.desc) === 'string') {
-            res.status(400).send('Description is empty');
+        const desc = req.body.desc;
+        if (desc && typeof (desc) === 'string') {
+            res.json(Place.findDesc(desc));
+
+            return;
         }
-        res.json(Place.findDesc(req.body.desc));
+        res.status(400).send('Description is empty');
     }
 
     static editPlace(req, res) {
-        Place.edit(req.body);
-        res.json(Place.getStore());
+        const { id, desc, isVisited } = req.body;
+        if (req.body.id) {
+            Place.edit(id, desc, isVisited);
+            res.send('OK');
+
+            return;
+        }
+        res.status(400).send('Id is empty');
     }
 
     static insertPlace(req, res) {
-        Place.insert(req.body);
-        res.json(Place.getStore());
+        const { id, indexTo } = req.body;
+        if (req.body.id) {
+            Place.insert(id, indexTo);
+            res.send('OK');
+
+            return;
+        }
+        res.status(400).send('Id is empty');
     }
 };

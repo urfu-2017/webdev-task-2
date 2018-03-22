@@ -69,7 +69,7 @@ class Place {
         }
     }
 
-    edit({ id, desc, isVisited }) {
+    edit(id, desc, isVisited) {
         const index = this.findElemById(id);
         if (index) {
             this.setDesc(index, desc);
@@ -97,9 +97,8 @@ class Place {
             store.splice(indexTo, 0, copy);
         }
     }
-
-    getStore(page, itemsCount, sortMethod) {
-        switch (sortMethod) {
+    getList(pageNumber, pageSize, sort) {
+        switch (sort) {
             case 'date':
                 return this.dateSort();
             case 'alphabet':
@@ -107,10 +106,10 @@ class Place {
             default:
                 break;
         }
-        if (page && itemsCount) {
-            const leftBorder = Number(page - 1) * Number(itemsCount);
+        if (pageNumber && pageSize) {
+            const leftBorder = Number(pageNumber - 1) * Number(pageSize);
 
-            return store.slice(leftBorder, leftBorder + Number(itemsCount));
+            return store.slice(leftBorder, leftBorder + Number(pageSize));
         }
 
         return store;
