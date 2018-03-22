@@ -1,6 +1,7 @@
 'use strict';
 
 const LokiDb = require('lokijs');
+const createError = require('http-errors');
 
 const _storage = new LokiDb();
 const _places = _storage.addCollection('places');
@@ -13,7 +14,7 @@ class Place {
 
     static swap(placeIndex1, placeIndex2) {
         if (placeIndex1 >= _places.data.length || placeIndex2 >= _places.data.length) {
-            throw Error('one of the index is out of range');
+            throw new createError.BadRequest('one of the index is out of range');
         }
         const savedPlace = _places.data[placeIndex1];
         _places.data[placeIndex1] = _places.data[placeIndex2];
@@ -46,7 +47,7 @@ class Place {
     static getById(placeId) {
         const placeRecord = _places.get(placeId);
         if (placeRecord === null) {
-            throw Error(`place with id = ${placeId} doesn't exist`);
+            throw new createError.NotFound(`place with id = ${placeId} doesn't exist`);
         }
 
         return new Place(placeRecord);
@@ -55,7 +56,7 @@ class Place {
     static deletePlace(placeId) {
         const place = _places.find({ '$loki': placeId });
         if (place.length !== 1) {
-            throw Error(`place with id = ${placeId} doesn't exist`);
+            throw new createError.NotFound(`place with id = ${placeId} doesn't exist`);
         }
 
         _places.remove(place);
@@ -83,7 +84,7 @@ class Place {
         );
 
         if (!isUpdated) {
-            throw Error(`place with id = ${id} doesn't exist`);
+            throw new createError.NotFound(`place with id = ${id} doesn't exist`);
         }
     }
 

@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 registerRoutes(app);
 
 app.use(function (err, req, res, next) {
-    res.status(400).send(err.message);
+    res.status(err.statusCode).send(err.message);
     next();
 });
 
