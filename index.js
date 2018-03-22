@@ -9,12 +9,14 @@ const err404 = (req, res) => res.sendStatus(404);
 
 app.use(express.json());
 
-app.get('/', controller.getLoc);
-app.get('/search', controller.searchLoc);
-app.delete('/', controller.removeLoc);
-app.patch('/swap', controller.swapLoc);
-app.post('/', controller.createLoc);
-app.patch('/', controller.editLoc);
+app.get('/places', controller.getLoc);
+app.get('/places/search', controller.searchLoc);
+app.delete('/places', controller.removeLoc);
+app.patch('/places/swap', controller.swapLoc);
+app.post('/places', controller.createLoc);
+app.patch('/places', controller.editLoc);
 app.all('*', err404);
 
-app.listen(8080);
+app.listen(8080, () => {
+    console.info('Server had started on http://localhost:8080');
+});

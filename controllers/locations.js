@@ -47,21 +47,21 @@ exports.searchLoc = (req, res) => {
         return;
     }
 
-    const loc = store.search(req.query.q);
+    const loc = store.searchDescription(req.query.q);
 
     res.send(loc);
 };
 
 exports.swapLoc = (req, res) => {
-    if (!(req.query.name && req.query.name)) {
+    if (!(req.query.name1 && req.query.name2)) {
         err400(req, res);
 
         return;
     }
 
-    const locs = store.swap(req.query.name, req.query.name);
+    const locations = store.swap(req.query.name1, req.query.name2);
 
-    if (!locs) {
+    if (!locations) {
         err400(req, res);
 
         return;
