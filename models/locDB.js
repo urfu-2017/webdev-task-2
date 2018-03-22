@@ -27,6 +27,10 @@ class LocDB {
         return res;
     }
 
+    clear() {
+        this.loc = [];
+    }
+
     searchDescription(query) {
         const res = this.loc.filter(x => x.description.includes(query));
 

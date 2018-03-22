@@ -15,13 +15,18 @@ exports.createLoc = (req, res) => {
 };
 
 exports.removeLoc = (req, res) => {
+    if (req.query.name) {
+        const loc = store.remove(req.query.name);
 
-    const loc = store.remove(req.query.name);
+        if (loc === null) {
+            err400(req, res);
 
-    if (loc === null) {
-        err400(req, res);
-
-        return;
+            return;
+        }
+    }
+    else
+    {
+        store.clear()
     }
 
     res.sendStatus(200);
