@@ -91,5 +91,5 @@ function getErrorMessage({ description, isVisited, indexNumber }) {
 }
 
 function isPropertyCorrect(property, typeOfProperty) {
-    return property && typeof property !== typeOfProperty;
+    return property !== undefined && typeof property !== typeOfProperty;
 }

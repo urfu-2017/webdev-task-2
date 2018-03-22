@@ -18,7 +18,7 @@ class Place {
 
     update({ description, isVisited, indexNumber }) {
         this.description = description ? description : this.description;
-        this.isVisited = isVisited ? isVisited : this.isVisited;
+        this.isVisited = isVisited !== undefined ? isVisited : this.isVisited;
         if (indexNumber) {
             this.movePlace(indexNumber);
         }
