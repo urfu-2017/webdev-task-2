@@ -26,8 +26,8 @@ function saveNote(req, res) {
 
     const notesModel = new Notes(req.storage);
 
-    notesModel.add(name, note.description);
-    res.sendStatus(200);
+    const result = notesModel.add(name, note.description);
+    res.json(result);
 }
 
 function editNote(req, res) {

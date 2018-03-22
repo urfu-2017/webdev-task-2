@@ -1,9 +1,16 @@
 
 'use strict';
 const { Notes } = require('../models/notes');
+
+/* eslint-disable max-statements */
 function getList(req, res) {
     let notes = (new Notes(req.storage)).getAll()
-        .slice();
+        .slice()
+        .map((note, index) => {
+            note.index = index;
+
+            return note;
+        });
     if (!sortNotes(req, notes)) {
         res.sendStatus(400);
 

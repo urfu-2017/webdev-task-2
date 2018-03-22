@@ -32,12 +32,15 @@ class Notes {
     }
 
     add(name, description) {
-        this._storage.notes.push({
+        let result = {
             name,
             description: description,
             date: new Date(),
             visited: false
-        });
+        };
+        this._storage.notes.push(result);
+
+        return result;
     }
 
     editDescription(index, description) {
@@ -50,7 +53,7 @@ class Notes {
 
     findIndexByName(name) {
         return this._storage.notes.findIndex((savedNote) => {
-            if (savedNote.name === name) {
+            if (savedNote !== undefined && savedNote.name === name) {
                 return true;
             }
 
