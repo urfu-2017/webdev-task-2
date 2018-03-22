@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 'use strict';
 
 const config = require('../config'); // здесь должны лежать константы и настройки

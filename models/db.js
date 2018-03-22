@@ -5,26 +5,47 @@ const log = require('../libs/log')(module);
 const ObjectID = require('mongodb').ObjectID;
 
 class Place {
-    static async getAll(search, sortBy, res) {
+    static async getAll(sortBy, searchOf, res) {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
-        const sort = {};
-        if (sortBy === 'time') {
-            sort.time = -1;
-        } else if (sortBy === 'alph') {
-            sort.description = 1;
+        let sortObj = '';
+        let sortType = sortBy;
+        if (sortType === 'time') {
+            sortObj = { time: -1 };
+        } else if (sortType === 'alph') {
+            sortObj = { description: -1 };
         }
-        const details = {};
-        if (search !== '') {
-            details.description = search;
+        let search = searchOf || '';
+        let details = '';
+        if (search === '') {
+            details = {};
+        } else {
+            details = { 'description': search };
         }
-
-        return await db.collection('notes')
+        db.collection('notes')
             .find(details)
-            .sort(sort)
+            .sort(sortObj)
             .toArray((err, item) => {
                 console.error(err);
+                console.info(item);
                 res.send(item);
+            });
+    }
+
+
+    static async find(req, res) {
+        const dbConnection = await dbConnect();
+        const db = dbConnection.db('notes');
+        const id = req.params.id;
+        const details = { '_id': new ObjectID(id) };
+        db.collection('notes').find(details)
+            .toArray((err, item) => {
+                if (err) {
+                    res.send({ 'error': 'An error has occurred' });
+                } else {
+                    res.send(item);
+                    log.debug(item);
+                }
             });
     }
 
@@ -63,22 +84,6 @@ class Place {
                     item[to] = item[from];
                     log.debug(cache);
                     item[from] = cache;
-                    res.send(item);
-                    log.debug(item);
-                }
-            });
-    }
-
-    static async find(req, res) {
-        const dbConnection = await dbConnect();
-        const db = dbConnection.db('notes');
-        const id = req.params.id;
-        const details = { '_id': new ObjectID(id) };
-        db.collection('notes').find(details)
-            .toArray((err, item) => {
-                if (err) {
-                    res.send({ 'error': 'An error has occurred' });
-                } else {
                     res.send(item);
                     log.debug(item);
                 }
