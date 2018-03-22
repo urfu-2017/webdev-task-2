@@ -44,6 +44,10 @@ class Notes {
         this._storage.notes[index].description = description;
     }
 
+    editName(index, name) {
+        this._storage.notes[index].name = name;
+    }
+
     findIndexByName(name) {
         return this._storage.notes.findIndex((savedNote) => {
             if (savedNote.name === name) {

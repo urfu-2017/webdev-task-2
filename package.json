@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start" : "node start.js",
+    "start": "node start.js",
     "lint": "eslint .",
     "test": "npm run lint",
     "mocha": "node_modules/.bin/mocha ./tests/tests.js"
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "body-parser": "1.18.2",
+    "cors": "2.8.4",
     "express": "4.16.3"
   }
 }

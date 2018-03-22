@@ -49,7 +49,9 @@ function editNote(req, res) {
         return;
     }
 
-
+    if (note.name !== undefined) {
+        notesModel.editName(foundIndex, note.name);
+    }
     notesModel.editDescription(foundIndex, note.description);
 
     res.sendStatus(200);
