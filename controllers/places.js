@@ -3,10 +3,13 @@
 const storage = require('../places-storage');
 
 module.exports.addPlace = function addPlace(req, res) {
-    const { name, description } = req.body;
-    storage.addPlace(name, description);
-
-    res.sendStatus(200);
+    const { name } = req.body;
+    const result = storage.addPlace(name);
+    if (!result) {
+        res.sendStatus(400);
+    } else {
+        res.sendStatus(200);
+    }
 };
 
 module.exports.getPlaces = function getPlaces(req, res) {

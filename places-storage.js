@@ -1,11 +1,15 @@
 'use strict';
 
 let places = [];
+let currentPlaceIndex = 0;
 
-module.exports.addPlace = function addPlace(name, description) {
+module.exports.addPlace = function addPlace(name) {
+    if (!name) {
+        return false;
+    }
     const place = {
-        'id': places.length,
-        name, description,
+        'id': currentPlaceIndex++,
+        name,
         'visited': false,
         'creationDate': new Date()
     };
@@ -17,9 +21,7 @@ module.exports.addPlace = function addPlace(name, description) {
 module.exports.getPlaces = function getPlaces(searchString, sortBy, skip, take) {
     let result = places.slice(0, places.length);
     if (searchString) {
-        result = result.filter(
-            place => filterByDescription(place.description, searchString)
-        );
+        result = result.filter(place => place.name.includes(searchString));
     }
     if (sortBy) {
         result = sortPlaces(result, sortBy);
@@ -56,12 +58,6 @@ function sortPlaces(__places, sortBy) {
     return __places;
 }
 
-function filterByDescription(description, searchString) {
-    const words = searchString.split(' ');
-
-    return words.some(word => description.split(' ').includes(word));
-}
-
 module.exports.removePlace = function removePlace(id) {
     const place = places.find(p => p.id === Number(id));
     if (place === undefined) {
@@ -84,15 +80,15 @@ module.exports.editPlace = function editPlace(id, newInfo) {
     if (place === undefined) {
         return false;
     }
-    const { moveTo, description, visited } = newInfo;
-
+    const { moveTo, name, visited } = newInfo;
+    console.info(newInfo);
     if (moveTo !== undefined) {
         const placeId = places.indexOf(place);
         places.splice(placeId, 1);
         places.splice(moveTo, 0, place);
     }
-    if (description !== undefined) {
-        place.description = description;
+    if (name !== undefined) {
+        place.name = name;
     }
     if (visited !== undefined) {
         place.visited = visited;
