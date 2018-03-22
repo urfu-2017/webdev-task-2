@@ -47,7 +47,7 @@ class Place {
         const details = { '_id': new ObjectID(id) };
         const note = {
             place, description,
-            mark, time: details._id.getTimestamp()
+            mark: Boolean(mark), time: details._id.getTimestamp()
         };
 
         return db.collection('notes').insert(note)
@@ -65,9 +65,7 @@ class Place {
                 if (from && to && item[to] && item[from]) {
                     let cache = item[to];
                     item[to] = item[from];
-                    log.debug(cache);
                     item[from] = cache;
-                    log.debug(item);
                     db.collection('notes').remove();
                     db.collection('notes').insertMany(item);
                 }
@@ -101,12 +99,9 @@ class Place {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
         const details = { '_id': new ObjectID(id) };
-        if (mark === '' || mark === undefined) {
-            mark = false;
-        }
         const note = {
             place, description,
-            mark, time: details._id.getTimestamp()
+            mark: Boolean(mark), time: details._id.getTimestamp()
         };
 
         return db.collection('notes').update(details, note)
