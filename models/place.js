@@ -4,96 +4,98 @@ let places = [];
 
 class Place {
     constructor({ name, description }) {
+
         this.name = name;
         this.description = description;
         this.isVisited = false;
         this.created = Date.now();
     }
 
-    insertPlace() {
-        places.push(this);
+    static clearAll(listName = places) {
+        listName.length = 0;
+
+        return listName;
     }
 
-    static getPlacesList(sortType) {
-        if (sortType === 'date') {
-            return places.sort((a, b) => a.created > b.created);
+    create(listName = places) {
+        listName.push(this);
+
+        return listName;
+    }
+
+    static deletePlace(name, listName = places) {
+        const index = this.findIndex(name);
+        if (listName.splice(index, 1)) {
+            return listName;
         }
 
-        return places.sort((a, b) => a.name > b.name);
+        return listName;
     }
 
-    static findPlace(description) {
-        return places.find(place => place.description === description);
+    static edit(body, listName = places) {
+        const index = this.findIndex(body.name);
+        listName[index].name = body.newName;
+
+        return listName;
     }
 
-    static findIndex(name) {
-        let resultIndex = places.length;
-        places.forEach((place, index) => {
+    static findPlace({ value, searchType }, listName = places) {
+        if (searchType === 'nameOnly') {
+            return listName.filter(place => (place.name.indexOf(value) + 1));
+        } else if (searchType === 'descrOnly') {
+            return listName.filter(place => (place.description.indexOf(value) + 1));
+        }
+
+        return listName.filter(place => {
+            const inDescription = Boolean(place.description.indexOf(value) + 1);
+            const inName = Boolean(place.name.indexOf(value) + 1);
+
+            return inDescription || inName;
+        });
+    }
+
+    static list(sortType, listName = places) {
+        if (sortType === 'date') {
+            return listName.sort((a, b) => a.created > b.created);
+        } else if (sortType === 'name') {
+            return listName.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase());
+        }
+
+        return listName;
+
+    }
+
+    static swap(name, isTop, listName = places) {
+        const index = this.findIndex(name);
+        const tempPlace = listName[index];
+        if (isTop && index - 1 !== 0) {
+            listName[index] = listName[index - 1];
+            listName[index - 1] = tempPlace;
+        } else {
+            listName[index] = listName[index + 1];
+            listName[index + 1] = tempPlace;
+        }
+
+        return listName;
+    }
+
+    static visit({ name, isVisit }, listName = places) {
+        isVisit = undefined || true;
+        const index = this.findIndex(name);
+        listName[index].isVisited = isVisit;
+
+        return listName;
+    }
+
+    static findIndex(name, listName = places) {
+        let resultIndex = listName.length;
+        listName.forEach((place, index) => {
             if (place.name === name) {
                 resultIndex = index;
             }
         });
 
         return resultIndex;
-    }
-
-    static setDescription(newDescription, name) {
-        const indexPlaceInArray = this.findIndex(name);
-        places[indexPlaceInArray].description = newDescription;
-
-        return true;
-    }
-
-    static visit(name) {
-        const indexPlaceInArray = this.findIndex(name);
-        places[indexPlaceInArray].isVisited = true;
-
-        return true;
-    }
-
-    static popPlace(name) {
-        const indexPlaceInArray = this.findIndex(name);
-        if (places.splice(indexPlaceInArray, 1)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    static shiftPlaces(leftEdge, sign, rightEdge, increment) {
-        const tempPlace = places[leftEdge];
-        if (sign === 'most') {
-            for (let i = leftEdge; i > rightEdge; i += increment) {
-                places[i] = places[i += increment];
-            }
-        } else {
-            for (let i = leftEdge; i < rightEdge; i += increment) {
-                places[i] = places[i += increment];
-            }
-        }
-        places[rightEdge] = tempPlace;
-    }
-
-    static switchOrder(name, numberInOrder) {
-        const indexPlaceInArray = this.findIndex(name);
-        if (numberInOrder === 'start') {
-            this.shiftPlaces(indexPlaceInArray, 'most', 0, -1);
-        } else if (numberInOrder === 'end') {
-            let len = places.length - 1;
-            this.shiftPlaces(indexPlaceInArray, 'less', len, 1);
-        } else if (numberInOrder < indexPlaceInArray) {
-            numberInOrder--;
-            this.shiftPlaces(indexPlaceInArray, 'most', numberInOrder, -1);
-        } else {
-            numberInOrder--;
-            this.shiftPlaces(indexPlaceInArray, 'less', numberInOrder, 1);
-        }
-
-        return places;
-    }
-
-    static clearAll() {
-        places = [];
     }
 }
 
