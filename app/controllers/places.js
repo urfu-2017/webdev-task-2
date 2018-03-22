@@ -61,10 +61,11 @@ exports.add = (req, res) => {
 
         return;
     }
+    let newPlace = new Place(placeName, Date.now());
 
-    localPlaces.push(new Place(placeName, Date.now()));
+    localPlaces.push(newPlace);
 
-    res.status(201).send(`Added note: ${placeName}`);
+    res.json(newPlace);
 };
 
 exports.delete = (req, res) => {
@@ -90,6 +91,8 @@ exports.update = (req, res) => {
     let placeName = req.params.name;
     // to - на какую позицию в списке нужно переместить место
     let to = req.body.moveTo;
+    delete req.body.moveTo;
+
     let placeToUpdate = localPlaces.find(({ name }) => name === placeName);
 
     if (!placeToUpdate) {
@@ -100,14 +103,11 @@ exports.update = (req, res) => {
 
     if (to !== undefined) {
         let from = localPlaces.findIndex(({ name }) => name === placeName);
-        localPlaces.move(from, to);
+        // Меняем местами
+        localPlaces.splice(to, 0, localPlaces.splice(from, 1)[0]);
     }
-    // toUpdate содержит поля, которые нужно обновить
-    Object.assign(placeToUpdate, req.body.toUpdate);
+
+    Object.assign(placeToUpdate, req.body);
 
     res.sendStatus(204);
-};
-
-localPlaces.move = function (from, to) {
-    this.splice(to, 0, this.splice(from, 1)[0]);
 };
