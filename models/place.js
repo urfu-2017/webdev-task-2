@@ -54,11 +54,9 @@ class Place {
             .catch(err => log.debug(err));
     }
 
-    static async swap(res, req) {
+    static async swap(from, to) {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
-        let from = req.query.from;
-        let to = req.query.to;
 
         return db.collection('notes')
             .find()
@@ -69,8 +67,9 @@ class Place {
                     item[to] = item[from];
                     log.debug(cache);
                     item[from] = cache;
-                    res.send(item);
                     log.debug(item);
+                    db.collection('notes').remove();
+                    db.collection('notes').insertMany(item);
                 }
             })
             .catch(err => log.debug(err));

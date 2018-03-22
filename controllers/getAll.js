@@ -39,10 +39,12 @@ class Fetch {
         res.send(`Updated ${id}`);
     }
 
-    static swap(req, res) {
-        res.send('Done');
+    static async swap(req, res) {
 
-        return placesData.swap(res, req);
+        const { from, to } = req.query;
+        await placesData.swap(from, to);
+
+        res.send('Done');
     }
 
 }
