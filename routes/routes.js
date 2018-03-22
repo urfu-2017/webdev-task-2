@@ -13,7 +13,7 @@ module.exports = function (app) {
 
     app.post('/notes', async (req, res) => await mainController.post(req, res));
 
-    app.copy('/notes', async (req, res) => await mainController.swap(req, res));
+    app.put('/notes', async (req, res) => await mainController.swap(req, res));
 
     app.delete('/notes/:id', async (req, res) => await mainController.remove(req, res));
 

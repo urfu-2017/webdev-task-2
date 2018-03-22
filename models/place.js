@@ -41,13 +41,13 @@ class Place {
             .catch(err => log.debug(err));
     }
 
-    static async create(mark, id, place, descr) {
+    static async create(mark, id, place, description) {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
         const details = { '_id': new ObjectID(id) };
         const note = {
-            place: place, description: descr,
-            mark: mark, time: details._id.getTimestamp()
+            place, description,
+            mark, time: details._id.getTimestamp()
         };
 
         return db.collection('notes').insert(note)
@@ -97,7 +97,7 @@ class Place {
     }
 
 
-    static async update(id, mark, place, descr) {
+    static async update(id, mark, place, description) {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
         const details = { '_id': new ObjectID(id) };
@@ -105,8 +105,8 @@ class Place {
             mark = false;
         }
         const note = {
-            place: place, description: descr,
-            mark: mark, time: details._id.getTimestamp()
+            place, description,
+            mark, time: details._id.getTimestamp()
         };
 
         return db.collection('notes').update(details, note)
