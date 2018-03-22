@@ -7,5 +7,5 @@ const mongouri = config.mongouri;
 
 
 module.exports = () => {
-    return MongoClient.connect(mongouri);
+    return MongoClient.connect(mongouri).then(connection => connection);
 };

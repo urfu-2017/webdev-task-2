@@ -41,10 +41,9 @@ class Place {
             .catch(err => log.debug(err));
     }
 
-    static async postAll(mark, id, place, descr) {
+    static async create(mark, id, place, descr) {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
-        mark = !(mark === '' || mark === undefined);
         const details = { '_id': new ObjectID(id) };
         const note = {
             place: place, description: descr,
@@ -55,7 +54,7 @@ class Place {
             .catch(err => log.debug(err));
     }
 
-    static async copy(res, req) {
+    static async swap(res, req) {
         const dbConnection = await dbConnect();
         const db = dbConnection.db('notes');
         let from = req.query.from;

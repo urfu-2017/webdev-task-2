@@ -1,51 +1,48 @@
 'use strict';
-const base = require('../models/place');
+const placesData = require('../models/place');
 
 class Fetch {
     static async getAll(req, res) {
         const { sort, search } = req.query;
-        const places = await base.getAll(sort, search);
+        const places = await placesData.getAll(sort, search);
         res.send(places);
     }
 
     static async post(req, res) {
-        const mark = req.body.mark;
-        const id = req.params.id;
-        const placeBody = req.body.place;
-        const descr = req.body.body;
-        const places = await base.postAll(mark, id, placeBody, descr);
+        const { id } = req.params;
+        const { mark, place, body: description } = req.body;
+        const places = await placesData.create(mark, id, place, description);
         res.send(places);
     }
 
     static async find(req, res) {
-        const id = req.params.id;
-        const places = await base.find(id);
+        const { id } = req.params;
+        const places = await placesData.find(id);
         res.send(places);
     }
 
     static async purge(res) {
-        await base.deleteAll();
+        await placesData.deleteAll();
         res.send('Deleted');
     }
 
     static async remove(req, res) {
-        const id = req.params.id;
-        await base.remove(id);
-        res.send('Note ' + id + ' deleted!');
+        const { id } = req.params;
+        await placesData.remove(id);
+        res.send(`Note ${id} deleted!`);
     }
 
     static async update(req, res) {
-        const id = req.params.id;
-        let mark = req.body.mark;
-        const place = req.body.place;
-        const descr = req.body.body;
-        await base.update(id, mark, place, descr);
-        res.send(id + 'Updated');
+        const { id } = req.params;
+        const { mark, place, body: description } = req.body;
+        await placesData.update(id, mark, place, description);
+        res.send(`Updated ${id}`);
     }
 
-    static copy(req, res) {
+    static swap(req, res) {
+        res.send('Done');
 
-        return base.copy(res, req);
+        return placesData.swap(res, req);
     }
 
 }
