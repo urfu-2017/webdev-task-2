@@ -1,9 +1,9 @@
 'use strict';
 
 const { Notes } = require('../models/notes');
-function checkData(req) {
+function checkData(req, newName) {
     const note = req.body;
-    const name = req.params.name;
+    const name = newName || req.params.name;
     const notesModel = new Notes(req.storage);
     let notes = notesModel.getAll();
 
@@ -31,17 +31,16 @@ function saveNote(req, res) {
 }
 
 function editNote(req, res) {
-    const resultChecking = checkData(req);
+    const resultChecking = checkData(req, req.body.name);
     if (!resultChecking) {
         res.sendStatus('400');
 
         return;
     }
-    const { note, name } = resultChecking;
-
+    const { note } = resultChecking;
     const notesModel = new Notes(req.storage);
 
-    const foundIndex = notesModel.findIndexByName(name);
+    const foundIndex = notesModel.findIndexByName(req.params.name);
 
     if (foundIndex === -1) {
         res.sendStatus(404);
@@ -52,7 +51,9 @@ function editNote(req, res) {
     if (note.name !== undefined) {
         notesModel.editName(foundIndex, note.name);
     }
-    notesModel.editDescription(foundIndex, note.description);
+    if (note.description !== undefined) {
+        notesModel.editDescription(foundIndex, note.description);
+    }
 
     res.sendStatus(200);
 }
