@@ -39,7 +39,7 @@ exports.createPlace = async (req, res) => {
     });
     const id = placesRepository.save(place);
 
-    res.send(id);
+    res.send({ id: id });
 };
 
 exports.updatePlace = async (req, res) => {
