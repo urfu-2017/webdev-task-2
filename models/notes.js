@@ -23,6 +23,8 @@ class Notes {
     swap(was, become) {
         let notes = this._storage.notes;
         let temp = notes[was];
+        notes[was].index = become;
+        notes[become].index = was;
         notes[was] = notes[become];
         notes[become] = temp;
     }
@@ -36,7 +38,8 @@ class Notes {
             name,
             description: description,
             date: new Date(),
-            visited: false
+            visited: false,
+            index: this._storage.notes.length
         };
         this._storage.notes.push(result);
 
