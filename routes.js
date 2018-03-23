@@ -3,16 +3,16 @@
 const places = require('./controllers/places');
 
 module.exports = app => {
-    // /places?search=:search&sortBy=(name|date)&sortDir=(desc|:sortDir)&page=:page&limit=:limit
-    app.get('/places', places.getPlaces);
-    // /places/:name
-    app.post('/places/:name', places.addPlace);
-    // /places
-    app.delete('/places', places.clearPlaces);
-    // /places/:id
-    app.delete('/places/:id', places.deletePlace);
-    // /places/:id?name=:name&isVisited=:isVisited
-    app.patch('/places/:id', places.updatePlace);
-    // вставляет в позицию массива начиная с нулевой: /places/:id?position=:positionId
-    app.put('/places/:id', places.swapPlace);
+
+    /* /places/list {search: (string), sortBy: "name" | "date", sortDirection: "desc"
+     | "*", page: (int), limit: (int) } */
+    app.post('/places/list', places.getPlaces);
+    // /places/ { name: (str) }
+    app.post('/places', places.addPlace);
+    // /places/ {} - delete all | { id: (int) }
+    app.delete('/places/', places.deletePlace);
+    // /places/ {name: (str), isVisited: (bool)}
+    app.patch('/places/', places.updatePlace);
+    // /places/:id/position { position: (int) - с нуля до конца списка }
+    app.patch('/places/:id/position/', places.swapPlace);
 };

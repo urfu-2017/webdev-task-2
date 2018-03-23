@@ -3,12 +3,17 @@
 let placesStorage = [];
 const Place = require('../models/place');
 
+const generateID = () => {
+    return Math.round(Date.now() / ((placesStorage.length + 1) *
+        Math.round(Math.random() * 1000000)));
+};
+
 module.exports.addPlace = function addPlace(name) {
-    const id = placesStorage.length;
+    const id = generateID();
     let places = new Place(id, name);
     placesStorage.push(places);
 
-    return true;
+    return places;
 };
 
 module.exports.getPlaces = function getPlaces(searchText, sortBy, page, limit) {
@@ -29,15 +34,14 @@ module.exports.getPlaces = function getPlaces(searchText, sortBy, page, limit) {
     return result;
 };
 
-function search(searchText, searchArr) {
-    let result = searchArr;
-    if (searchText) {
-        result = searchArr = searchArr.filter(
-            place => searchInDescription(place.name, searchText)
+function search(text, array) {
+    if (text) {
+        array = array.filter(
+            place => searchInName(place.name, text)
         );
     }
 
-    return result;
+    return array;
 }
 
 module.exports.clearAll = function clearAll() {
@@ -68,49 +72,46 @@ module.exports.updatePlace = function updatePlace(id, name, isVisited) {
     if (name !== undefined) {
         place.name = name;
     }
-    if (isVisited !== undefined) {
-        if (isVisited === 'true') {
-            place.isVisited = true;
-        }
+    if (typeof (isVisited) === 'boolean') {
+        place.isVisited = isVisited;
     }
 
-    return true;
+    return place;
 };
 
 module.exports.swapPlace = function swapPlace(id, position) {
-    const place = findById(id);
-    if (position === undefined || !isNaN(position)) {
+    const place = findById(Number(id));
+    if (place === undefined) {
+
         return false;
     }
-    const placeIndex = placesStorage.indexOf(place);
-    placesStorage.splice(placeIndex, 1);
-    placesStorage.splice(Number(position), 0, place);
+    placesStorage.splice(placesStorage.indexOf(place), 1);
+    placesStorage.splice(position, 0, place);
 
     return true;
 };
 
 function findById(id) {
-    return placesStorage.find(p => p.id === Number(id));
+    return placesStorage.find(p => p.id === id);
 }
 
 function sortPlaces(places, sortBy) {
-    const { dir, by } = sortBy;
-    let dirMult = (dir === 'desc') ? -1 : 1;
+    const { direction, by } = sortBy;
+    let dirMult = (direction === 'desc') ? -1 : 1;
 
     if (by === 'name') {
-        return places.sort((a, b) => a.name > b.name
-            ? dirMult : -1 * dirMult);
+        return places.sort((a, b) => (a.name > b.name ? 1 : -1) * dirMult);
     }
     if (by === 'date') {
-        return places.sort((a, b) => a.dateCreate > b.dateCreate
-            ? dirMult : -1 * dirMult);
+        return places.sort((a, b) => (a.dateCreate - b.dateCreate) * dirMult);
     }
 
     return places;
 }
 
-function searchInDescription(description, searchString) {
+function searchInName(description, searchString) {
     const words = searchString.split(' ');
+    const searchIn = description.split(' ').map(word => word.toLowerCase());
 
-    return words.some(word => description.split(' ').includes(word));
+    return words.some(word => searchIn.includes(word));
 }

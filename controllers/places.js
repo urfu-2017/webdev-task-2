@@ -3,51 +3,55 @@
 const placesRepo = require('../repository/placesRepository');
 
 module.exports.addPlace = function addPlace(req, res) {
-    const { name } = req.params;
-    placesRepo.addPlace(name);
-    res.sendStatus(200);
+    const { name } = req.body;
+    const answer = placesRepo.addPlace(name);
+    res.json(answer);
 };
 
 module.exports.getPlaces = function getPlaces(req, res) {
-    const { search, sortBy, sortDir, page, limit } = req.query;
-    const sort = { 'dir': sortDir, 'by': sortBy };
+    const { search, sortBy, sortDir, page, limit } = req.body;
+    const sort = { direction: sortDir, by: sortBy };
     const places = placesRepo.getPlaces(search, sort, page, limit);
     res.json(places);
 };
 
-module.exports.clearPlaces = function clearPlaces(req, res) {
-    placesRepo.clearAll();
-    res.sendStatus(200);
-};
+// module.exports.clearPlaces = function clearPlaces(req, res) {
+//     placesRepo.clearAll();
+//     res.sendStatus(200);
+// };
 
 module.exports.deletePlace = function deletePlace(req, res) {
-    const { id } = req.params;
-    const complite = placesRepo.deletePlace(id);
-    if (complite) {
-        res.sendStatus(200);
+    const { id } = req.body;
+    if (id !== undefined) {
+        const isComplete = placesRepo.deletePlace(id);
+        if (isComplete) {
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(404);
+        }
     } else {
-        res.sendStatus(400);
+        placesRepo.clearAll();
+        res.sendStatus(200);
     }
 };
 
 module.exports.updatePlace = function updatePlace(req, res) {
-    const { id } = req.params;
-    const { name, isVisited } = req.query;
-    const complite = placesRepo.updatePlace(id, name, isVisited);
-    if (complite) {
-        res.sendStatus(200);
+    const { id, name, isVisited } = req.body;
+    const place = placesRepo.updatePlace(id, name, isVisited);
+    if (place) {
+        res.json(place);
     } else {
-        res.sendStatus(400);
+        res.sendStatus(404);
     }
 };
 
 module.exports.swapPlace = function swapPlace(req, res) {
     const { id } = req.params;
-    const { position } = req.query;
-    const complite = placesRepo.swapPlace(id, position);
-    if (complite) {
+    const { position } = req.body;
+    const isComplete = placesRepo.swapPlace(Number(id), Number(position));
+    if (isComplete) {
         res.sendStatus(200);
     } else {
-        res.sendStatus(400);
+        res.sendStatus(404);
     }
 };
