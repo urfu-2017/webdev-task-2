@@ -46,15 +46,16 @@ exports.getPlaces = (req, res) => {
 
 exports.postPlaces = (req, res) => {
     let { description } = req.body;
-    DB.push({
+    let place = {
         id: '000' + idCounter,
         createTime: Number(new Date()),
         description: description,
         visited: 'false'
-    });
+    };
+    DB.push(place);
     idCounter++;
 
-    res.sendStatus(201);
+    res.status(201).send(JSON.stringify(place));
 };
 
 exports.changeData = (req, res) => {

@@ -3,21 +3,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const routes = require('./routes');
+const router = require('./router');
+const handleErrors = require('./middlewares/handleErrors');
+const { port } = require('./config');
 
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/places', routes.getPlaces);
-app.post('/places', routes.postPlaces);
-app.delete('/places', routes.deleteAll);
-app.patch('/places/:id', routes.changeData);
-app.delete('/places/:id', routes.deleteData);
-app.get('/places/search', routes.getSearch);
-app.get('*', (req, res) => {
-    res.sendStatus(404);
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
 });
 
-app.listen(8080, () => {
-    console.info('Listening on port 8080');
+router(app);
+app.use(handleErrors);
+
+app.listen(port, () => {
+    console.info(`Listening on port ${port}`);
 });
