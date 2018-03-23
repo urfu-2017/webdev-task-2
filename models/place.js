@@ -4,98 +4,115 @@ let places = [];
 
 class Place {
     constructor({ name, description }) {
-
+        this.id = Math.round((Date.now() * Math.random() * Math.pow(10, 5))) %
+            Math.round(Math.random() * Math.pow(10, 16));
         this.name = name;
         this.description = description;
         this.isVisited = false;
-        this.created = Date.now();
+        const tempDate = new Date();
+        const month = ('0' + (tempDate.getMonth() + 1)).substr(-3);
+        this.created = [tempDate.getDate(), month, tempDate.getFullYear()].join('.');
+        this.unixTimeStamp = Date.now();
     }
 
-    static clearAll(listName = places) {
-        listName.length = 0;
+    static clearAll() {
+        places = [];
 
-        return listName;
+        return places;
     }
 
-    create(listName = places) {
-        listName.push(this);
-
-        return listName;
+    create() {
+        places.push(this);
     }
 
-    static deletePlace(name, listName = places) {
-        const index = this.findIndex(name);
-        if (listName.splice(index, 1)) {
-            return listName;
+    static deletePlace(id) {
+        const index = places.findIndex(place => place.id === Number(id));
+        if (index !== -1) {
+            places.splice(index, 1);
+
+            return true;
         }
 
-        return listName;
+        return false;
     }
 
-    static edit(body, listName = places) {
-        const index = this.findIndex(body.name);
-        listName[index].name = body.newName;
+    static edit(id, newValue, editableField) {
+        const index = places.findIndex(place => place.id === Number(id));
+        if (index !== -1) {
+            if (editableField === 'name') {
+                places[index].name = newValue;
+            } else {
+                places[index].description = newValue;
+            }
 
-        return listName;
+            return {
+                placeWithNewValue: places[index],
+                isEdit: true
+            };
+        }
+
+        return { isEdit: true };
     }
 
-    static findPlace({ value, searchType }, listName = places) {
+    static findPlace(value, searchType) {
+        value = value.toLowerCase();
         if (searchType === 'nameOnly') {
-            return listName.filter(place => (place.name.indexOf(value) + 1));
+            return places.filter(place => (place.name.toLowerCase().indexOf(value) + 1));
         } else if (searchType === 'descrOnly') {
-            return listName.filter(place => (place.description.indexOf(value) + 1));
+            return places.filter(place => (place.description.toLowerCase().indexOf(value) + 1));
         }
 
-        return listName.filter(place => {
-            const inDescription = Boolean(place.description.indexOf(value) + 1);
-            const inName = Boolean(place.name.indexOf(value) + 1);
+        return places.filter(place => {
+            const inDescription = Boolean(place.description.toLowerCase().indexOf(value) + 1);
+            const inName = Boolean(place.name.toLowerCase().indexOf(value) + 1);
 
             return inDescription || inName;
         });
     }
 
-    static list(sortType, listName = places) {
+    static list(sortType) {
         if (sortType === 'date') {
-            return listName.sort((a, b) => a.created > b.created);
+            return places.sort((a, b) => a.unixTimeStamp > b.unixTimeStamp);
         } else if (sortType === 'name') {
-            return listName.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase());
+            return places.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase());
         }
 
-        return listName;
+
+        return places;
 
     }
 
-    static swap(name, isTop, listName = places) {
-        const index = this.findIndex(name);
-        const tempPlace = listName[index];
-        if (isTop && index - 1 !== 0) {
-            listName[index] = listName[index - 1];
-            listName[index - 1] = tempPlace;
-        } else {
-            listName[index] = listName[index + 1];
-            listName[index + 1] = tempPlace;
+    static pagination(numberForPages) {
+        numberForPages = Number(numberForPages);
+        let counter = 0;
+        let arrPages = [];
+        while (counter < places.length) {
+            arrPages.push(places.slice(counter, counter + numberForPages));
+            counter += numberForPages;
         }
 
-        return listName;
+        return arrPages;
     }
 
-    static visit({ name, isVisit }, listName = places) {
-        isVisit = undefined || true;
-        const index = this.findIndex(name);
-        listName[index].isVisited = isVisit;
+    static swap(id1, id2) {
+        const index1 = places.findIndex(place => place.id === Number(id1));
+        const index2 = places.findIndex(place => place.id === Number(id2));
+        let tempPlace = places[index1];
+        places[index1] = places[index2];
+        places[index2] = tempPlace;
 
-        return listName;
+        return places;
     }
 
-    static findIndex(name, listName = places) {
-        let resultIndex = listName.length;
-        listName.forEach((place, index) => {
-            if (place.name === name) {
-                resultIndex = index;
-            }
-        });
+    static visit(id, isVisit) {
+        const index = places.findIndex(place => place.id === Number(id));
+        if (index + 1) {
+            places[index].isVisited = isVisit;
 
-        return resultIndex;
+            return true;
+        }
+
+        return false;
     }
 }
 

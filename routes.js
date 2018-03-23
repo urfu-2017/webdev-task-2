@@ -6,17 +6,20 @@ const { clearAll,
     edit,
     findPlace,
     list,
+    pagination,
     swap,
-    visit } = require('./controllers/describeMethods.js');
+    visit } = require('./controllers/describe-methods.js');
 
 module.exports = app => {
     app
-        .delete('/clearAll', clearAll)//
-        .post('/create/:name/:description', create)//
-        .delete('/deletePlace', deletePlace)//
-        .put('/edit', edit)//
-        .get('/list', list)//
-        .put('/swap', swap)
-        .get('/findPlace', findPlace)//
-        .patch('/visit', visit);
+        .get('/places', list)
+        .get('/search', findPlace)
+        .get('/page', pagination)
+        .put('/places/:id/visited', visit)
+        .post('/places', create)
+        .patch('/places/order', swap)
+        .patch('/edit/:id', edit)
+        .delete('/places', clearAll)
+        .delete('/places/:id', deletePlace)
+        .delete('/places/:id/visited', visit);
 };

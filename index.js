@@ -6,9 +6,9 @@ const cors = require('cors');
 
 const routes = require('./routes');
 const Place = require('./models/place');
-const stubData = require('./data_for_check_app/sevenWondersOfTheWorld.json');
+const stubData = require('./data_for_check_app/seven-wonders-of-the-world.json');
 
-for (let place of stubData) {
+for (const place of stubData) {
     new Place(place).create();
 }
 
