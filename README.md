@@ -17,6 +17,7 @@
 7. Возможность менять порядок мест в списке
 8. Возможность очистки всего списка мест
 
+### API
 1. POST /places
 2. GET /places ?sort={alpha, time} ?limit ?page
 3. GET /places/search ?q
