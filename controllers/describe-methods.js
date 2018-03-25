@@ -4,16 +4,15 @@ const Place = require('../models/place');
 
 // Возможность очистки всего списка мест
 exports.clearAll = (req, res) => {
-    const places = Place.clearAll();
-    res.status(200).send(places); // OK
+    Place.clearAll();
+    res.sendStatus(200); // OK
 };
 
 // Возможность добавления нового места (страны, города, достопримечательности)
 //   Место состоит из описания и отметки о посещении
 //   Место создается непосещённым
 exports.create = (req, res) => {
-    // console.log(req.params);
-    const place = new Place(req.params);
+    const place = new Place(req.body);
     place.create();
     res.status(201).send(place); // Created
 };
@@ -23,17 +22,17 @@ exports.deletePlace = (req, res) => {
     const isDelete = Place.deletePlace(req.params.id);
     if (isDelete) {
         res.sendStatus(202);
+    } else {
+        res.sendStatus(404);
     }
-    res.sendStatus(404);
 };
 
 // Возможность редактирования описания конкретного места
 exports.edit = (req, res) => {
-    const editableField = req.query.name ? 'name' : 'description';
     const { placeWithNewValue, isEdit } = Place.edit(
         req.params.id,
-        req.query.newValue,
-        editableField);
+        req.body.name,
+        req.body.description);
     if (isEdit) {
         res.status(200).send(placeWithNewValue); // OK
     } else {
@@ -53,7 +52,6 @@ exports.findPlace = (req, res) => {
 //   Можно выводить список мест постранично
 exports.list = (req, res) => {
     const places = Place.list(req.query.sortType);
-    // console.log(places);
     res.type('application/json');
     res.status(200);
     res.send(places);
@@ -84,7 +82,7 @@ exports.visit = (req, res) => {
     }
     const isCorrectMark = Place.visit(id, isVisit);
     if (isCorrectMark) {
-        res.status(200); // OK
+        res.sendStatus(200); // OK
     } else {
         res.sendStatus(404); // Not Found
     }

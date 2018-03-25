@@ -36,14 +36,11 @@ class Place {
         return false;
     }
 
-    static edit(id, newValue, editableField) {
+    static edit(id, name, description) {
         const index = places.findIndex(place => place.id === Number(id));
         if (index !== -1) {
-            if (editableField === 'name') {
-                places[index].name = newValue;
-            } else {
-                places[index].description = newValue;
-            }
+            places[index].name = name;
+            places[index].description = description;
 
             return {
                 placeWithNewValue: places[index],
@@ -94,12 +91,37 @@ class Place {
         return arrPages;
     }
 
+    static recountArray(index1, index2) {
+        return places.map((place, index) => {
+            if (index === index2 - 1) {
+                return places[index1];
+            }
+            if (index >= index2) {
+                return place;
+            }
+            if (index >= index1) {
+                return places[index + 1];
+            }
+
+            return place;
+        });
+    }
+
     static swap(id1, id2) {
-        const index1 = places.findIndex(place => place.id === Number(id1));
-        const index2 = places.findIndex(place => place.id === Number(id2));
-        let tempPlace = places[index1];
-        places[index1] = places[index2];
-        places[index2] = tempPlace;
+        let index1 = places.findIndex(place => place.id === Number(id1));
+        let index2 = places.findIndex(place => place.id === Number(id2));
+        if ((index1 === undefined) || (index2 === undefined)) {
+            return places;
+        }
+        if (index1 > index2) {
+            places.reverse();
+            index1 = places.length - index1 - 1;
+            index2 = places.length - index2 - 1;
+            places = this.recountArray(index1, index2);
+            places.reverse();
+        } else if (index1 < index2) {
+            places = this.recountArray(index1, index2);
+        }
 
         return places;
     }
