@@ -1,13 +1,6 @@
 'use strict';
 
-class Place {
-    constructor(id, description) {
-        this.id = id;
-        this.description = description;
-        this.visited = false;
-        this.creationDate = new Date();
-    }
-}
+const Place = require('./place');
 
 class PlacesStorage {
     constructor() {
@@ -25,7 +18,7 @@ class PlacesStorage {
     getPlace(id) {
         let index = this._findIndexById(id);
 
-        return (index !== -1) ? this._places[index] : null;
+        return index !== -1 ? this._places[index] : null;
     }
 
     list() {
@@ -49,8 +42,9 @@ class PlacesStorage {
             return false;
         }
 
-        let place = this._places.splice(currentIndex, 1)[0];
-        this._places.splice(index, 0, place);
+        const places = this._places.slice();
+        this._places[currentIndex] = places[index];
+        this._places[index] = places[currentIndex];
 
         return true;
     }
