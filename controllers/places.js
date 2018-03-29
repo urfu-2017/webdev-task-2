@@ -1,127 +1,82 @@
 'use strict';
 
-const Storage = require('./storage');
-const storage = new Storage();
-
-function getComparator(field) {
-    if (field === 'createAt') {
-        return (a, b) => a.createAt - b.createdAt;
-    } else if (field === 'title') {
-        return (a, b) => a.title.localeCompare(b.title);
-    }
-}
-
-function getContainsFilter(containsString) {
-    if (containsString) {
-        return place => place.description.includes(containsString);
-    }
-}
-
+var HttpStatus = require('http-status-codes');
+const Place = require('../models/place');
 
 module.exports.post = (req, res) => {
-    const description = req.body.description;
-    const title = req.body.title;
-    if (typeof description !== 'string' || typeof title !== 'string') {
-        console.info(typeof description);
-        console.info(typeof title);
-        res.status(400).send({
-            error: 'place should has "description" and "title"'
+    const place = new Place(req.body);
+    if (!place.save()) {
+        res.status(HttpStatus.BAD_REQUEST).send({
+            error: 'invalid place for save'
         });
 
         return;
     }
 
-    var id = storage.add({
-        description,
-        title,
-        visited: false,
-        createdAt: new Date()
-    });
-
-    res.status(201).send({ id });
+    res.status(HttpStatus.CREATED).send(place);
 };
 
 module.exports.get = (req, res) => {
-    const id = req.params.id;
-    const place = storage.find(id);
+    const place = Place.find(req.params.id);
     if (!place) {
-        res.status(404).send({
-            error: `place with id "${id}" not found`
+        res.status(HttpStatus.NOT_FOUND).send({
+            error: `place with id "${req.params.id}" not found`
         });
 
         return;
     }
 
-    res.status(200).send(place);
+    res.status(HttpStatus.OK).send(place);
 };
-
-module.exports.getByFilter = (req, res) => {
-    const query = {
-        limit: Number.parseInt(req.query.limit),
-        offset: Number.parseInt(req.query.offset),
-        comparator: getComparator(req.query.orderby),
-        filter: getContainsFilter(req.query.contains)
-    };
-
-    const result = storage.findByQuery(query);
-
-    res.status(200).send(result);
-};
-
-module.exports.changeIndex = (req, res) => {
-    const id = req.params.id;
-    const newIndex = Number.parseInt(req.params.newIndex);
-
-    if (!storage.changeIndex(id, newIndex)) {
-        res.status(404).send({
-            error: 'id not exists or incorrect index'
-        });
-
-        return;
-    }
-
-    res.status(204).send();
-};
-
-function isValidPlaceForUpdate(place) {
-    return (!('description' in place) || typeof place.description === 'string') &&
-           (!('title' in place) || typeof place.title === 'string') &&
-           (!('visited' in place) || typeof place.visited === 'boolean');
-}
 
 module.exports.patch = (req, res) => {
-    if (!isValidPlaceForUpdate(req.body)) {
-        res.status(400).send({
-            error: 'place for patch should has at least one of fields: ' +
-                   '"description", "title", "visited"'
+    const place = Place.find(req.params.id);
+    if (!place) {
+        res.status(HttpStatus.NOT_FOUND).send({
+            error: `place with id "${req.params.id}" not found`
+        });
+
+        return;
+    }
+    place.update(req.body);
+    if (!place.save()) {
+        res.status(HttpStatus.BAD_REQUEST).send({
+            error: 'invalid place for update'
         });
 
         return;
     }
 
-    const id = req.params.id;
-    const wasUpdate = storage.update(id, {
-        description: req.body.description,
-        title: req.body.title,
-        visited: req.body.visited
-    });
-    if (!wasUpdate) {
-        res.status(404).send();
+    res.status(HttpStatus.NO_CONTENT).send();
+};
+
+module.exports.getByQuery = (req, res) => {
+    const result = Place.findByQuery(req.query);
+    res.status(HttpStatus.OK).send(result);
+};
+
+module.exports.patchOrder = (req, res) => {
+    const oldIndex = Number.parseInt(req.body.oldIndex, 10);
+    const newIndex = Number.parseInt(req.body.newIndex, 10);
+    if (isNaN(oldIndex) || isNaN(newIndex) || !Place.changeIndex(oldIndex, newIndex)) {
+        res.status(HttpStatus.BAD_REQUEST).send({
+            error: 'invalid oldIndex or newIndex'
+        });
 
         return;
     }
 
-    res.status(204).send();
+    res.status(HttpStatus.NO_CONTENT).send();
 };
 
 module.exports.delete = (req, res) => {
-    storage.deletePlace(req.id);
+    Place.delete(req.id);
 
-    res.status(204).send();
+    res.status(HttpStatus.NO_CONTENT).send();
 };
 
 module.exports.deleteAll = (req, res) => {
-    storage.clear();
+    Place.deleteAll();
 
-    res.status(204).send();
+    res.status(HttpStatus.NO_CONTENT).send();
 };
