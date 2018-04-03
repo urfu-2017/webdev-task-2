@@ -47,7 +47,7 @@ var latest = {
     get last() {
         return this.lastNum++;
     }
-}
+};
 
 class Place {
     constructor(description) {
