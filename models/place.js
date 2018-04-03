@@ -42,9 +42,16 @@ var storage = [
     }
 ];
 
+var latest = {
+    lastNum: storage[storage.length - 1].id + 1,
+    get last() {
+        return this.lastNum++;
+    }
+}
+
 class Place {
     constructor(description) {
-        this.id = storage.length === 0 ? 0 : storage[storage.length - 1].id + 1;
+        this.id = latest.last;
         this.description = description;
         this.isVisited = false;
         this.creationDate = new Date();
@@ -81,17 +88,17 @@ class Place {
         storage = [];
     }
 
-    static removeCertain(Id) {
-        Id = Number(Id);
-        storage = storage.filter(elem =>elem.id !== Id);
+    static removeCertain(id) {
+        id = Number(id);
+        storage = storage.filter(elem =>elem.id !== id);
 
     }
 
-    static updateCertain(Id, body) {
+    static updateCertain(id, body) {
         var { description, isVisited } = body;
-        Id = Number(Id);
+        id = Number(id);
         for (var i = 0; i < storage.length; i++) {
-            if (storage[i].id === Id) {
+            if (storage[i].id === id) {
 
                 storage[i].description = description ? description : storage[i].description;
 
