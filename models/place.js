@@ -30,8 +30,8 @@ var storage = [
     },
     {
         id: 1,
-        description: 'Лондон',
-        isVisited: false,
+        description: 'Нью-Йорк',
+        isVisited: true,
         creationDate: new Date(2018, 2, 19)
     },
     {
@@ -42,10 +42,9 @@ var storage = [
     }
 ];
 
-var id = 3;
 class Place {
     constructor(description) {
-        this.id = id++;
+        this.id = storage.length === 0 ? 0 : storage[storage.length - 1].id + 1;
         this.description = description;
         this.isVisited = false;
         this.creationDate = new Date();
@@ -71,7 +70,7 @@ class Place {
         }
 
         if (search) {
-            return clone.filter(elem => elem.description.indexOf(search) !== -1);
+            return clone.filter(elem => elem.description.includes(search));
         }
 
 
@@ -80,18 +79,19 @@ class Place {
 
     static removePlaces() {
         storage = [];
-        id = 0;
     }
 
     static removeCertain(Id) {
-        storage = storage.filter(elem =>elem.id !== Number(Id));
+        Id = Number(Id);
+        storage = storage.filter(elem =>elem.id !== Id);
 
     }
 
     static updateCertain(Id, body) {
         var { description, isVisited } = body;
+        Id = Number(Id);
         for (var i = 0; i < storage.length; i++) {
-            if (storage[i].id === Number(Id)) {
+            if (storage[i].id === Id) {
 
                 storage[i].description = description ? description : storage[i].description;
 

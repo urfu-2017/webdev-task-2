@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "start": "node index.js"
   },
   "devDependencies": {
     "eslint": "4.18.0",
@@ -11,6 +12,7 @@
   "dependencies": {
     "body-parser": "1.18.2",
     "express": "4.16.3",
+    "now": "10.2.1",
     "xmlhttprequest": "1.8.0"
   }
 }

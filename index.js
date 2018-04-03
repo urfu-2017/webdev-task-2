@@ -4,8 +4,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const routes = require('./routes');
+const { cors } = require('./middlewares/cors');
 
 const app = express();
+
+app.use(cors);
 
 app.use(bodyParser.json());
 
@@ -17,6 +20,6 @@ app.use((err, req, res) => {
     res.sendStatus(500);
 });
 
-app.listen(8080);
+app.listen(8000);
 
 module.exports = app;
