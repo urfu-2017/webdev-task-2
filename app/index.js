@@ -2,20 +2,19 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 
 const routes = require('./routes');
 const app = express();
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    methods: 'GET,PATCH,POST,DELETE',
+    optionsSuccessStatus: 204
+};
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-    if (req.get('Origin') === 'http://localhost:3000') {
-        res.set('Access-Control-Allow-Origin', '*');
-        res.set('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE');
-        res.set('Access-Control-Allow-Headers', 'Content-Type');
-    }
-    next();
-});
+app.use(cors(corsOptions));
 
 routes(app);
 

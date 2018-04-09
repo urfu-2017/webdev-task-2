@@ -3,7 +3,7 @@
 class Place {
     constructor(name, createdAt) {
         this.name = name;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt || new Date();
         this.isVisited = false;
     }
 }

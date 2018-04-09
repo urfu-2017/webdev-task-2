@@ -12,15 +12,14 @@ const orderings = {
     }
 };
 
-let localPlaces = [];
+let placesStore = require('../domain/places-store');
 
 exports.get = (req, res) => {
     let { order, limit, offset, query } = req.query;
     limit = Number(limit) || 10;
     offset = Number(offset) || 0;
 
-    let sortingFun = orderings[order];
-    let requestedPlaces = localPlaces.slice(offset, limit + offset);
+    let requestedPlaces = placesStore.get().slice(offset, limit + offset);
 
     if (query) {
         requestedPlaces = requestedPlaces.filter(({ name }) => {
@@ -28,8 +27,8 @@ exports.get = (req, res) => {
         });
     }
 
-    if (sortingFun) {
-        requestedPlaces.sort(sortingFun);
+    if (order && Object.keys(orderings).includes(order)) {
+        requestedPlaces.sort(orderings[order]);
     }
 
     res.json(requestedPlaces);
@@ -37,7 +36,7 @@ exports.get = (req, res) => {
 
 exports.getByName = (req, res) => {
     let placeName = req.params.name;
-    let requestedPlace = localPlaces.find(({ name }) => name === placeName);
+    let requestedPlace = placesStore.getByName(placeName);
 
     if (requestedPlace) {
         res.json(requestedPlace);
@@ -47,34 +46,30 @@ exports.getByName = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    let placeName = req.params.name;
-    let isAlreadyAdded = Boolean(localPlaces.find(({ name }) => name === placeName));
-
-    if (isAlreadyAdded) {
-        errors.error400(req, res).send(`Place (${placeName}) has already been added`);
-
-        return;
-    }
+    let placeName = req.body.name;
 
     if (!placeName) {
         errors.error400(req, res).send(`Name is not specified at ${req.method} request`);
 
         return;
     }
-    let newPlace = new Place(placeName, Date.now());
 
-    localPlaces.push(newPlace);
+    let addedPlace = placesStore.add(new Place(placeName));
 
-    res.json(newPlace);
+    if (!addedPlace) {
+        errors.error409(req, res).send(`Place (${placeName}) has already been added`);
+
+        return;
+    }
+
+    res.status(201).json(addedPlace);
 };
 
 exports.delete = (req, res) => {
     let placeName = req.params.name;
-    let indexToDelete = localPlaces.findIndex(({ name }) => name === placeName);
 
-    if (indexToDelete !== -1) {
-        localPlaces.splice(indexToDelete, 1);
-
+    let success = placesStore.deleteByName(placeName);
+    if (success) {
         res.sendStatus(204);
     } else {
         errors.error404(req, res).send('Place not found');
@@ -82,7 +77,7 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-    localPlaces = [];
+    placesStore.deleteAll();
 
     res.sendStatus(204);
 };
@@ -93,21 +88,14 @@ exports.update = (req, res) => {
     let to = req.body.moveTo;
     delete req.body.moveTo;
 
-    let placeToUpdate = localPlaces.find(({ name }) => name === placeName);
+    let success = placesStore.update(placeName, req.body);
 
-    if (!placeToUpdate) {
-        errors.error404(req, res).send('Place not found');
+    if (success) {
+        placesStore.moveTo(placeName, to);
+        res.sendStatus(204);
 
         return;
     }
 
-    if (to !== undefined) {
-        let from = localPlaces.findIndex(({ name }) => name === placeName);
-        // Меняем местами
-        localPlaces.splice(to, 0, localPlaces.splice(from, 1)[0]);
-    }
-
-    Object.assign(placeToUpdate, req.body);
-
-    res.sendStatus(204);
+    errors.error404(req, res).send('Place not found');
 };
