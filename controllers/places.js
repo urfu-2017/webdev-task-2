@@ -8,11 +8,12 @@ const pageSize = 1;
 exports.getAll = async (req, res) => {
     let places = [];
     const page = req.query.page;
+    const descriptionQuery = req.query.description;
     if (page) {
         const skip = (page - 1) * pageSize;
-        places = placesRepository.getAll(skip, pageSize);
+        places = placesRepository.getAll(skip, pageSize, descriptionQuery);
     } else {
-        places = placesRepository.getAll();
+        places = placesRepository.find(descriptionQuery);
     }
 
     res.send(places);
@@ -20,12 +21,10 @@ exports.getAll = async (req, res) => {
 
 exports.getPlace = async (req, res) => {
     const id = req.params.id;
-    const descriptionQuery = req.query.description;
-    let place = null;
-    if (id) {
-        place = placesRepository.get(id);
-    } else if (descriptionQuery) {
-        place = placesRepository.find(descriptionQuery);
+    let place = placesRepository.get(id);
+    if (place === null) {
+        res.status(404)
+            .send('Not Found!');
     }
 
     res.send(place);
@@ -33,8 +32,7 @@ exports.getPlace = async (req, res) => {
 
 exports.createPlace = async (req, res) => {
     const placeDescription = req.body.description;
-    const place = new Place({ id: -1,
-        description: placeDescription,
+    const place = new Place({ description: placeDescription,
         visited: false
     });
     const id = placesRepository.save(place);

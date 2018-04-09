@@ -2,20 +2,21 @@
 
 const storage = [];
 const orders = {};
-let currentIdx = 0;
+let currentId = 0;
 
 class PlacesRepository {
-    getAll(skip, take) {
+    getAll(skip, take, description) {
         skip = skip || 0;
         take = take || Number.MAX_SAFE_INTEGER;
 
-        return storage.sort((a, b) => orders[a.id] - orders[b.id]).slice(skip, skip + take);
+        return this.find(description).sort((a, b) => orders[a.id] - orders[b.id])
+            .slice(skip, skip + take);
     }
     get(id) {
         return storage.find(p => p.id === id);
     }
     find(description) {
-        return storage.find(p => p.description.toLowerCase().includes(description.toLowerCase()));
+        return storage.filter(p => p.description.toLowerCase().includes(description.toLowerCase()));
     }
     save(place, order) {
         place.id = parseInt(place.id);
@@ -40,9 +41,9 @@ class PlacesRepository {
         storage.splice(0, storage.length);
     }
     generateId() {
-        currentIdx += 1;
+        currentId += 1;
 
-        return currentIdx;
+        return currentId;
     }
     setOrder(place, order) {
         const maxOrder = Math.max.apply(null, Object.values(orders));
@@ -50,6 +51,10 @@ class PlacesRepository {
             order = 1;
         }
         order = order && parseInt(order) || maxOrder + 1;
+        this.updateOrders(place, order);
+    }
+
+    updateOrders(place, order) {
         Object.keys(orders).forEach(id => {
             if (orders[id] >= order) {
                 orders[id] += order < orders[place.id] ? 1 : -1;

@@ -1,24 +1,31 @@
 'use strict';
 
+var express = require('express');
 const { error404 } = require('./controllers/errors');
 const places = require('./controllers/places');
 
 module.exports = app => {
     app.get('/', (req, res) => res.send('Api on /api/v1/!'));
 
+    const apiV1 = new express.Router();
+
     // Можем объединить разные http методы с одинаковым маршрутом
-    app
-        .route('/api/v1/places')
+    apiV1
+        .route('/places')
         .get(places.getAll);
 
-    app
-        .route('/api/v1/places/:order?')
-        .put(places.updatePlace);
+    apiV1
+        .route('/places/:order?')
+        .patch(places.updatePlace);
 
-    app
-        .get('/api/v1/place/:id?', places.getPlace)
-        .delete('/api/v1/places/:id?', places.deletePlace)
-        .post('/api/v1/places', places.createPlace);
+    apiV1
+        .route('/places/:id?')
+        .get(places.getPlace)
+        .delete(places.deletePlace);
 
+    apiV1
+        .post('/places', places.createPlace);
+
+    app.use('/api/v1', apiV1);
     app.all('*', error404);
 };
