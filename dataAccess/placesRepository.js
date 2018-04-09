@@ -16,6 +16,7 @@ class PlacesRepository {
         return storage.find(p => p.id === id);
     }
     find(description) {
+        description = description || '';
         return storage.filter(p => p.description.toLowerCase().includes(description.toLowerCase()));
     }
     save(place, order) {
