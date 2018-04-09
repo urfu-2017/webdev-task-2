@@ -17,7 +17,9 @@ class PlacesRepository {
     }
     find(description) {
         description = description || '';
-        return storage.filter(p => p.description.toLowerCase().includes(description.toLowerCase()));
+
+        return storage.filter(p => p.description.toLowerCase().includes(description.toLowerCase()))
+            .sort((a, b) => orders[a.id] - orders[b.id]);
     }
     save(place, order) {
         place.id = parseInt(place.id);
@@ -47,20 +49,19 @@ class PlacesRepository {
         return currentId;
     }
     setOrder(place, order) {
-        const maxOrder = Math.max.apply(null, Object.values(orders));
+        let maxOrder = Math.max.apply(null, Object.values(orders));
         if (maxOrder < 1) {
-            order = 1;
+            maxOrder = 0;
         }
-        order = order && parseInt(order) || maxOrder + 1;
+        order = order && parseInt(order) + 1 || orders[place.id] || maxOrder + 1;
         this.updateOrders(place, order);
     }
 
     updateOrders(place, order) {
-        Object.keys(orders).forEach(id => {
-            if (orders[id] >= order) {
-                orders[id] += order < orders[place.id] ? 1 : -1;
-            }
-        });
+        const placeToSwap = Object.keys(orders).find(id => orders[id] === order);
+        if (placeToSwap) {
+            orders[placeToSwap] = orders[place.id];
+        }
         orders[place.id] = order;
     }
 }
