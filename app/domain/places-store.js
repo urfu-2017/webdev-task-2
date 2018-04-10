@@ -9,8 +9,8 @@ class PlacesStore {
         return [...this.list];
     }
 
-    getByName(placeName) {
-        return this.list.find(({ name }) => name === placeName);
+    getById(placeId) {
+        return this.list.find(({ id }) => id === placeId);
     }
 
     add(place) {
@@ -24,8 +24,8 @@ class PlacesStore {
         return place;
     }
 
-    deleteByName(placeName) {
-        let indexToDelete = this.list.findIndex(({ name }) => name === placeName);
+    deleteById(placeId) {
+        let indexToDelete = this.list.findIndex(({ id }) => id === placeId);
         if (indexToDelete === -1) {
             return false;
         }
@@ -39,8 +39,8 @@ class PlacesStore {
         this.list = [];
     }
 
-    moveTo(placeName, indexTo) {
-        let indexFrom = this.list.findIndex(({ name }) => name === placeName);
+    moveTo(placeId, indexTo) {
+        let indexFrom = this.list.findIndex(({ id }) => id === placeId);
 
         if (indexTo !== undefined) {
             this.list.splice(indexTo, 0, this.list.splice(indexFrom, 1)[0]);
@@ -51,8 +51,8 @@ class PlacesStore {
         return false;
     }
 
-    update(placeName, data) {
-        let placeToUpdate = this.list.find(({ name }) => name === placeName);
+    update(placeId, data) {
+        let placeToUpdate = this.getById(placeId);
 
         if (!placeToUpdate) {
             return false;

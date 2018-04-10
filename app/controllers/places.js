@@ -34,9 +34,9 @@ exports.get = (req, res) => {
     res.json(requestedPlaces);
 };
 
-exports.getByName = (req, res) => {
-    let placeName = req.params.name;
-    let requestedPlace = placesStore.getByName(placeName);
+exports.getById = (req, res) => {
+    let placeId = req.params.id;
+    let requestedPlace = placesStore.getById(placeId);
 
     if (requestedPlace) {
         res.json(requestedPlace);
@@ -66,9 +66,9 @@ exports.add = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    let placeName = req.params.name;
+    let placeId = req.params.id;
 
-    let success = placesStore.deleteByName(placeName);
+    let success = placesStore.deleteById(placeId);
     if (success) {
         res.sendStatus(204);
     } else {
@@ -83,15 +83,15 @@ exports.deleteAll = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    let placeName = req.params.name;
+    let placeId = req.params.id;
     // to - на какую позицию в списке нужно переместить место
     let to = req.body.moveTo;
     delete req.body.moveTo;
 
-    let success = placesStore.update(placeName, req.body);
+    let success = placesStore.update(placeId, req.body);
 
     if (success) {
-        placesStore.moveTo(placeName, to);
+        placesStore.moveTo(placeId, to);
         res.sendStatus(204);
 
         return;
