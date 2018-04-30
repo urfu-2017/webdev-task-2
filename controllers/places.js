@@ -3,48 +3,33 @@
 const Place = require('../models/place');
 const places = Place.findAll();
 
-exports.list = (req, res) => {
-    const data = { places };
-
+exports.getAllPlaces = (req, res) => {
+    const data = Place.findAll();
     res.send(data);
 };
 
 exports.create = (req, res) => {
-    let description = req.params.description;
-    let place = new Place({
-        description
-    });
-    place.save();
-    res.sendStatus(201);
-};
-
-exports.changeDescription = (req, res) => {
-    let oldDescription = req.params.oldDescription;
-    let newDescription = req.params.newDescription;
-    let foundedPlace = Place.find(oldDescription);
-    if (!foundedPlace) {
+    const description = req.params.description;
+    if (description) {
+        let place = new Place({
+            description
+        });
+        place.save();
+        res.send(places);
+    } else {
         res.sendStatus(404);
-
-        return;
     }
-    Place.edit(oldDescription, newDescription);
-    res.sendStatus(200);
-};
-
-exports.changeMark = (req, res) => {
-    Place.mark(req.params.description, req.params.mark);
-    res.sendStatus(200);
 };
 
 exports.deletePlace = (req, res) => {
-    let description = req.params.description;
-    let foundedPlace = Place.find(description);
+    const id = req.params.id;
+    const foundedPlace = Place.find(id, undefined);
     if (!foundedPlace) {
         res.sendStatus(404);
 
         return;
     }
-    Place.removePlace(description);
+    Place.removePlace(id);
     res.sendStatus(200);
 
 };
@@ -55,50 +40,39 @@ exports.deleteAll = (req, res) => {
 
         return;
     }
-    res.sendStatus(200);
     Place.clearAll();
-};
-
-exports.find = (req, res) => {
-    let founded = Place.find(req.params.description);
-    if (!founded) {
-        res.sendStatus(404);
-
-        return;
-    }
-    res.send(founded);
+    res.sendStatus(200);
 };
 
 exports.changeIndex = (req, res) => {
-    let index = req.params.index;
-    if (index < 0 || index > places.length) {
+    const index = req.query.index;
+    const id = req.query.id;
+    if (index < 0 || index > places.length || id < 0 || id >= places.length) {
         res.sendStatus(204);
 
         return;
     }
-    Place.changeIndex(req.params.description, index);
-    res.sendStatus(200);
+    Place.changeIndex(id, index);
+    res.status(200).send(places);
 };
 
-exports.dateSortAsc = (req, res) => {
-    res.status(200).send(Place.dateSortAsc());
+exports.search = (req, res) => {
+    const id = req.query.id ? req.query.id : NaN;
+    const description = req.query.description ? req.query.description : undefined;
+    const size = req.query.size ? req.query.size : 3;
+    const page = req.query.page ? req.query.page : 1;
+    const sortByDate = req.query.sortByDate;
+    const sortByABC = req.query.sortByABC;
+    const foundedPlaces = Place.find(Number(id), description);
+    const sortedPlaces = Place.sortPlaces(foundedPlaces, sortByDate, sortByABC);
+    const pages = Place.paginate(sortedPlaces, Number(size), Number(page));
+    res.status(200).send(pages);
 };
 
-exports.dateSortDesc = (req, res) => {
-    res.status(200).send(Place.dateSortDesc());
-};
-
-exports.abcSort = (req, res) => {
-    res.status(200).send(Place.abcSort());
-};
-
-exports.paginate = (req, res) => {
-    let page = req.params.page;
-    let pages = Place.paginate();
-    if (page < 1 || page > pages.length) {
-        res.sendStatus(404);
-
-        return;
-    }
-    res.status(200).send(pages[page - 1]);
+exports.changePlace = (req, res) => {
+    const id = req.query.id ? req.query.id : undefined;
+    const newDescription = req.query.newDescription ? req.query.newDescription : undefined;
+    const isVisited = req.query.isVisited ? req.query.isVisited : undefined;
+    const edited = Place.edit(Number(id), newDescription, isVisited);
+    res.status(200).send(edited);
 };

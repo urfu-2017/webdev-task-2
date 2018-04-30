@@ -7,68 +7,98 @@ class Place {
         this.description = description;
         this.visited = false;
         this.created = new Date();
+        this.id = places.length;
     }
 
     save() {
         places.push(this);
     }
 
-    static find(description) {
-        return places.find(place => place.description === description);
+    static find(id, description) {
+        let founded = [];
+
+        if (!isNaN(id)) {
+            founded.push(places.find(place => place.id === Number(id)));
+
+            return founded;
+        }
+
+        if (description !== undefined) {
+            founded.push(places.find(place => place.description === description));
+
+            return founded;
+        }
+
+        return places;
     }
 
-    static clearAll() {
-        places.length = 0;
+    static removePlace(id) {
+        if (id !== undefined) {
+            places.splice(places[id], 1);
+        }
     }
 
-    static removePlace(description) {
-        places.splice(places[description], 1);
-    }
+    static edit(id, newDescription, isVisited) {
+        if (id > places.length - 1) {
 
-    static mark(description, tick) {
-        Place.find(description).visited = tick;
-    }
+            return [];
+        }
+        let foundedPlace = Place.find(id, undefined)[0];
+        if (newDescription) {
+            foundedPlace.description = newDescription;
+        }
+        if (isVisited !== undefined) {
+            foundedPlace.visited = isVisited;
+        }
 
-    static edit(oldDescription, NewDescription) {
-        Place.find(oldDescription).description = NewDescription;
+        return [foundedPlace];
     }
 
     static findAll() {
         return places;
     }
 
-    static changeIndex(description, to) {
-        let elemByDescription = Place.find(description);
-        let elemByIndex = places[to];
-        let from = places.indexOf(elemByDescription);
-        places.splice(to, 1, elemByDescription);
-        places.splice(from, 1, elemByIndex);
+    static clearAll() {
+        places = [];
     }
 
-    static dateSortAsc() {
-        return places.sort(function (a, b) {
-            return a.created - b.created;
-        });
+    static changeIndex(id, to) {
+        const placeFrom = Place.find(id, undefined)[0];
+        const placeTo = places[to];
+        const from = places.indexOf(placeFrom);
+        places.splice(to, 1, placeFrom);
+        places.splice(from, 1, placeTo);
     }
 
-    static dateSortDesc() {
-        return places.sort(function (a, b) {
-            return b.created - a.created;
-        });
-    }
+    static paginate(sortedPlaces, size, pageNumber) {
+        if (pageNumber) {
+            let pages = [];
+            if (pageNumber > sortedPlaces.length / size) {
+                return [];
+            }
+            for (let i = 0; i < sortedPlaces.length; i += size) {
+                let page = sortedPlaces.slice(i, i + size);
+                pages.push(page);
+            }
 
-    static abcSort() {
-        return places.sort();
-    }
-
-    static paginate() {
-        let pages = [];
-        for (let i = 0; i < places.length; i += 3) {
-            let page = places.slice(i, i + 3);
-            pages.push(page);
+            return pages[pageNumber - 1];
         }
 
-        return pages;
+        return sortedPlaces;
+    }
+
+    static sortPlaces(foundedPlaces, sortByDate, sortByABC) {
+        if (sortByDate === 'asc') {
+            foundedPlaces.sort((a, b) => a.created - b.created);
+        }
+        if (sortByDate === 'desc') {
+            foundedPlaces.sort((a, b) => b.created - a.created);
+        }
+        if (sortByABC) {
+            foundedPlaces.sort((a, b) => a.description.localeCompare(b.description));
+        }
+
+        return foundedPlaces;
     }
 }
 
